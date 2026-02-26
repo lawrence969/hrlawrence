@@ -3,9 +3,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import BookConsultation from "./pages/BookConsultation";
 import TrackOrder from "./pages/TrackOrder";
+import Auth from "./pages/Auth";
+import MyOrders from "./pages/MyOrders";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -17,13 +20,17 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/book-consultation" element={<BookConsultation />} />
-          <Route path="/track-order" element={<TrackOrder />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/book-consultation" element={<BookConsultation />} />
+            <Route path="/track-order" element={<TrackOrder />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

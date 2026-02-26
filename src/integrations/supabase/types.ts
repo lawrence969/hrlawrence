@@ -134,7 +134,7 @@ export type Database = {
           id?: string
           item_description: string
           notes?: string | null
-          order_number: string
+          order_number?: string
           order_type: string
           status?: string
           updated_at?: string
