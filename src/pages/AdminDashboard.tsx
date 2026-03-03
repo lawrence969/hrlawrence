@@ -329,7 +329,7 @@ const AdminDashboard = () => {
   const sendEmailInvitation = async (email: string, orderNumber: string) => {
     setSendingEmailInvite(true);
     const { data, error } = await supabase.functions.invoke("send-invitation", {
-      body: { email, orderNumber, portalUrl: window.location.origin },
+      body: { email, orderNumber, portalUrl: `https://id-preview--${import.meta.env.VITE_SUPABASE_PROJECT_ID || "3cd18dce-b474-4b6c-a592-a850ccbde0c2"}.lovable.app` },
     });
     if (error) {
       toast({ title: "Failed to send invitation", description: error.message, variant: "destructive" });
