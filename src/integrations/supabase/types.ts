@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointment_invitations: {
+        Row: {
+          created_at: string
+          id: string
+          invitation_type: string
+          message: string | null
+          order_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invitation_type: string
+          message?: string | null
+          order_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invitation_type?: string
+          message?: string | null
+          order_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointment_invitations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           appointment_type: string
@@ -116,6 +151,7 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          current_department: string
           customer_email: string
           customer_profile_id: string | null
           id: string
@@ -129,6 +165,7 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
+          current_department?: string
           customer_email: string
           customer_profile_id?: string | null
           id?: string
@@ -142,6 +179,7 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
+          current_department?: string
           customer_email?: string
           customer_profile_id?: string | null
           id?: string
@@ -197,6 +235,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      quotes: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          order_id: string
+          responded_at: string | null
+          sent_at: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id: string
+          responded_at?: string | null
+          sent_at?: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string
+          responded_at?: string | null
+          sent_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
