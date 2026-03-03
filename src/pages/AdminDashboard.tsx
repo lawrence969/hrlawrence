@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -95,9 +96,16 @@ const AdminDashboard = () => {
   const [sendingInvite, setSendingInvite] = useState(false);
 
   const [newOrder, setNewOrder] = useState({
-    customerEmail: "", firstName: "", lastName: "", phone: "",
+    customerEmail: "", firstName: "", lastName: "", address: "",
+    phone1: "", phone2: "",
     orderType: "repair" as "repair" | "custom",
     itemDescription: "", notes: "",
+    orderDate: new Date().toISOString().split("T")[0],
+    rhodiumPolish: false,
+    stoneType: "", stoneSize: "", ringSize: "",
+    metal: "", metalType: "", colour: "",
+    budget: "", deposit: "",
+    deliveryDate: "",
   });
 
   const fetchOrders = async () => {
@@ -182,13 +190,36 @@ const AdminDashboard = () => {
       notes: newOrder.notes || null,
       created_by: user.id,
       order_number: "",
-    });
+      first_name: newOrder.firstName || null,
+      last_name: newOrder.lastName || null,
+      address: newOrder.address || null,
+      phone1: newOrder.phone1 || null,
+      phone2: newOrder.phone2 || null,
+      order_date: newOrder.orderDate || null,
+      rhodium_polish: newOrder.rhodiumPolish,
+      stone_type: newOrder.stoneType || null,
+      stone_size: newOrder.stoneSize || null,
+      ring_size: newOrder.ringSize || null,
+      metal: newOrder.metal || null,
+      metal_type: newOrder.metalType || null,
+      colour: newOrder.colour || null,
+      budget: newOrder.budget ? parseFloat(newOrder.budget) : null,
+      deposit: newOrder.deposit ? parseFloat(newOrder.deposit) : null,
+      delivery_date: newOrder.deliveryDate || null,
+    } as any);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Order Created" });
       setShowNewOrder(false);
-      setNewOrder({ customerEmail: "", firstName: "", lastName: "", phone: "", orderType: "repair", itemDescription: "", notes: "" });
+      setNewOrder({
+        customerEmail: "", firstName: "", lastName: "", address: "",
+        phone1: "", phone2: "", orderType: "repair",
+        itemDescription: "", notes: "",
+        orderDate: new Date().toISOString().split("T")[0],
+        rhodiumPolish: false, stoneType: "", stoneSize: "", ringSize: "",
+        metal: "", metalType: "", colour: "", budget: "", deposit: "", deliveryDate: "",
+      });
     }
   };
 
@@ -391,20 +422,22 @@ const AdminDashboard = () => {
                 <button onClick={() => setShowNewOrder(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
               </div>
               <form onSubmit={createOrder} className="space-y-4">
-                <div>
-                  <Label className="font-body text-sm">Order Type</Label>
-                  <div className="flex gap-3 mt-1">
-                    {(["repair", "custom"] as const).map((t) => (
-                      <button key={t} type="button" onClick={() => setNewOrder({ ...newOrder, orderType: t })}
-                        className={`px-4 py-2 font-body text-sm border transition-colors capitalize ${
-                          newOrder.orderType === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-foreground"
-                        }`}>{t === "custom" ? "Custom Piece" : "Repair"}</button>
-                    ))}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Order Type</Label>
+                    <div className="flex gap-3 mt-1">
+                      {(["repair", "custom"] as const).map((t) => (
+                        <button key={t} type="button" onClick={() => setNewOrder({ ...newOrder, orderType: t })}
+                          className={`px-4 py-2 font-body text-sm border transition-colors capitalize ${
+                            newOrder.orderType === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-foreground"
+                          }`}>{t === "custom" ? "Custom Piece" : "Repair"}</button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="ce" className="font-body text-sm">Client Email</Label>
-                  <Input id="ce" type="email" required value={newOrder.customerEmail} onChange={(e) => setNewOrder({ ...newOrder, customerEmail: e.target.value })} className="mt-1" />
+                  <div>
+                    <Label className="font-body text-sm">Order Date</Label>
+                    <Input type="date" value={newOrder.orderDate} onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })} className="mt-1" />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -417,8 +450,89 @@ const AdminDashboard = () => {
                   </div>
                 </div>
                 <div>
-                  <Label className="font-body text-sm">Phone</Label>
-                  <Input type="tel" value={newOrder.phone} onChange={(e) => setNewOrder({ ...newOrder, phone: e.target.value })} className="mt-1" />
+                  <Label className="font-body text-sm">Address</Label>
+                  <Input value={newOrder.address} onChange={(e) => setNewOrder({ ...newOrder, address: e.target.value })} className="mt-1" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Telephone 1</Label>
+                    <Input type="tel" value={newOrder.phone1} onChange={(e) => setNewOrder({ ...newOrder, phone1: e.target.value })} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Telephone 2</Label>
+                    <Input type="tel" value={newOrder.phone2} onChange={(e) => setNewOrder({ ...newOrder, phone2: e.target.value })} className="mt-1" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="ce" className="font-body text-sm">Email</Label>
+                  <Input id="ce" type="email" required value={newOrder.customerEmail} onChange={(e) => setNewOrder({ ...newOrder, customerEmail: e.target.value })} className="mt-1" />
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Checkbox id="rhodium" checked={newOrder.rhodiumPolish} onCheckedChange={(checked) => setNewOrder({ ...newOrder, rhodiumPolish: !!checked })} />
+                  <Label htmlFor="rhodium" className="font-body text-sm cursor-pointer">Rhodium / Polish</Label>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Stone Type</Label>
+                    <Input value={newOrder.stoneType} onChange={(e) => setNewOrder({ ...newOrder, stoneType: e.target.value })} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Stone Size</Label>
+                    <Input value={newOrder.stoneSize} onChange={(e) => setNewOrder({ ...newOrder, stoneSize: e.target.value })} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Ring Size</Label>
+                    <Input value={newOrder.ringSize} onChange={(e) => setNewOrder({ ...newOrder, ringSize: e.target.value })} className="mt-1" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Metal</Label>
+                    <Select value={newOrder.metal} onValueChange={(v) => setNewOrder({ ...newOrder, metal: v })}>
+                      <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        {["10k", "14k", "18k", "22k"].map((m) => (
+                          <SelectItem key={m} value={m}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Metal Type</Label>
+                    <Select value={newOrder.metalType} onValueChange={(v) => setNewOrder({ ...newOrder, metalType: v })}>
+                      <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        {["Platinum", "Gold", "Silver", "Other"].map((m) => (
+                          <SelectItem key={m} value={m.toLowerCase()}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Colour</Label>
+                    <Select value={newOrder.colour} onValueChange={(v) => setNewOrder({ ...newOrder, colour: v })}>
+                      <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        {["White", "Yellow", "Rose"].map((c) => (
+                          <SelectItem key={c} value={c.toLowerCase()}>{c}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Budget</Label>
+                    <Input type="number" step="0.01" value={newOrder.budget} onChange={(e) => setNewOrder({ ...newOrder, budget: e.target.value })} className="mt-1" placeholder="$" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Deposit</Label>
+                    <Input type="number" step="0.01" value={newOrder.deposit} onChange={(e) => setNewOrder({ ...newOrder, deposit: e.target.value })} className="mt-1" placeholder="$" />
+                  </div>
+                </div>
+                <div>
+                  <Label className="font-body text-sm">Delivery Date</Label>
+                  <Input type="date" value={newOrder.deliveryDate} onChange={(e) => setNewOrder({ ...newOrder, deliveryDate: e.target.value })} className="mt-1" />
                 </div>
                 <div>
                   <Label className="font-body text-sm">Item Description</Label>

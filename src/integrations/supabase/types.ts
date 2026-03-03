@@ -149,45 +149,93 @@ export type Database = {
       }
       orders: {
         Row: {
+          address: string | null
+          budget: number | null
+          colour: string | null
           created_at: string
           created_by: string | null
           current_department: string
           customer_email: string
           customer_profile_id: string | null
+          delivery_date: string | null
+          deposit: number | null
+          first_name: string | null
           id: string
           item_description: string
+          last_name: string | null
+          metal: string | null
+          metal_type: string | null
           notes: string | null
+          order_date: string | null
           order_number: string
           order_type: string
+          phone1: string | null
+          phone2: string | null
+          rhodium_polish: boolean | null
+          ring_size: string | null
           status: string
+          stone_size: string | null
+          stone_type: string | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
+          budget?: number | null
+          colour?: string | null
           created_at?: string
           created_by?: string | null
           current_department?: string
           customer_email: string
           customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
           id?: string
           item_description: string
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
           notes?: string | null
+          order_date?: string | null
           order_number?: string
           order_type: string
+          phone1?: string | null
+          phone2?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
           status?: string
+          stone_size?: string | null
+          stone_type?: string | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
+          budget?: number | null
+          colour?: string | null
           created_at?: string
           created_by?: string | null
           current_department?: string
           customer_email?: string
           customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
           id?: string
           item_description?: string
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
           notes?: string | null
+          order_date?: string | null
           order_number?: string
           order_type?: string
+          phone1?: string | null
+          phone2?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
           status?: string
+          stone_size?: string | null
+          stone_type?: string | null
           updated_at?: string
         }
         Relationships: [
