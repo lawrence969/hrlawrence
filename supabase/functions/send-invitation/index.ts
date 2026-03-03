@@ -32,11 +32,11 @@ Deno.serve(async (req) => {
     );
 
     if (existingUser && existingUser.email_confirmed_at) {
-      // User exists and confirmed — send a magic link email so they can log in
+      // User exists and confirmed — send a password reset email
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-      const magicRes = await fetch(`${supabaseUrl}/auth/v1/magiclink`, {
+      const recoverRes = await fetch(`${supabaseUrl}/auth/v1/recover`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,23 +44,21 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           email,
-          options: {
-            emailRedirectTo: `${portalUrl}/my-orders`,
-          },
+          gotrue_meta_security: {},
         }),
       });
 
-      if (!magicRes.ok) {
-        const errBody = await magicRes.text();
-        console.error("Magic link error:", errBody);
+      if (!recoverRes.ok) {
+        const errBody = await recoverRes.text();
+        console.error("Recovery email error:", errBody);
         return new Response(
-          JSON.stringify({ error: "Failed to send login link" }),
+          JSON.stringify({ error: "Failed to send password reset email" }),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
       return new Response(
-        JSON.stringify({ success: true, message: "Login link sent to existing user", alreadyExists: true }),
+        JSON.stringify({ success: true, message: "Password reset email sent to existing user", alreadyExists: true }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
