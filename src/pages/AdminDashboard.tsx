@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,14 @@ import logoWhite from "@/assets/logo-white.jpg";
 
 const repairStatusFlow = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
 const customStatusFlow = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
+
+const departments = ["front_of_store", "repair", "design", "setting"] as const;
+const departmentLabels: Record<string, string> = {
+  front_of_store: "Front of Store",
+  repair: "Repair",
+  design: "Design",
+  setting: "Setting",
+};
 
 const statusLabels: Record<string, string> = {
   intake: "Intake", in_progress: "In Progress", complete: "Complete",
@@ -32,15 +41,34 @@ const statusColor = (status: string) => {
   return "bg-secondary text-secondary-foreground";
 };
 
+const deptColor = (dept: string) => {
+  if (dept === "front_of_store") return "bg-primary/10 text-primary";
+  if (dept === "repair") return "bg-orange-100 text-orange-800";
+  if (dept === "design") return "bg-purple-100 text-purple-800";
+  if (dept === "setting") return "bg-blue-100 text-blue-800";
+  return "bg-muted text-muted-foreground";
+};
+
 interface Order {
   id: string;
   order_number: string;
   customer_email: string;
   order_type: string;
   status: string;
+  current_department: string;
   item_description: string;
   notes: string | null;
   created_at: string;
+  customer_profile_id: string | null;
+}
+
+interface Quote {
+  id: string;
+  order_id: string;
+  amount: number;
+  description: string | null;
+  status: string;
+  sent_at: string;
 }
 
 const AdminDashboard = () => {
@@ -48,6 +76,24 @@ const AdminDashboard = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [showNewOrder, setShowNewOrder] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [activePanel, setActivePanel] = useState<"detail" | "quote" | "invite" | null>(null);
+  const [messages, setMessages] = useState<{ id: string; message: string; sender_id: string; created_at: string }[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+
+  // Quote form
+  const [quoteAmount, setQuoteAmount] = useState("");
+  const [quoteDesc, setQuoteDesc] = useState("");
+  const [quotePhone, setQuotePhone] = useState("");
+  const [sendingQuote, setSendingQuote] = useState(false);
+
+  // Invite form
+  const [inviteType, setInviteType] = useState<"review" | "pickup">("review");
+  const [inviteMsg, setInviteMsg] = useState("");
+  const [invitePhone, setInvitePhone] = useState("");
+  const [sendingInvite, setSendingInvite] = useState(false);
+
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", phone: "",
     orderType: "repair" as "repair" | "custom",
@@ -69,6 +115,45 @@ const AdminDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
 
+  // Fetch messages and quotes when order selected
+  useEffect(() => {
+    if (!selectedOrder) return;
+    const fetchMessages = async () => {
+      const { data } = await supabase.from("order_messages").select("*").eq("order_id", selectedOrder.id).order("created_at", { ascending: true });
+      setMessages(data || []);
+    };
+    const fetchQuotes = async () => {
+      const { data } = await supabase.from("quotes").select("*").eq("order_id", selectedOrder.id).order("created_at", { ascending: false });
+      setQuotes(data || []);
+    };
+    fetchMessages();
+    fetchQuotes();
+
+    // Try to get customer phone
+    if (selectedOrder.customer_profile_id) {
+      supabase.from("profiles").select("phone").eq("id", selectedOrder.customer_profile_id).single().then(({ data }) => {
+        if (data?.phone) {
+          setQuotePhone(data.phone);
+          setInvitePhone(data.phone);
+        }
+      });
+    }
+
+    const msgChannel = supabase
+      .channel(`admin-msgs-${selectedOrder.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "order_messages", filter: `order_id=eq.${selectedOrder.id}` }, () => fetchMessages())
+      .subscribe();
+    const quoteChannel = supabase
+      .channel(`admin-quotes-${selectedOrder.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "quotes", filter: `order_id=eq.${selectedOrder.id}` }, () => fetchQuotes())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(msgChannel);
+      supabase.removeChannel(quoteChannel);
+    };
+  }, [selectedOrder]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body">Loading...</div>;
   if (!user) return <Navigate to="/auth" replace />;
   if (!isStaff) return <Navigate to="/my-orders" replace />;
@@ -80,6 +165,12 @@ const AdminDashboard = () => {
       const { error } = await supabase.from("orders").update({ status: flow[idx + 1] }).eq("id", order.id);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     }
+  };
+
+  const changeDepartment = async (orderId: string, dept: string) => {
+    const { error } = await supabase.from("orders").update({ current_department: dept }).eq("id", orderId);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Department Updated" });
   };
 
   const createOrder = async (e: React.FormEvent) => {
@@ -101,6 +192,108 @@ const AdminDashboard = () => {
     }
   };
 
+  const sendQuote = async () => {
+    if (!selectedOrder || !quoteAmount) return;
+    setSendingQuote(true);
+    // Create quote record
+    const { data: quoteData, error: qErr } = await supabase.from("quotes").insert({
+      order_id: selectedOrder.id,
+      amount: parseFloat(quoteAmount),
+      description: quoteDesc || null,
+    }).select().single();
+
+    if (qErr) {
+      toast({ title: "Error", description: qErr.message, variant: "destructive" });
+      setSendingQuote(false);
+      return;
+    }
+
+    // Update order status to quote_sent if applicable
+    if (selectedOrder.order_type === "custom" && selectedOrder.status === "intake") {
+      await supabase.from("orders").update({ status: "quote_sent" }).eq("id", selectedOrder.id);
+    }
+
+    // Send SMS if phone provided
+    if (quotePhone) {
+      const { error: smsErr } = await supabase.functions.invoke("send-sms", {
+        body: {
+          action: "quote",
+          to: quotePhone,
+          orderId: selectedOrder.id,
+          orderNumber: selectedOrder.order_number,
+          amount: quoteAmount,
+          message: quoteDesc,
+          quoteId: quoteData.id,
+          portalUrl: window.location.origin,
+        },
+      });
+      if (smsErr) {
+        toast({ title: "Quote saved but SMS failed", description: smsErr.message, variant: "destructive" });
+      } else {
+        toast({ title: "Quote sent via SMS" });
+      }
+    } else {
+      toast({ title: "Quote saved (no phone for SMS)" });
+    }
+
+    setQuoteAmount("");
+    setQuoteDesc("");
+    setSendingQuote(false);
+    setActivePanel("detail");
+  };
+
+  const sendInvite = async () => {
+    if (!selectedOrder) return;
+    setSendingInvite(true);
+
+    const { data: inviteData, error: iErr } = await supabase.from("appointment_invitations").insert({
+      order_id: selectedOrder.id,
+      invitation_type: inviteType,
+      message: inviteMsg || null,
+    }).select().single();
+
+    if (iErr) {
+      toast({ title: "Error", description: iErr.message, variant: "destructive" });
+      setSendingInvite(false);
+      return;
+    }
+
+    if (invitePhone) {
+      const { error: smsErr } = await supabase.functions.invoke("send-sms", {
+        body: {
+          action: "appointment_invitation",
+          to: invitePhone,
+          orderId: selectedOrder.id,
+          orderNumber: selectedOrder.order_number,
+          message: inviteType,
+          invitationId: inviteData.id,
+          portalUrl: window.location.origin,
+        },
+      });
+      if (smsErr) {
+        toast({ title: "Invitation saved but SMS failed", description: smsErr.message, variant: "destructive" });
+      } else {
+        toast({ title: "Appointment invitation sent via SMS" });
+      }
+    } else {
+      toast({ title: "Invitation saved (no phone for SMS)" });
+    }
+
+    setInviteMsg("");
+    setSendingInvite(false);
+    setActivePanel("detail");
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !selectedOrder || !user) return;
+    const { error } = await supabase.from("order_messages").insert({
+      order_id: selectedOrder.id,
+      sender_id: user.id,
+      message: newMessage.trim(),
+    });
+    if (!error) setNewMessage("");
+  };
+
   const repairs = orders.filter((o) => o.order_type === "repair");
   const customs = orders.filter((o) => o.order_type === "custom");
   const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()));
@@ -114,20 +307,27 @@ const AdminDashboard = () => {
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Order</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Client</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider hidden md:table-cell">Item</th>
+            <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Dept</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Status</th>
-            <th className="text-right px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Action</th>
+            <th className="text-right px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
           {items.map((order) => (
-            <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30">
+            <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
               <td className="px-4 py-3 font-body text-sm text-foreground">{order.customer_email}</td>
-              <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell">{order.item_description}</td>
+              <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
+              <td className="px-4 py-3">
+                <Badge variant="secondary" className={`font-body text-xs ${deptColor(order.current_department)}`}>
+                  <MapPin className="w-3 h-3 mr-1" />
+                  {departmentLabels[order.current_department] || order.current_department}
+                </Badge>
+              </td>
               <td className="px-4 py-3">
                 <Badge variant="secondary" className={`font-body text-xs ${statusColor(order.status)}`}>{statusLabels[order.status] || order.status}</Badge>
               </td>
-              <td className="px-4 py-3 text-right">
+              <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                 {order.status !== "picked_up" && (
                   <Button size="sm" variant="ghost" onClick={() => advanceOrder(order)} className="font-body text-xs text-accent hover:text-accent">
                     Advance <ChevronRight className="w-3 h-3 ml-1" />
@@ -137,7 +337,7 @@ const AdminDashboard = () => {
             </motion.tr>
           ))}
           {items.length === 0 && (
-            <tr><td colSpan={5} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
+            <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
           )}
         </tbody>
       </table>
@@ -146,7 +346,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-muted">
-      <div className="fixed left-0 top-0 bottom-0 w-64 bg-primary text-primary-foreground p-6 hidden lg:flex flex-col">
+      <div className="fixed left-0 top-0 bottom-0 w-64 bg-primary text-primary-foreground p-6 hidden lg:flex flex-col z-40">
         <Link to="/"><img src={logoWhite} alt="HR Lawrence" className="h-10 mb-10" /></Link>
         <nav className="space-y-2 flex-1">
           <div className="px-4 py-2 bg-sidebar-accent rounded text-sm font-body font-medium">Dashboard</div>
@@ -231,6 +431,163 @@ const AdminDashboard = () => {
                 <Button type="submit" className="w-full bg-primary text-primary-foreground font-body text-sm tracking-widest uppercase">Create Order</Button>
               </form>
             </div>
+          </motion.div>
+        )}
+
+        {/* Order Detail Slide-out */}
+        {selectedOrder && activePanel && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 z-50 flex justify-end" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
+            <motion.div initial={{ x: 400 }} animate={{ x: 0 }} className="bg-background w-full max-w-md h-full overflow-y-auto border-l border-border p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                <button onClick={() => { setSelectedOrder(null); setActivePanel(null); }}><X className="w-5 h-5 text-muted-foreground" /></button>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-2 mb-6">
+                <Button size="sm" variant={activePanel === "detail" ? "default" : "outline"} onClick={() => setActivePanel("detail")} className="font-body text-xs">
+                  Details
+                </Button>
+                <Button size="sm" variant={activePanel === "quote" ? "default" : "outline"} onClick={() => setActivePanel("quote")} className="font-body text-xs">
+                  <DollarSign className="w-3 h-3 mr-1" /> Quote
+                </Button>
+                <Button size="sm" variant={activePanel === "invite" ? "default" : "outline"} onClick={() => setActivePanel("invite")} className="font-body text-xs">
+                  <Calendar className="w-3 h-3 mr-1" /> Invite
+                </Button>
+              </div>
+
+              {activePanel === "detail" && (
+                <div className="space-y-6">
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-1">Client</p>
+                    <p className="font-body text-sm text-foreground">{selectedOrder.customer_email}</p>
+                  </div>
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-1">Item</p>
+                    <p className="font-body text-sm text-foreground">{selectedOrder.item_description}</p>
+                  </div>
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-1">Type</p>
+                    <p className="font-body text-sm text-foreground capitalize">{selectedOrder.order_type}</p>
+                  </div>
+
+                  {/* Department */}
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-2">Department Location</p>
+                    <Select value={selectedOrder.current_department} onValueChange={(val) => changeDepartment(selectedOrder.id, val)}>
+                      <SelectTrigger className="w-full font-body text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {departments.map((d) => (
+                          <SelectItem key={d} value={d} className="font-body text-sm">{departmentLabels[d]}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <p className="font-body text-xs text-muted-foreground mb-2">Status</p>
+                    <Badge variant="secondary" className={`font-body text-xs ${statusColor(selectedOrder.status)}`}>{statusLabels[selectedOrder.status] || selectedOrder.status}</Badge>
+                    {selectedOrder.status !== "picked_up" && (
+                      <Button size="sm" variant="outline" onClick={() => advanceOrder(selectedOrder)} className="ml-3 font-body text-xs">
+                        Advance <ChevronRight className="w-3 h-3 ml-1" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Quotes */}
+                  {quotes.length > 0 && (
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-2">Quotes</p>
+                      <div className="space-y-2">
+                        {quotes.map((q) => (
+                          <div key={q.id} className="bg-muted/50 p-3 border border-border">
+                            <div className="flex justify-between items-center">
+                              <span className="font-body text-sm font-medium text-foreground">${q.amount}</span>
+                              <Badge variant="secondary" className={`font-body text-xs ${q.status === "approved" ? "bg-green-100 text-green-800" : q.status === "declined" ? "bg-red-100 text-red-800" : "bg-accent/20 text-accent"}`}>{q.status}</Badge>
+                            </div>
+                            {q.description && <p className="font-body text-xs text-muted-foreground mt-1">{q.description}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Messages */}
+                  <div className="border-t border-border pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                      <p className="font-body text-xs text-muted-foreground font-medium">Messages</p>
+                    </div>
+                    {messages.length > 0 && (
+                      <div className="space-y-2 max-h-48 overflow-y-auto mb-3">
+                        {messages.map((msg) => (
+                          <div key={msg.id} className={`p-2 text-xs font-body ${msg.sender_id === user?.id ? "bg-accent/10 ml-4" : "bg-muted mr-4"}`}>
+                            <p className="text-foreground">{msg.message}</p>
+                            <p className="text-muted-foreground mt-1 text-[10px]">{new Date(msg.created_at).toLocaleString()}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Input placeholder="Send a message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendMessage()} className="font-body text-xs" />
+                      <Button size="sm" onClick={sendMessage} className="bg-primary text-primary-foreground"><Send className="w-3 h-3" /></Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePanel === "quote" && (
+                <div className="space-y-4">
+                  <p className="font-body text-sm text-foreground font-medium">Send Quote for Approval</p>
+                  <div>
+                    <Label className="font-body text-xs">Amount ($)</Label>
+                    <Input type="number" step="0.01" required value={quoteAmount} onChange={(e) => setQuoteAmount(e.target.value)} className="mt-1 font-body" placeholder="0.00" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-xs">Description</Label>
+                    <Textarea value={quoteDesc} onChange={(e) => setQuoteDesc(e.target.value)} className="mt-1 font-body text-sm" placeholder="Describe the work and costs..." />
+                  </div>
+                  <div>
+                    <Label className="font-body text-xs">Customer Phone (for SMS)</Label>
+                    <Input type="tel" value={quotePhone} onChange={(e) => setQuotePhone(e.target.value)} className="mt-1 font-body" placeholder="+1234567890" />
+                  </div>
+                  <Button onClick={sendQuote} disabled={sendingQuote || !quoteAmount} className="w-full bg-primary text-primary-foreground font-body text-sm">
+                    {sendingQuote ? "Sending..." : "Send Quote via SMS"}
+                  </Button>
+                </div>
+              )}
+
+              {activePanel === "invite" && (
+                <div className="space-y-4">
+                  <p className="font-body text-sm text-foreground font-medium">Send Appointment Invitation</p>
+                  <div>
+                    <Label className="font-body text-xs">Appointment Type</Label>
+                    <div className="flex gap-2 mt-1">
+                      {(["review", "pickup"] as const).map((t) => (
+                        <button key={t} type="button" onClick={() => setInviteType(t)}
+                          className={`px-4 py-2 font-body text-xs border capitalize transition-colors ${
+                            inviteType === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-foreground"
+                          }`}>{t}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="font-body text-xs">Message (optional)</Label>
+                    <Textarea value={inviteMsg} onChange={(e) => setInviteMsg(e.target.value)} className="mt-1 font-body text-sm" placeholder="Add a note about the appointment..." />
+                  </div>
+                  <div>
+                    <Label className="font-body text-xs">Customer Phone (for SMS)</Label>
+                    <Input type="tel" value={invitePhone} onChange={(e) => setInvitePhone(e.target.value)} className="mt-1 font-body" placeholder="+1234567890" />
+                  </div>
+                  <Button onClick={sendInvite} disabled={sendingInvite} className="w-full bg-primary text-primary-foreground font-body text-sm">
+                    {sendingInvite ? "Sending..." : "Send Invitation via SMS"}
+                  </Button>
+                </div>
+              )}
+            </motion.div>
           </motion.div>
         )}
 
