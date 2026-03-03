@@ -32,9 +32,36 @@ Deno.serve(async (req) => {
     );
 
     if (existingUser && existingUser.email_confirmed_at) {
+      // User exists and confirmed — send a magic link email so they can log in
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+      const magicRes = await fetch(`${supabaseUrl}/auth/v1/magiclink`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": anonKey,
+        },
+        body: JSON.stringify({
+          email,
+          options: {
+            emailRedirectTo: `${portalUrl}/my-orders`,
+          },
+        }),
+      });
+
+      if (!magicRes.ok) {
+        const errBody = await magicRes.text();
+        console.error("Magic link error:", errBody);
+        return new Response(
+          JSON.stringify({ error: "Failed to send login link" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       return new Response(
-        JSON.stringify({ error: "User already has an active account", alreadyExists: true }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: true, message: "Login link sent to existing user", alreadyExists: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
