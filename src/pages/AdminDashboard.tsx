@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare, Mail } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -94,6 +94,7 @@ const AdminDashboard = () => {
   const [inviteMsg, setInviteMsg] = useState("");
   const [invitePhone, setInvitePhone] = useState("");
   const [sendingInvite, setSendingInvite] = useState(false);
+  const [sendingEmailInvite, setSendingEmailInvite] = useState(false);
 
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
@@ -325,7 +326,23 @@ const AdminDashboard = () => {
     if (!error) setNewMessage("");
   };
 
+  const sendEmailInvitation = async (email: string, orderNumber: string) => {
+    setSendingEmailInvite(true);
+    const { data, error } = await supabase.functions.invoke("send-invitation", {
+      body: { email, orderNumber, portalUrl: window.location.origin },
+    });
+    if (error) {
+      toast({ title: "Failed to send invitation", description: error.message, variant: "destructive" });
+    } else if (data?.error) {
+      toast({ title: data.alreadyExists ? "Already has an account" : "Error", description: data.error, variant: "destructive" });
+    } else {
+      toast({ title: "Invitation sent!", description: `Email invitation sent to ${email}` });
+    }
+    setSendingEmailInvite(false);
+  };
+
   const repairs = orders.filter((o) => o.order_type === "repair");
+
   const customs = orders.filter((o) => o.order_type === "custom");
   const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()));
   const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()));
@@ -609,9 +626,19 @@ const AdminDashboard = () => {
                         Advance <ChevronRight className="w-3 h-3 ml-1" />
                       </Button>
                     )}
-                  </div>
+                   </div>
 
-                  {/* Quotes */}
+                   {/* Invite to Sign Up */}
+                   {!selectedOrder.customer_profile_id && (
+                     <div className="bg-accent/10 border border-accent/20 p-4">
+                       <p className="font-body text-xs text-muted-foreground mb-2">No account linked</p>
+                       <Button size="sm" disabled={sendingEmailInvite} onClick={() => sendEmailInvitation(selectedOrder.customer_email, selectedOrder.order_number)} className="font-body text-xs bg-primary text-primary-foreground w-full">
+                         <Mail className="w-3 h-3 mr-2" />
+                         {sendingEmailInvite ? "Sending..." : `Invite ${selectedOrder.customer_email} to sign up`}
+                       </Button>
+                     </div>
+                   )}
+
                   {quotes.length > 0 && (
                     <div>
                       <p className="font-body text-xs text-muted-foreground mb-2">Quotes</p>
