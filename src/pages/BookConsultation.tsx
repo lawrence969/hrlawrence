@@ -58,7 +58,19 @@ const BookConsultation = () => {
       toast({ title: "Booking Error", description: error.message, variant: "destructive" });
     } else {
       setSubmitted(true);
-      toast({ title: "Consultation Booked!", description: "You will receive a confirmation email shortly." });
+      toast({ title: "Consultation Booked!", description: "We'll be in touch to confirm your appointment." });
+
+      // Notify staff via email
+      supabase.functions.invoke("notify-consultation", {
+        body: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          date: selectedDate?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }),
+          time: selectedTime,
+        },
+      }).catch((err) => console.error("Staff notification failed:", err));
     }
     setSubmitting(false);
   };
