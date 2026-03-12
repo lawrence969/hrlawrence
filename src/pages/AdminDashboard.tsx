@@ -54,6 +54,8 @@ interface Order {
   id: string;
   order_number: string;
   customer_email: string;
+  first_name: string | null;
+  last_name: string | null;
   order_type: string;
   status: string;
   current_department: string;
@@ -344,8 +346,8 @@ const AdminDashboard = () => {
   const repairs = orders.filter((o) => o.order_type === "repair");
 
   const customs = orders.filter((o) => o.order_type === "custom");
-  const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()));
-  const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()));
+  const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()) || `${r.first_name || ''} ${r.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
+  const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()) || `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
 
   const OrderTable = ({ items, flow }: { items: Order[]; flow: string[] }) => (
     <div className="bg-background border border-border overflow-hidden">
@@ -364,7 +366,11 @@ const AdminDashboard = () => {
           {items.map((order) => (
             <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
-              <td className="px-4 py-3 font-body text-sm text-foreground">{order.customer_email}</td>
+              <td className="px-4 py-3 font-body text-sm text-foreground">
+                {order.first_name || order.last_name
+                  ? `${order.first_name || ''} ${order.last_name || ''}`.trim()
+                  : <span className="text-muted-foreground">{order.customer_email}</span>}
+              </td>
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
               <td className="px-4 py-3">
                 <Badge variant="secondary" className={`font-body text-xs ${deptColor(order.current_department)}`}>
