@@ -54,6 +54,8 @@ interface Order {
   id: string;
   order_number: string;
   customer_email: string;
+  first_name: string | null;
+  last_name: string | null;
   order_type: string;
   status: string;
   current_department: string;
