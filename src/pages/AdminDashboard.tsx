@@ -366,7 +366,11 @@ const AdminDashboard = () => {
           {items.map((order) => (
             <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
-              <td className="px-4 py-3 font-body text-sm text-foreground">{order.customer_email}</td>
+              <td className="px-4 py-3 font-body text-sm text-foreground">
+                {order.first_name || order.last_name
+                  ? `${order.first_name || ''} ${order.last_name || ''}`.trim()
+                  : <span className="text-muted-foreground">{order.customer_email}</span>}
+              </td>
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
               <td className="px-4 py-3">
                 <Badge variant="secondary" className={`font-body text-xs ${deptColor(order.current_department)}`}>
