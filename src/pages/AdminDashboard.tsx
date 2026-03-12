@@ -346,8 +346,8 @@ const AdminDashboard = () => {
   const repairs = orders.filter((o) => o.order_type === "repair");
 
   const customs = orders.filter((o) => o.order_type === "custom");
-  const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()));
-  const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()));
+  const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()) || `${r.first_name || ''} ${r.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
+  const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()) || `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
 
   const OrderTable = ({ items, flow }: { items: Order[]; flow: string[] }) => (
     <div className="bg-background border border-border overflow-hidden">
