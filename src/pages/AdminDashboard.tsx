@@ -406,7 +406,7 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments.map((d) => (
+                    {[...departments].sort((a, b) => departmentLabels[a].localeCompare(departmentLabels[b])).map((d) => (
                       <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
                     ))}
                   </SelectContent>
