@@ -428,13 +428,6 @@ const AdminDashboard = () => {
                   </SelectContent>
                 </Select>
               </td>
-              <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                {order.status !== "picked_up" && (
-                  <Button size="sm" variant="ghost" onClick={() => advanceOrder(order)} className="font-body text-xs text-accent hover:text-accent">
-                    Advance <ChevronRight className="w-3 h-3 ml-1" />
-                  </Button>
-                )}
-              </td>
             </motion.tr>
             );
           })}
