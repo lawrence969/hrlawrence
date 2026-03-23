@@ -30,6 +30,7 @@ const statusLabels: Record<string, string> = {
   intake: "Intake", in_progress: "In Progress", complete: "Complete",
   ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
   quote_sent: "Quote Sent", quote_approved: "Quote Approved",
+  ordered_stones: "Ordered Stones",
   in_design: "In Design", design_approved: "Design Approved",
   in_production: "In Production",
 };
