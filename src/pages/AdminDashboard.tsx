@@ -349,7 +349,20 @@ const AdminDashboard = () => {
   const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()) || `${r.first_name || ''} ${r.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
   const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()) || `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
 
-  const OrderTable = ({ items, flow }: { items: Order[]; flow: string[] }) => (
+  const changeOrderType = async (orderId: string, newType: string) => {
+    const newFlow = newType === "repair" ? repairStatusFlow : customStatusFlow;
+    // Reset status to intake if current status isn't in the new flow
+    const order = orders.find((o) => o.id === orderId);
+    const updates: Record<string, string> = { order_type: newType };
+    if (order && !newFlow.includes(order.status)) {
+      updates.status = "intake";
+    }
+    const { error } = await supabase.from("orders").update(updates).eq("id", orderId);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Order Type Updated" });
+  };
+
+  const OrderTable = ({ items }: { items: Order[] }) => (
     <div className="bg-background border border-border overflow-hidden">
       <table className="w-full">
         <thead>
@@ -357,13 +370,16 @@ const AdminDashboard = () => {
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Order</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Client</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider hidden md:table-cell">Item</th>
+            <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Type</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Dept</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Status</th>
             <th className="text-right px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {items.map((order) => (
+          {items.map((order) => {
+            const flow = order.order_type === "repair" ? repairStatusFlow : customStatusFlow;
+            return (
             <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
               <td className="px-4 py-3 font-body text-sm text-foreground">
@@ -372,6 +388,17 @@ const AdminDashboard = () => {
                   : <span className="text-muted-foreground">{order.customer_email}</span>}
               </td>
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
+              <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                <Select value={order.order_type} onValueChange={(val) => changeOrderType(order.id, val)}>
+                  <SelectTrigger className={`h-7 w-[110px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : "bg-purple-100 text-purple-800"}`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+                    <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </td>
               <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                 <Select value={order.current_department} onValueChange={(val) => changeDepartment(order.id, val)}>
                   <SelectTrigger className={`h-7 w-[140px] text-xs font-body border-0 ${deptColor(order.current_department)}`}>
@@ -408,9 +435,10 @@ const AdminDashboard = () => {
                 )}
               </td>
             </motion.tr>
-          ))}
+            );
+          })}
           {items.length === 0 && (
-            <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
+            <tr><td colSpan={7} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
           )}
         </tbody>
       </table>
