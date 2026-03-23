@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import logoWhite from "@/assets/logo-white.jpg";
 
 const repairStatusFlow = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
-const customStatusFlow = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
+const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
 
 const departments = ["front_of_store", "repair", "design", "setting"] as const;
 const departmentLabels: Record<string, string> = {
@@ -30,13 +30,14 @@ const statusLabels: Record<string, string> = {
   intake: "Intake", in_progress: "In Progress", complete: "Complete",
   ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
   quote_sent: "Quote Sent", quote_approved: "Quote Approved",
+  ordered_stones: "Ordered Stones",
   in_design: "In Design", design_approved: "Design Approved",
   in_production: "In Production",
 };
 
 const statusColor = (status: string) => {
   if (["intake"].includes(status)) return "bg-secondary text-secondary-foreground";
-  if (["in_progress", "in_design", "in_production"].includes(status)) return "bg-accent/20 text-accent";
+  if (["in_progress", "in_design", "in_production", "ordered_stones"].includes(status)) return "bg-accent/20 text-accent";
   if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
   if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
   return "bg-secondary text-secondary-foreground";
@@ -373,7 +374,7 @@ const AdminDashboard = () => {
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Type</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Dept</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Status</th>
-            <th className="text-right px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Actions</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -427,18 +428,11 @@ const AdminDashboard = () => {
                   </SelectContent>
                 </Select>
               </td>
-              <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                {order.status !== "picked_up" && (
-                  <Button size="sm" variant="ghost" onClick={() => advanceOrder(order)} className="font-body text-xs text-accent hover:text-accent">
-                    Advance <ChevronRight className="w-3 h-3 ml-1" />
-                  </Button>
-                )}
-              </td>
             </motion.tr>
             );
           })}
           {items.length === 0 && (
-            <tr><td colSpan={7} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
+            <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
           )}
         </tbody>
       </table>
