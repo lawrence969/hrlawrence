@@ -395,8 +395,8 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
                     <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
+                    <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
                   </SelectContent>
                 </Select>
               </td>
@@ -406,7 +406,7 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments.map((d) => (
+                    {[...departments].sort((a, b) => departmentLabels[a].localeCompare(departmentLabels[b])).map((d) => (
                       <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
                     ))}
                   </SelectContent>
@@ -422,7 +422,7 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {flow.map((s) => (
+                    {[...flow].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
                       <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
                     ))}
                   </SelectContent>
