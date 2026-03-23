@@ -796,8 +796,8 @@ const AdminDashboard = () => {
             <TabsTrigger value="repairs" className="font-body text-sm">Repairs ({repairs.length})</TabsTrigger>
             <TabsTrigger value="custom" className="font-body text-sm">Custom Orders ({customs.length})</TabsTrigger>
           </TabsList>
-          <TabsContent value="repairs"><OrderTable items={filteredRepairs} flow={repairStatusFlow} /></TabsContent>
-          <TabsContent value="custom"><OrderTable items={filteredCustoms} flow={customStatusFlow} /></TabsContent>
+          <TabsContent value="repairs"><OrderTable items={filteredRepairs} /></TabsContent>
+          <TabsContent value="custom"><OrderTable items={filteredCustoms} /></TabsContent>
         </Tabs>
       </div>
     </div>
