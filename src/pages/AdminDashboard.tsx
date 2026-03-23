@@ -372,14 +372,33 @@ const AdminDashboard = () => {
                   : <span className="text-muted-foreground">{order.customer_email}</span>}
               </td>
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
-              <td className="px-4 py-3">
-                <Badge variant="secondary" className={`font-body text-xs ${deptColor(order.current_department)}`}>
-                  <MapPin className="w-3 h-3 mr-1" />
-                  {departmentLabels[order.current_department] || order.current_department}
-                </Badge>
+              <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                <Select value={order.current_department} onValueChange={(val) => changeDepartment(order.id, val)}>
+                  <SelectTrigger className={`h-7 w-[140px] text-xs font-body border-0 ${deptColor(order.current_department)}`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((d) => (
+                      <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </td>
-              <td className="px-4 py-3">
-                <Badge variant="secondary" className={`font-body text-xs ${statusColor(order.status)}`}>{statusLabels[order.status] || order.status}</Badge>
+              <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                <Select value={order.status} onValueChange={async (val) => {
+                  const { error } = await supabase.from("orders").update({ status: val }).eq("id", order.id);
+                  if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                  else toast({ title: "Status Updated" });
+                }}>
+                  <SelectTrigger className={`h-7 w-[150px] text-xs font-body border-0 ${statusColor(order.status)}`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {flow.map((s) => (
+                      <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </td>
               <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                 {order.status !== "picked_up" && (
