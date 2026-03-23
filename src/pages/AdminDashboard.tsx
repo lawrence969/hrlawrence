@@ -395,8 +395,8 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
                     <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
+                    <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
                   </SelectContent>
                 </Select>
               </td>
