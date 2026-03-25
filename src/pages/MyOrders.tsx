@@ -167,7 +167,7 @@ const MyOrders = () => {
     <div className="min-h-screen">
       <Navbar />
       <div className="pt-32 pb-24 bg-cream min-h-[80vh]">
-        <div className="container mx-auto px-6 max-w-5xl">
+        <div className="container mx-auto px-6 max-w-7xl">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-display text-foreground">My Orders</h1>
@@ -183,9 +183,9 @@ const MyOrders = () => {
               <p className="font-body text-muted-foreground">No orders found yet. Your orders will appear here once your piece is checked in.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               {/* Order Table */}
-              <div className="bg-background border border-border overflow-x-auto">
+              <div className="lg:col-span-3 bg-background border border-border overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -221,7 +221,7 @@ const MyOrders = () => {
 
               {/* Order Detail */}
               {selectedOrder && (
-                <motion.div key={selectedOrder.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-background border border-border p-6 self-start space-y-6">
+                <motion.div key={selectedOrder.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-2 bg-background border border-border p-6 self-start space-y-6">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-body text-xs text-muted-foreground">Order</p>
