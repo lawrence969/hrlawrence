@@ -887,6 +887,45 @@ const AdminDashboard = () => {
 
         <OrderTable items={filteredOrders} />
       </div>
+
+      {/* Confirm Create Order Dialog */}
+      <AlertDialog open={showConfirmCreate} onOpenChange={setShowConfirmCreate}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-body">Confirm Order Creation</AlertDialogTitle>
+            <AlertDialogDescription className="font-body">
+              Are you sure you want to create this {newOrder.orderType === "custom" ? "Custom Piece" : "Repair"} order for {newOrder.firstName || newOrder.customerEmail}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="font-body" onClick={confirmCreateOrder}>Create Order</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Print Prompt Dialog */}
+      <AlertDialog open={showPrintPrompt} onOpenChange={setShowPrintPrompt}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-body flex items-center gap-2">
+              <Printer className="w-5 h-5" /> Print Order Form
+            </AlertDialogTitle>
+            <AlertDialogDescription className="font-body">
+              Order created successfully! Would you like to print the order form?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-body">No, Skip</AlertDialogCancel>
+            <AlertDialogAction className="font-body" onClick={() => {
+              if (createdOrderData) printOrderForm(createdOrderData);
+              setCreatedOrderData(null);
+            }}>
+              Print Form
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
