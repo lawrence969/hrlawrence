@@ -698,15 +698,20 @@ const AdminDashboard = () => {
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="font-body text-sm">Budget</Label>
-                    <Input type="number" step="0.01" value={newOrder.budget} onChange={(e) => setNewOrder({ ...newOrder, budget: e.target.value })} className="mt-1" placeholder="$" />
+                <div>
+                  <Label className="font-body text-sm">Budget</Label>
+                  <Input type="number" step="0.01" value={newOrder.budget} onChange={(e) => setNewOrder({ ...newOrder, budget: e.target.value })} className="mt-1" placeholder="$" />
+                </div>
+                <div className="border border-accent/30 bg-accent/5 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <DollarSign className="w-4 h-4 text-accent" />
+                    <Label className="font-body text-sm font-medium">Quote</Label>
                   </div>
-                  <div>
-                    <Label className="font-body text-sm">Deposit</Label>
-                    <Input type="number" step="0.01" value={newOrder.deposit} onChange={(e) => setNewOrder({ ...newOrder, deposit: e.target.value })} className="mt-1" placeholder="$" />
-                  </div>
+                  <p className="font-body text-xs text-muted-foreground mb-2">Quote can be sent after the order is created.</p>
+                </div>
+                <div>
+                  <Label className="font-body text-sm">Deposit</Label>
+                  <Input type="number" step="0.01" value={newOrder.deposit} onChange={(e) => setNewOrder({ ...newOrder, deposit: e.target.value })} className="mt-1" placeholder="$" />
                 </div>
                 <div>
                   <Label className="font-body text-sm">Delivery Date</Label>
