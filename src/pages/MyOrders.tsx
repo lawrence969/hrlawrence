@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, MessageSquare, LogOut, DollarSign, Calendar, Check, X as XIcon, MapPin } from "lucide-react";
+import { Send, MessageSquare, LogOut, DollarSign, Calendar, Check, X as XIcon, MapPin, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const statusLabels: Record<string, string> = {
@@ -34,6 +34,8 @@ interface Order {
   current_department: string;
   item_description: string;
   created_at: string;
+  first_name: string | null;
+  last_name: string | null;
 }
 
 interface Quote {
@@ -71,6 +73,7 @@ const MyOrders = () => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -178,6 +181,16 @@ const MyOrders = () => {
             </Button>
           </div>
 
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name or order number..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 font-body text-sm"
+            />
+          </div>
+
           {orders.length === 0 ? (
             <div className="text-center py-16">
               <p className="font-body text-muted-foreground">No orders found yet. Your orders will appear here once your piece is checked in.</p>
@@ -197,7 +210,13 @@ const MyOrders = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {[...orders].sort((a, b) => a.order_number.localeCompare(b.order_number, undefined, { numeric: true })).map((order) => (
+                    {[...orders]
+                      .filter((o) => {
+                        if (!searchQuery.trim()) return true;
+                        const q = searchQuery.toLowerCase();
+                        return o.order_number.toLowerCase().includes(q) || o.item_description.toLowerCase().includes(q) || (o.first_name && o.first_name.toLowerCase().includes(q)) || (o.last_name && o.last_name.toLowerCase().includes(q));
+                      })
+                      .sort((a, b) => a.order_number.localeCompare(b.order_number, undefined, { numeric: true })).map((order) => (
                       <TableRow
                         key={order.id}
                         onClick={() => setSelectedOrder(order)}
