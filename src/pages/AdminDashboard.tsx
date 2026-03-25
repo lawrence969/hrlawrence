@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare, Mail, Trash2 } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare, Mail, Trash2, Printer } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
