@@ -208,7 +208,13 @@ const MyOrders = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {[...orders].sort((a, b) => a.order_number.localeCompare(b.order_number, undefined, { numeric: true })).map((order) => (
+                    {[...orders]
+                      .filter((o) => {
+                        if (!searchQuery.trim()) return true;
+                        const q = searchQuery.toLowerCase();
+                        return o.order_number.toLowerCase().includes(q) || o.item_description.toLowerCase().includes(q) || (o.first_name && o.first_name.toLowerCase().includes(q)) || (o.last_name && o.last_name.toLowerCase().includes(q));
+                      })
+                      .sort((a, b) => a.order_number.localeCompare(b.order_number, undefined, { numeric: true })).map((order) => (
                       <TableRow
                         key={order.id}
                         onClick={() => setSelectedOrder(order)}
