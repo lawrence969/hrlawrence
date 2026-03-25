@@ -528,7 +528,6 @@ const AdminDashboard = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                  </div>
                   <div>
                     <Label className="font-body text-sm">Order Date</Label>
                     <Input type="date" value={newOrder.orderDate} onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })} className="mt-1" />
