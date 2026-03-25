@@ -1021,8 +1021,10 @@ const AdminDashboard = () => {
           <AlertDialogFooter>
             <AlertDialogCancel className="font-body">No, Skip</AlertDialogCancel>
             <AlertDialogAction className="font-body" onClick={() => {
-              if (createdOrderData) printOrderForm(createdOrderData);
+              if (createdOrderData) printOrderForm(createdOrderData, createdOrderNumber);
               setCreatedOrderData(null);
+              setCreatedOrderNumber(null);
+            }}>
             }}>
               Print Form
             </AlertDialogAction>
