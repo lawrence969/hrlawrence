@@ -921,7 +921,14 @@ const AdminDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Department */}
+                  {/* Notes */}
+                  {selectedOrder.notes && (
+                    <div className="border border-border p-4">
+                      <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">Notes</p>
+                      <p className="font-body text-sm text-foreground whitespace-pre-wrap">{selectedOrder.notes}</p>
+                    </div>
+                  )}
+
                   <div>
                     <p className="font-body text-xs text-muted-foreground mb-2">Department Location</p>
                     <Select value={selectedOrder.current_department} onValueChange={(val) => changeDepartment(selectedOrder.id, val)}>
