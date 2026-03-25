@@ -34,6 +34,8 @@ interface Order {
   current_department: string;
   item_description: string;
   created_at: string;
+  first_name: string | null;
+  last_name: string | null;
 }
 
 interface Quote {
