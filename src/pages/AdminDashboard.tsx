@@ -14,7 +14,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import logoWhite from "@/assets/logo-white.jpg";
+import logoNavy from "@/assets/logo-navy.jpg";
 
 const repairStatusFlow = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
 const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
