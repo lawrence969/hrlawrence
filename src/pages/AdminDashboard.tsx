@@ -108,6 +108,7 @@ const AdminDashboard = () => {
   const [showConfirmCreate, setShowConfirmCreate] = useState(false);
   const [showPrintPrompt, setShowPrintPrompt] = useState(false);
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
+  const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
@@ -204,14 +205,15 @@ const AdminDashboard = () => {
     setShowConfirmCreate(true);
   };
 
-  const printOrderForm = (orderData: typeof newOrder) => {
+  const printOrderForm = (orderData: typeof newOrder, orderNumber?: string | null) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
     printWindow.document.write(`
-      <html><head><title>Order Form</title>
+      <html><head><title>Order Form - ${orderNumber || ""}</title>
       <style>
         body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
         h1 { font-size: 22px; margin-bottom: 4px; }
+        .order-num { font-size: 16px; color: #555; margin-bottom: 4px; font-weight: bold; }
         h2 { font-size: 14px; color: #888; margin-bottom: 24px; font-weight: normal; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 20px; }
         .field { margin-bottom: 4px; }
@@ -221,6 +223,7 @@ const AdminDashboard = () => {
         hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
         @media print { body { padding: 20px; } }
       </style></head><body>
+      ${orderNumber ? `<div class="order-num">${orderNumber}</div>` : ""}
       <h1>Order Form</h1>
       <h2>${orderData.orderType === "custom" ? "Custom Piece" : "Repair"} — ${new Date().toLocaleDateString()}</h2>
       <div class="grid">
@@ -257,7 +260,7 @@ const AdminDashboard = () => {
 
   const confirmCreateOrder = async () => {
     setShowConfirmCreate(false);
-    const { error } = await supabase.from("orders").insert({
+    const { data, error } = await supabase.from("orders").insert({
       customer_email: newOrder.customerEmail,
       order_type: newOrder.orderType,
       item_description: newOrder.itemDescription,
@@ -280,12 +283,14 @@ const AdminDashboard = () => {
       budget: newOrder.budget ? parseFloat(newOrder.budget) : null,
       deposit: newOrder.deposit ? parseFloat(newOrder.deposit) : null,
       delivery_date: newOrder.deliveryDate || null,
-    } as any);
+    } as any).select("order_number").single();
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Order Created" });
+      const orderNum = data?.order_number || "—";
+      toast({ title: "Order Created", description: orderNum });
       setCreatedOrderData({ ...newOrder });
+      setCreatedOrderNumber(orderNum);
       setShowPrintPrompt(true);
       setShowNewOrder(false);
       setNewOrder({
@@ -586,9 +591,13 @@ const AdminDashboard = () => {
         {showNewOrder && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-background border border-border p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-display text-foreground">New Order</h2>
                 <button onClick={() => setShowNewOrder(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
+              </div>
+              <div className="bg-muted border border-border px-4 py-3 mb-6 flex items-center gap-2">
+                <span className="font-body text-xs text-muted-foreground uppercase tracking-widest">Order #</span>
+                <span className="font-display text-sm text-muted-foreground/60">Assigned on confirmation</span>
               </div>
               <form onSubmit={handleCreateOrderClick} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
@@ -1008,14 +1017,15 @@ const AdminDashboard = () => {
               <Printer className="w-5 h-5" /> Print Order Form
             </AlertDialogTitle>
             <AlertDialogDescription className="font-body">
-              Order created successfully! Would you like to print the order form?
+              Order <span className="font-semibold text-foreground">{createdOrderNumber}</span> created successfully! Would you like to print the order form?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="font-body">No, Skip</AlertDialogCancel>
             <AlertDialogAction className="font-body" onClick={() => {
-              if (createdOrderData) printOrderForm(createdOrderData);
+              if (createdOrderData) printOrderForm(createdOrderData, createdOrderNumber);
               setCreatedOrderData(null);
+              setCreatedOrderNumber(null);
             }}>
               Print Form
             </AlertDialogAction>
