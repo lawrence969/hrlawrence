@@ -65,6 +65,8 @@ interface Order {
   notes: string | null;
   created_at: string;
   customer_profile_id: string | null;
+  budget: number | null;
+  deposit: number | null;
 }
 
 interface Quote {
@@ -698,20 +700,15 @@ const AdminDashboard = () => {
                     </Select>
                   </div>
                 </div>
-                <div>
-                  <Label className="font-body text-sm">Budget</Label>
-                  <Input type="number" step="0.01" value={newOrder.budget} onChange={(e) => setNewOrder({ ...newOrder, budget: e.target.value })} className="mt-1" placeholder="$" />
-                </div>
-                <div className="border border-accent/30 bg-accent/5 p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <DollarSign className="w-4 h-4 text-accent" />
-                    <Label className="font-body text-sm font-medium">Quote</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Budget</Label>
+                    <Input type="number" step="0.01" value={newOrder.budget} onChange={(e) => setNewOrder({ ...newOrder, budget: e.target.value })} className="mt-1" placeholder="$" />
                   </div>
-                  <p className="font-body text-xs text-muted-foreground mb-2">Quote can be sent after the order is created.</p>
-                </div>
-                <div>
-                  <Label className="font-body text-sm">Deposit</Label>
-                  <Input type="number" step="0.01" value={newOrder.deposit} onChange={(e) => setNewOrder({ ...newOrder, deposit: e.target.value })} className="mt-1" placeholder="$" />
+                  <div>
+                    <Label className="font-body text-sm">Deposit</Label>
+                    <Input type="number" step="0.01" value={newOrder.deposit} onChange={(e) => setNewOrder({ ...newOrder, deposit: e.target.value })} className="mt-1" placeholder="$" />
+                  </div>
                 </div>
                 <div>
                   <Label className="font-body text-sm">Delivery Date</Label>
@@ -805,22 +802,44 @@ const AdminDashboard = () => {
                      </div>
                    )}
 
-                  {quotes.length > 0 && (
+                  {/* Budget, Quote, Deposit */}
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="font-body text-xs text-muted-foreground mb-2">Quotes</p>
+                      <p className="font-body text-xs text-muted-foreground mb-1">Budget</p>
+                      <p className="font-body text-sm text-foreground">{selectedOrder.budget ? `$${selectedOrder.budget}` : "—"}</p>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-1">Deposit</p>
+                      <p className="font-body text-sm text-foreground">{selectedOrder.deposit ? `$${selectedOrder.deposit}` : "—"}</p>
+                    </div>
+                  </div>
+
+                  {/* Quote Box */}
+                  <div className="border border-accent/30 bg-accent/5 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <DollarSign className="w-4 h-4 text-accent" />
+                      <p className="font-body text-xs text-muted-foreground font-medium">Quotes</p>
+                    </div>
+                    {quotes.length > 0 ? (
                       <div className="space-y-2">
                         {quotes.map((q) => (
-                          <div key={q.id} className="bg-muted/50 p-3 border border-border">
+                          <div key={q.id} className="bg-background p-3 border border-border">
                             <div className="flex justify-between items-center">
                               <span className="font-body text-sm font-medium text-foreground">${q.amount}</span>
                               <Badge variant="secondary" className={`font-body text-xs ${q.status === "approved" ? "bg-green-100 text-green-800" : q.status === "declined" ? "bg-red-100 text-red-800" : "bg-accent/20 text-accent"}`}>{q.status}</Badge>
                             </div>
                             {q.description && <p className="font-body text-xs text-muted-foreground mt-1">{q.description}</p>}
+                            <p className="font-body text-[10px] text-muted-foreground mt-1">{new Date(q.sent_at).toLocaleDateString()}</p>
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <p className="font-body text-xs text-muted-foreground italic">No quotes sent yet</p>
+                    )}
+                    <Button size="sm" variant="outline" className="mt-3 font-body text-xs w-full" onClick={() => setActivePanel("quote")}>
+                      <PlusCircle className="w-3 h-3 mr-1" /> Send New Quote
+                    </Button>
+                  </div>
 
                   {/* Follow-up Timeline */}
                   <div className="border-t border-border pt-4">
