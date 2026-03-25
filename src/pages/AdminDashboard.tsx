@@ -437,7 +437,7 @@ const AdminDashboard = () => {
   };
 
   const OrderTable = ({ items }: { items: Order[] }) => (
-    <div className="bg-background border border-border overflow-hidden">
+    <div className="bg-background border border-border overflow-x-auto">
       <table className="w-full">
         <thead>
           <tr className="border-b border-border bg-muted/50">
