@@ -203,6 +203,7 @@ const MyOrders = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="font-body text-xs">Order #</TableHead>
+                      <TableHead className="font-body text-xs">Name</TableHead>
                       <TableHead className="font-body text-xs">Item</TableHead>
                       <TableHead className="font-body text-xs">Type</TableHead>
                       <TableHead className="font-body text-xs">Status</TableHead>
