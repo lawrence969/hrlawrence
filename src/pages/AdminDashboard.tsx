@@ -345,11 +345,7 @@ const AdminDashboard = () => {
     setSendingEmailInvite(false);
   };
 
-  const repairs = orders.filter((o) => o.order_type === "repair");
-
-  const customs = orders.filter((o) => o.order_type === "custom");
-  const filteredRepairs = repairs.filter((r) => r.customer_email.toLowerCase().includes(search.toLowerCase()) || r.order_number.toLowerCase().includes(search.toLowerCase()) || `${r.first_name || ''} ${r.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
-  const filteredCustoms = customs.filter((c) => c.customer_email.toLowerCase().includes(search.toLowerCase()) || c.order_number.toLowerCase().includes(search.toLowerCase()) || `${c.first_name || ''} ${c.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
+  const filteredOrders = orders.filter((o) => o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
 
   const changeOrderType = async (orderId: string, newType: string) => {
     const newFlow = newType === "repair" ? repairStatusFlow : customStatusFlow;
@@ -497,10 +493,9 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {[
-            { label: "Active Repairs", value: repairs.filter((r) => r.status !== "picked_up").length },
-            { label: "Active Custom", value: customs.filter((c) => c.status !== "picked_up").length },
+            { label: "Active Orders", value: orders.filter((o) => o.status !== "picked_up").length },
             { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_pickup").length },
             { label: "Total Orders", value: orders.length },
           ].map((stat) => (
@@ -819,14 +814,7 @@ const AdminDashboard = () => {
           <Input placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 font-body" />
         </div>
 
-        <Tabs defaultValue="repairs">
-          <TabsList className="bg-background border border-border mb-6">
-            <TabsTrigger value="repairs" className="font-body text-sm">Repairs ({repairs.length})</TabsTrigger>
-            <TabsTrigger value="custom" className="font-body text-sm">Custom Orders ({customs.length})</TabsTrigger>
-          </TabsList>
-          <TabsContent value="repairs"><OrderTable items={filteredRepairs} /></TabsContent>
-          <TabsContent value="custom"><OrderTable items={filteredCustoms} /></TabsContent>
-        </Tabs>
+        <OrderTable items={filteredOrders} />
       </div>
     </div>
   );
