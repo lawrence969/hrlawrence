@@ -586,9 +586,13 @@ const AdminDashboard = () => {
         {showNewOrder && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-background border border-border p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-display text-foreground">New Order</h2>
                 <button onClick={() => setShowNewOrder(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
+              </div>
+              <div className="bg-muted border border-border px-4 py-3 mb-6 flex items-center gap-2">
+                <span className="font-body text-xs text-muted-foreground uppercase tracking-widest">Order #</span>
+                <span className="font-display text-sm text-muted-foreground/60">Assigned on confirmation</span>
               </div>
               <form onSubmit={handleCreateOrderClick} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
