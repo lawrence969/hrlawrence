@@ -547,20 +547,22 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-muted">
-      <div className="fixed top-0 left-0 right-0 z-40 bg-primary text-primary-foreground">
-        <div className="flex items-center justify-between px-6 py-3">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to="/" className="flex-shrink-0">
+            <img src={logoNavy} alt="HR Lawrence" className="h-10" />
+          </Link>
           <div className="flex items-center gap-8">
-            <Link to="/"><img src={logoWhite} alt="HR Lawrence" className="h-8" /></Link>
-            <span className="text-sm font-body font-medium tracking-widest uppercase">Staff Portal</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-sm font-body text-primary-foreground/70 hover:text-primary-foreground transition-colors">Home</Link>
-            <button onClick={signOut} className="flex items-center gap-2 text-sm font-body text-primary-foreground/70 cursor-pointer hover:text-primary-foreground transition-colors">
+            <Link to="/" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Home</Link>
+            <Link to="/book-consultation" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Book Consultation</Link>
+            <Link to="/track-order" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Track Order</Link>
+            <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Staff Portal</span>
+            <button onClick={signOut} className="flex items-center gap-2 text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
               <LogOut className="w-4 h-4" /> Sign Out
             </button>
           </div>
         </div>
-      </div>
+      </nav>
 
       <div className="pt-16 p-6 lg:p-10 lg:pt-20">
         <div className="flex items-center justify-between mb-8">
