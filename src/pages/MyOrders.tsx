@@ -221,7 +221,7 @@ const MyOrders = () => {
 
               {/* Order Detail */}
               {selectedOrder && (
-                <motion.div key={selectedOrder.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-background border border-border p-6 self-start space-y-6">
+                <motion.div key={selectedOrder.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-2 bg-background border border-border p-6 self-start space-y-6">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-body text-xs text-muted-foreground">Order</p>
