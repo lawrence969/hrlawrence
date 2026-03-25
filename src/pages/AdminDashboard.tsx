@@ -65,6 +65,8 @@ interface Order {
   notes: string | null;
   created_at: string;
   customer_profile_id: string | null;
+  budget: number | null;
+  deposit: number | null;
 }
 
 interface Quote {
