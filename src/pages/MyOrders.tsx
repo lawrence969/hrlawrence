@@ -196,9 +196,9 @@ const MyOrders = () => {
               <p className="font-body text-muted-foreground">No orders found yet. Your orders will appear here once your piece is checked in.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
               {/* Order Table */}
-              <div className="lg:col-span-2 bg-background border border-border overflow-x-auto">
+              <div className="bg-background border border-border overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -242,7 +242,7 @@ const MyOrders = () => {
 
               {/* Order Detail */}
               {selectedOrder && (
-                <motion.div key={selectedOrder.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-1 bg-background border border-border p-6 self-start space-y-6">
+                <motion.div key={selectedOrder.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-background border border-border p-6 self-start space-y-6">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-body text-xs text-muted-foreground">Order</p>
