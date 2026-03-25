@@ -812,6 +812,64 @@ const AdminDashboard = () => {
                     </div>
                   )}
 
+                  {/* Follow-up Timeline */}
+                  <div className="border-t border-border pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                      <p className="font-body text-xs text-muted-foreground font-medium">Follow-up Timeline</p>
+                    </div>
+                    {orderNotes.length > 0 && (
+                      <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
+                        {orderNotes.map((n, idx) => (
+                          <div key={n.id} className="relative pl-4 border-l-2 border-accent/30">
+                            <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-accent" />
+                            <p className="font-body text-[10px] text-muted-foreground font-medium">{new Date(n.note_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                            <p className="font-body text-xs text-foreground mt-0.5">{n.note}</p>
+                            <button
+                              className="font-body text-[10px] text-destructive hover:underline mt-1"
+                              onClick={async () => {
+                                await supabase.from("order_notes").delete().eq("id", n.id);
+                                setOrderNotes(orderNotes.filter(on => on.id !== n.id));
+                              }}
+                            >Delete</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2 items-end">
+                      <div className="flex-1">
+                        <Input
+                          placeholder="Add a follow-up note..."
+                          value={newNote}
+                          onChange={(e) => setNewNote(e.target.value)}
+                          className="font-body text-xs"
+                        />
+                      </div>
+                      <Input
+                        type="date"
+                        value={newNoteDate}
+                        onChange={(e) => setNewNoteDate(e.target.value)}
+                        className="font-body text-xs w-[130px]"
+                      />
+                      <Button size="sm" className="bg-primary text-primary-foreground" onClick={async () => {
+                        if (!newNote.trim() || !selectedOrder || !user) return;
+                        const { data, error } = await supabase.from("order_notes").insert({
+                          order_id: selectedOrder.id,
+                          note: newNote.trim(),
+                          note_date: newNoteDate,
+                          created_by: user.id,
+                        }).select().single();
+                        if (!error && data) {
+                          setOrderNotes([data, ...orderNotes]);
+                          setNewNote("");
+                          setNewNoteDate(new Date().toISOString().split("T")[0]);
+                        }
+                      }}>
+                        <PlusCircle className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+
                   {/* Messages */}
                   <div className="border-t border-border pt-4">
                     <div className="flex items-center gap-2 mb-3">
