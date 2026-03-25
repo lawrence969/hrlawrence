@@ -429,11 +429,44 @@ const AdminDashboard = () => {
                   </SelectContent>
                 </Select>
               </td>
+              <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Order</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete order {order.order_number}? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        onClick={async () => {
+                          const { error } = await supabase.from("orders").delete().eq("id", order.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          else {
+                            toast({ title: "Order Deleted" });
+                            if (selectedOrder?.id === order.id) { setSelectedOrder(null); setActivePanel(null); }
+                          }
+                        }}
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </td>
             </motion.tr>
             );
           })}
           {items.length === 0 && (
-            <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
+            <tr><td colSpan={7} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">No orders found</td></tr>
           )}
         </tbody>
       </table>
