@@ -107,7 +107,7 @@ const AdminDashboard = () => {
     itemDescription: "", notes: "",
     orderDate: new Date().toISOString().split("T")[0],
     rhodiumPolish: false,
-    stoneType: "", stoneSize: "", ringSize: "",
+    stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
     metal: "", metalType: "", colour: "",
     budget: "", deposit: "",
     deliveryDate: "",
@@ -222,7 +222,7 @@ const AdminDashboard = () => {
         phone1: "", phone2: "", orderType: "repair",
         itemDescription: "", notes: "",
         orderDate: new Date().toISOString().split("T")[0],
-        rhodiumPolish: false, stoneType: "", stoneSize: "", ringSize: "",
+        rhodiumPolish: false, stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
         metal: "", metalType: "", colour: "", budget: "", deposit: "", deliveryDate: "",
       });
     }
@@ -565,10 +565,20 @@ const AdminDashboard = () => {
                   <Checkbox id="rhodium" checked={newOrder.rhodiumPolish} onCheckedChange={(checked) => setNewOrder({ ...newOrder, rhodiumPolish: !!checked })} />
                   <Label htmlFor="rhodium" className="font-body text-sm cursor-pointer">Rhodium / Polish</Label>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-4 gap-3">
                   <div>
                     <Label className="font-body text-sm">Stone Type</Label>
                     <Input value={newOrder.stoneType} onChange={(e) => setNewOrder({ ...newOrder, stoneType: e.target.value })} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Lab / Natural</Label>
+                    <Select value={newOrder.stoneOrigin} onValueChange={(val: "lab" | "natural") => setNewOrder({ ...newOrder, stoneOrigin: val })}>
+                      <SelectTrigger className="mt-1"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="lab">Lab</SelectItem>
+                        <SelectItem value="natural">Natural</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label className="font-body text-sm">Stone Size</Label>
