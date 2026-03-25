@@ -205,7 +205,7 @@ const MyOrders = () => {
                       >
                         <TableCell className="font-display text-sm whitespace-nowrap">{order.order_number}</TableCell>
                         <TableCell className="text-muted-foreground max-w-[200px] truncate">{order.item_description}</TableCell>
-                        <TableCell><Badge variant="secondary" className="font-body text-xs capitalize">{order.order_type}</Badge></TableCell>
+                        <TableCell><Badge className={`font-body text-xs capitalize ${order.order_type === "custom" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>{order.order_type}</Badge></TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
