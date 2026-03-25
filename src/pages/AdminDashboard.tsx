@@ -540,17 +540,22 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-muted">
-      <div className="fixed left-0 top-0 bottom-0 w-64 bg-primary text-primary-foreground p-6 hidden lg:flex flex-col z-40">
-        <Link to="/"><img src={logoWhite} alt="HR Lawrence" className="h-10 mb-10" /></Link>
-        <nav className="space-y-2 flex-1">
-          <div className="px-4 py-2 bg-sidebar-accent rounded text-sm font-body font-medium">Dashboard</div>
-        </nav>
-        <button onClick={signOut} className="flex items-center gap-2 text-sm font-body text-primary-foreground/60 cursor-pointer hover:text-primary-foreground">
-          <LogOut className="w-4 h-4" /> Sign Out
-        </button>
+      <div className="fixed top-0 left-0 right-0 z-40 bg-primary text-primary-foreground">
+        <div className="flex items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-8">
+            <Link to="/"><img src={logoWhite} alt="HR Lawrence" className="h-8" /></Link>
+            <span className="text-sm font-body font-medium tracking-widest uppercase">Staff Portal</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-sm font-body text-primary-foreground/70 hover:text-primary-foreground transition-colors">Home</Link>
+            <button onClick={signOut} className="flex items-center gap-2 text-sm font-body text-primary-foreground/70 cursor-pointer hover:text-primary-foreground transition-colors">
+              <LogOut className="w-4 h-4" /> Sign Out
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="lg:ml-64 p-6 lg:p-10">
+      <div className="pt-16 p-6 lg:p-10 lg:pt-20">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-display text-foreground">Dashboard</h1>
