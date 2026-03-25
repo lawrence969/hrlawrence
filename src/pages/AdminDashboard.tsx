@@ -516,17 +516,18 @@ const AdminDashboard = () => {
               </div>
               <form onSubmit={createOrder} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="font-body text-sm">Order Type</Label>
-                    <div className="flex gap-3 mt-1">
-                      {(["repair", "custom"] as const).map((t) => (
-                        <button key={t} type="button" onClick={() => setNewOrder({ ...newOrder, orderType: t })}
-                          className={`px-4 py-2 font-body text-sm border transition-colors capitalize ${
-                            newOrder.orderType === t ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-foreground"
-                          }`}>{t === "custom" ? "Custom Piece" : "Repair"}</button>
-                      ))}
-                    </div>
-                  </div>
+                <div>
+                  <Label className="font-body text-sm">Order Type</Label>
+                  <Select value={newOrder.orderType} onValueChange={(val: "repair" | "custom") => setNewOrder({ ...newOrder, orderType: val })}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="custom" className="font-body text-sm">Custom Piece</SelectItem>
+                      <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                   <div>
                     <Label className="font-body text-sm">Order Date</Label>
                     <Input type="date" value={newOrder.orderDate} onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })} className="mt-1" />
