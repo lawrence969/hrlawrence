@@ -107,7 +107,7 @@ const AdminDashboard = () => {
     itemDescription: "", notes: "",
     orderDate: new Date().toISOString().split("T")[0],
     rhodiumPolish: false,
-    stoneType: "", stoneSize: "", ringSize: "",
+    stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
     metal: "", metalType: "", colour: "",
     budget: "", deposit: "",
     deliveryDate: "",
