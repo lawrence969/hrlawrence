@@ -743,7 +743,50 @@ const AdminDashboard = () => {
             <motion.div initial={{ x: 400 }} animate={{ x: 0 }} className="bg-background w-full max-w-md h-full overflow-y-auto border-l border-border p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
-                <button onClick={() => { setSelectedOrder(null); setActivePanel(null); }}><X className="w-5 h-5 text-muted-foreground" /></button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      const printWindow = window.open("", "_blank");
+                      if (!printWindow) return;
+                      const name = [selectedOrder.first_name, selectedOrder.last_name].filter(Boolean).join(" ") || "—";
+                      printWindow.document.write(`
+                        <html><head><title>Order ${selectedOrder.order_number}</title>
+                        <style>
+                          body { font-family: Georgia, serif; padding: 40px; color: #1a1a1a; }
+                          h1 { font-size: 22px; margin-bottom: 4px; }
+                          .subtitle { color: #666; font-size: 13px; margin-bottom: 24px; }
+                          table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+                          th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e5e5e5; font-size: 14px; }
+                          th { color: #888; font-weight: normal; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+                          .notes { margin-top: 24px; padding: 16px; background: #f9f9f9; border: 1px solid #e5e5e5; }
+                          .notes h3 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 8px; }
+                          .notes p { font-size: 14px; margin: 0; white-space: pre-wrap; }
+                          @media print { body { padding: 20px; } }
+                        </style></head><body>
+                        <h1>Order ${selectedOrder.order_number}</h1>
+                        <p class="subtitle">${selectedOrder.order_type.charAt(0).toUpperCase() + selectedOrder.order_type.slice(1)} · ${new Date(selectedOrder.created_at).toLocaleDateString()}</p>
+                        <table>
+                          <tr><th>Client Name</th><td>${name}</td></tr>
+                          <tr><th>Email</th><td>${selectedOrder.customer_email}</td></tr>
+                          <tr><th>Item</th><td>${selectedOrder.item_description}</td></tr>
+                          <tr><th>Status</th><td>${statusLabels[selectedOrder.status] || selectedOrder.status}</td></tr>
+                          <tr><th>Department</th><td>${departmentLabels[selectedOrder.current_department] || selectedOrder.current_department}</td></tr>
+                          <tr><th>Budget</th><td>${selectedOrder.budget ? "$" + selectedOrder.budget : "—"}</td></tr>
+                          <tr><th>Deposit</th><td>${selectedOrder.deposit ? "$" + selectedOrder.deposit : "—"}</td></tr>
+                        </table>
+                        ${selectedOrder.notes ? `<div class="notes"><h3>Notes</h3><p>${selectedOrder.notes}</p></div>` : ""}
+                        </body></html>
+                      `);
+                      printWindow.document.close();
+                      printWindow.print();
+                    }}
+                    title="Print order"
+                    className="p-1.5 rounded hover:bg-muted transition-colors"
+                  >
+                    <Printer className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                  <button onClick={() => { setSelectedOrder(null); setActivePanel(null); }}><X className="w-5 h-5 text-muted-foreground" /></button>
+                </div>
               </div>
 
               {/* Action buttons */}
