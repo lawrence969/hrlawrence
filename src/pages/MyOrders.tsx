@@ -196,7 +196,7 @@ const MyOrders = () => {
               <p className="font-body text-muted-foreground">No orders found yet. Your orders will appear here once your piece is checked in.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
               {/* Order Table */}
               <div className="lg:col-span-2 bg-background border border-border overflow-x-auto">
                 <Table>
