@@ -279,7 +279,7 @@ const AdminDashboard = () => {
       setShowNewOrder(false);
       setNewOrder({
         customerEmail: "", firstName: "", lastName: "", address: "",
-        phone1: "", phone2: "", orderType: "repair",
+        phone1: "", phone2: "", orderType: "" as "" | "repair" | "custom",
         itemDescription: "", notes: "",
         orderDate: new Date().toISOString().split("T")[0],
         rhodiumPolish: false, stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
