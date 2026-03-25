@@ -258,7 +258,7 @@ const AdminDashboard = () => {
 
   const confirmCreateOrder = async () => {
     setShowConfirmCreate(false);
-    const { error } = await supabase.from("orders").insert({
+    const { data, error } = await supabase.from("orders").insert({
       customer_email: newOrder.customerEmail,
       order_type: newOrder.orderType,
       item_description: newOrder.itemDescription,
@@ -281,12 +281,14 @@ const AdminDashboard = () => {
       budget: newOrder.budget ? parseFloat(newOrder.budget) : null,
       deposit: newOrder.deposit ? parseFloat(newOrder.deposit) : null,
       delivery_date: newOrder.deliveryDate || null,
-    } as any);
+    } as any).select("order_number").single();
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Order Created" });
+      const orderNum = data?.order_number || "—";
+      toast({ title: "Order Created", description: orderNum });
       setCreatedOrderData({ ...newOrder });
+      setCreatedOrderNumber(orderNum);
       setShowPrintPrompt(true);
       setShowNewOrder(false);
       setNewOrder({
