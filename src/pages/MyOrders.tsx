@@ -224,6 +224,7 @@ const MyOrders = () => {
                         className={`cursor-pointer font-body text-sm ${selectedOrder?.id === order.id ? "bg-accent/10" : ""}`}
                       >
                         <TableCell className="font-display text-sm whitespace-nowrap">{order.order_number}</TableCell>
+                        <TableCell className="font-body text-sm whitespace-nowrap">{[order.first_name, order.last_name].filter(Boolean).join(" ") || "—"}</TableCell>
                         <TableCell className="text-muted-foreground max-w-[200px] truncate">{order.item_description}</TableCell>
                         <TableCell><Badge className={`font-body text-xs capitalize ${order.order_type === "custom" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>{order.order_type}</Badge></TableCell>
                         <TableCell>
