@@ -99,7 +99,9 @@ const AdminDashboard = () => {
   const [invitePhone, setInvitePhone] = useState("");
   const [sendingInvite, setSendingInvite] = useState(false);
   const [sendingEmailInvite, setSendingEmailInvite] = useState(false);
-
+  const [showConfirmCreate, setShowConfirmCreate] = useState(false);
+  const [showPrintPrompt, setShowPrintPrompt] = useState(false);
+  const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
