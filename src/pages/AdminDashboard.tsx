@@ -782,11 +782,23 @@ const AdminDashboard = () => {
                         <table>
                           <tr><th>Client Name</th><td>${name}</td></tr>
                           <tr><th>Email</th><td>${selectedOrder.customer_email}</td></tr>
+                          <tr><th>Phone 1</th><td>${selectedOrder.phone1 || "—"}</td></tr>
+                          <tr><th>Phone 2</th><td>${selectedOrder.phone2 || "—"}</td></tr>
+                          <tr><th>Address</th><td>${selectedOrder.address || "—"}</td></tr>
+                          <tr><th>Order Date</th><td>${selectedOrder.order_date ? new Date(selectedOrder.order_date + "T00:00:00").toLocaleDateString() : "—"}</td></tr>
                           <tr><th>Item</th><td>${selectedOrder.item_description}</td></tr>
                           <tr><th>Status</th><td>${statusLabels[selectedOrder.status] || selectedOrder.status}</td></tr>
                           <tr><th>Department</th><td>${departmentLabels[selectedOrder.current_department] || selectedOrder.current_department}</td></tr>
+                          <tr><th>Metal</th><td>${selectedOrder.metal || "—"}</td></tr>
+                          <tr><th>Metal Type</th><td>${selectedOrder.metal_type || "—"}</td></tr>
+                          <tr><th>Colour</th><td>${selectedOrder.colour || "—"}</td></tr>
+                          <tr><th>Ring Size</th><td>${selectedOrder.ring_size || "—"}</td></tr>
+                          <tr><th>Stone Type</th><td>${selectedOrder.stone_type || "—"}</td></tr>
+                          <tr><th>Stone Size</th><td>${selectedOrder.stone_size || "—"}</td></tr>
+                          <tr><th>Rhodium/Polish</th><td>${selectedOrder.rhodium_polish ? "Yes" : "No"}</td></tr>
                           <tr><th>Budget</th><td>${selectedOrder.budget ? "$" + selectedOrder.budget : "—"}</td></tr>
                           <tr><th>Deposit</th><td>${selectedOrder.deposit ? "$" + selectedOrder.deposit : "—"}</td></tr>
+                          <tr><th>Delivery Date</th><td>${selectedOrder.delivery_date || "—"}</td></tr>
                         </table>
                         ${selectedOrder.notes ? `<div class="notes"><h3>Notes</h3><p>${selectedOrder.notes}</p></div>` : ""}
                         </body></html>
