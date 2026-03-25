@@ -1015,7 +1015,7 @@ const AdminDashboard = () => {
               <Printer className="w-5 h-5" /> Print Order Form
             </AlertDialogTitle>
             <AlertDialogDescription className="font-body">
-              Order created successfully! Would you like to print the order form?
+              Order <span className="font-semibold text-foreground">{createdOrderNumber}</span> created successfully! Would you like to print the order form?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
