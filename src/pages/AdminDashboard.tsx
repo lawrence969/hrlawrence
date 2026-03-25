@@ -67,6 +67,18 @@ interface Order {
   customer_profile_id: string | null;
   budget: number | null;
   deposit: number | null;
+  address: string | null;
+  phone1: string | null;
+  phone2: string | null;
+  stone_type: string | null;
+  stone_size: string | null;
+  ring_size: string | null;
+  metal: string | null;
+  metal_type: string | null;
+  colour: string | null;
+  rhodium_polish: boolean | null;
+  delivery_date: string | null;
+  order_date: string | null;
 }
 
 interface Quote {
@@ -770,11 +782,23 @@ const AdminDashboard = () => {
                         <table>
                           <tr><th>Client Name</th><td>${name}</td></tr>
                           <tr><th>Email</th><td>${selectedOrder.customer_email}</td></tr>
+                          <tr><th>Phone 1</th><td>${selectedOrder.phone1 || "—"}</td></tr>
+                          <tr><th>Phone 2</th><td>${selectedOrder.phone2 || "—"}</td></tr>
+                          <tr><th>Address</th><td>${selectedOrder.address || "—"}</td></tr>
+                          <tr><th>Order Date</th><td>${selectedOrder.order_date ? new Date(selectedOrder.order_date + "T00:00:00").toLocaleDateString() : "—"}</td></tr>
                           <tr><th>Item</th><td>${selectedOrder.item_description}</td></tr>
                           <tr><th>Status</th><td>${statusLabels[selectedOrder.status] || selectedOrder.status}</td></tr>
                           <tr><th>Department</th><td>${departmentLabels[selectedOrder.current_department] || selectedOrder.current_department}</td></tr>
+                          <tr><th>Metal</th><td>${selectedOrder.metal || "—"}</td></tr>
+                          <tr><th>Metal Type</th><td>${selectedOrder.metal_type || "—"}</td></tr>
+                          <tr><th>Colour</th><td>${selectedOrder.colour || "—"}</td></tr>
+                          <tr><th>Ring Size</th><td>${selectedOrder.ring_size || "—"}</td></tr>
+                          <tr><th>Stone Type</th><td>${selectedOrder.stone_type || "—"}</td></tr>
+                          <tr><th>Stone Size</th><td>${selectedOrder.stone_size || "—"}</td></tr>
+                          <tr><th>Rhodium/Polish</th><td>${selectedOrder.rhodium_polish ? "Yes" : "No"}</td></tr>
                           <tr><th>Budget</th><td>${selectedOrder.budget ? "$" + selectedOrder.budget : "—"}</td></tr>
                           <tr><th>Deposit</th><td>${selectedOrder.deposit ? "$" + selectedOrder.deposit : "—"}</td></tr>
+                          <tr><th>Delivery Date</th><td>${selectedOrder.delivery_date || "—"}</td></tr>
                         </table>
                         ${selectedOrder.notes ? `<div class="notes"><h3>Notes</h3><p>${selectedOrder.notes}</p></div>` : ""}
                         </body></html>
@@ -806,17 +830,95 @@ const AdminDashboard = () => {
 
               {activePanel === "detail" && (
                 <div className="space-y-6">
-                  <div>
-                    <p className="font-body text-xs text-muted-foreground mb-1">Client</p>
-                    <p className="font-body text-sm text-foreground">{selectedOrder.customer_email}</p>
+                  {/* Customer Info */}
+                  <div className="border border-border p-4 space-y-3">
+                    <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider">Customer Information</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">First Name</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.first_name || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Last Name</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.last_name || "—"}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-0.5">Email</p>
+                      <p className="font-body text-sm text-foreground">{selectedOrder.customer_email}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Phone 1</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.phone1 || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Phone 2</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.phone2 || "—"}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-0.5">Address</p>
+                      <p className="font-body text-sm text-foreground">{selectedOrder.address || "—"}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-body text-xs text-muted-foreground mb-1">Item</p>
-                    <p className="font-body text-sm text-foreground">{selectedOrder.item_description}</p>
+
+                  {/* Order Info */}
+                  <div className="border border-border p-4 space-y-3">
+                    <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider">Order Details</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Type</p>
+                        <p className="font-body text-sm text-foreground capitalize">{selectedOrder.order_type}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Order Date</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.order_date ? new Date(selectedOrder.order_date + "T00:00:00").toLocaleDateString() : "—"}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-0.5">Item Description</p>
+                      <p className="font-body text-sm text-foreground">{selectedOrder.item_description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-body text-xs text-muted-foreground mb-1">Type</p>
-                    <p className="font-body text-sm text-foreground capitalize">{selectedOrder.order_type}</p>
+
+                  {/* Jewelry Specs */}
+                  <div className="border border-border p-4 space-y-3">
+                    <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider">Jewelry Specifications</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Metal</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.metal || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Metal Type</p>
+                        <p className="font-body text-sm text-foreground capitalize">{selectedOrder.metal_type || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Colour</p>
+                        <p className="font-body text-sm text-foreground capitalize">{selectedOrder.colour || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Ring Size</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.ring_size || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Stone Type</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.stone_type || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Stone Size</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.stone_size || "—"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Rhodium/Polish</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.rhodium_polish ? "Yes" : "No"}</p>
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Delivery Date</p>
+                        <p className="font-body text-sm text-foreground">{selectedOrder.delivery_date ? new Date(selectedOrder.delivery_date + "T00:00:00").toLocaleDateString() : "—"}</p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Department */}
