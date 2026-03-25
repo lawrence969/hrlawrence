@@ -185,7 +185,7 @@ const MyOrders = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               {/* Order Table */}
-              <div className="bg-background border border-border overflow-x-auto">
+              <div className="lg:col-span-3 bg-background border border-border overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
