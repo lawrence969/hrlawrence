@@ -574,7 +574,7 @@ const AdminDashboard = () => {
                 <h2 className="text-xl font-display text-foreground">New Order</h2>
                 <button onClick={() => setShowNewOrder(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
               </div>
-              <form onSubmit={createOrder} className="space-y-4">
+              <form onSubmit={handleCreateOrderClick} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="font-body text-sm">Order Type</Label>
