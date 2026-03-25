@@ -1025,7 +1025,6 @@ const AdminDashboard = () => {
               setCreatedOrderData(null);
               setCreatedOrderNumber(null);
             }}>
-            }}>
               Print Form
             </AlertDialogAction>
           </AlertDialogFooter>
