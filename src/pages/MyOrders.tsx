@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, MessageSquare, LogOut, DollarSign, Calendar, Check, X as XIcon, MapPin } from "lucide-react";
@@ -183,35 +184,39 @@ const MyOrders = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Order List */}
-              <div className="space-y-3">
-                {orders.map((order) => (
-                  <button
-                    key={order.id}
-                    onClick={() => setSelectedOrder(order)}
-                    className={`w-full text-left bg-background border p-5 transition-colors ${
-                      selectedOrder?.id === order.id ? "border-accent" : "border-border hover:border-accent/50"
-                    }`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-display text-base text-foreground">{order.order_number}</p>
-                        <p className="font-body text-sm text-muted-foreground mt-1">{order.item_description}</p>
-                      </div>
-                      <Badge variant="secondary" className="font-body text-xs capitalize">{order.order_type}</Badge>
-                    </div>
-                    <div className="mt-3 flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 rounded-full bg-accent" />
-                        <span className="font-body text-xs text-accent font-medium">{statusLabels[order.status] || order.status}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-muted-foreground" />
-                        <span className="font-body text-xs text-muted-foreground">{departmentLabels[order.current_department] || order.current_department}</span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
+              {/* Order Table */}
+              <div className="bg-background border border-border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="font-body text-xs">Order #</TableHead>
+                      <TableHead className="font-body text-xs">Item</TableHead>
+                      <TableHead className="font-body text-xs">Type</TableHead>
+                      <TableHead className="font-body text-xs">Status</TableHead>
+                      <TableHead className="font-body text-xs">Dept</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[...orders].sort((a, b) => a.order_number.localeCompare(b.order_number, undefined, { numeric: true })).map((order) => (
+                      <TableRow
+                        key={order.id}
+                        onClick={() => setSelectedOrder(order)}
+                        className={`cursor-pointer font-body text-sm ${selectedOrder?.id === order.id ? "bg-accent/10" : ""}`}
+                      >
+                        <TableCell className="font-display text-sm whitespace-nowrap">{order.order_number}</TableCell>
+                        <TableCell className="text-muted-foreground max-w-[200px] truncate">{order.item_description}</TableCell>
+                        <TableCell><Badge variant="secondary" className="font-body text-xs capitalize">{order.order_type}</Badge></TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
+                            <span className="text-xs text-accent font-medium whitespace-nowrap">{statusLabels[order.status] || order.status}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{departmentLabels[order.current_department] || order.current_department}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
 
               {/* Order Detail */}
