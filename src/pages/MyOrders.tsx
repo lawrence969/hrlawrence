@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, MessageSquare, LogOut, DollarSign, Calendar, Check, X as XIcon, MapPin } from "lucide-react";
+import { Send, MessageSquare, LogOut, DollarSign, Calendar, Check, X as XIcon, MapPin, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const statusLabels: Record<string, string> = {
@@ -71,6 +71,7 @@ const MyOrders = () => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -176,6 +177,16 @@ const MyOrders = () => {
             <Button variant="ghost" onClick={signOut} className="font-body text-sm text-muted-foreground">
               <LogOut className="w-4 h-4 mr-2" /> Sign Out
             </Button>
+          </div>
+
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name or order number..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 font-body text-sm"
+            />
           </div>
 
           {orders.length === 0 ? (
