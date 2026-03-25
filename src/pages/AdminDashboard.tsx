@@ -188,8 +188,64 @@ const AdminDashboard = () => {
     else toast({ title: "Department Updated" });
   };
 
-  const createOrder = async (e: React.FormEvent) => {
+  const handleCreateOrderClick = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowConfirmCreate(true);
+  };
+
+  const printOrderForm = (orderData: typeof newOrder) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <html><head><title>Order Form</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
+        h1 { font-size: 22px; margin-bottom: 4px; }
+        h2 { font-size: 14px; color: #888; margin-bottom: 24px; font-weight: normal; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 20px; }
+        .field { margin-bottom: 4px; }
+        .label { font-size: 11px; text-transform: uppercase; color: #999; letter-spacing: 1px; }
+        .value { font-size: 14px; min-height: 20px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+        .full { grid-column: 1 / -1; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+        @media print { body { padding: 20px; } }
+      </style></head><body>
+      <h1>Order Form</h1>
+      <h2>${orderData.orderType === "custom" ? "Custom Piece" : "Repair"} — ${new Date().toLocaleDateString()}</h2>
+      <div class="grid">
+        <div class="field"><div class="label">First Name</div><div class="value">${orderData.firstName || "—"}</div></div>
+        <div class="field"><div class="label">Last Name</div><div class="value">${orderData.lastName || "—"}</div></div>
+        <div class="field"><div class="label">Email</div><div class="value">${orderData.customerEmail || "—"}</div></div>
+        <div class="field"><div class="label">Phone 1</div><div class="value">${orderData.phone1 || "—"}</div></div>
+        <div class="field"><div class="label">Phone 2</div><div class="value">${orderData.phone2 || "—"}</div></div>
+        <div class="field"><div class="label">Address</div><div class="value">${orderData.address || "—"}</div></div>
+      </div>
+      <hr/>
+      <div class="grid">
+        <div class="field"><div class="label">Order Type</div><div class="value">${orderData.orderType === "custom" ? "Custom Piece" : "Repair"}</div></div>
+        <div class="field"><div class="label">Order Date</div><div class="value">${orderData.orderDate || "—"}</div></div>
+        <div class="field full"><div class="label">Item Description</div><div class="value">${orderData.itemDescription || "—"}</div></div>
+        <div class="field"><div class="label">Metal</div><div class="value">${orderData.metal || "—"}</div></div>
+        <div class="field"><div class="label">Metal Type</div><div class="value">${orderData.metalType || "—"}</div></div>
+        <div class="field"><div class="label">Colour</div><div class="value">${orderData.colour || "—"}</div></div>
+        <div class="field"><div class="label">Ring Size</div><div class="value">${orderData.ringSize || "—"}</div></div>
+        <div class="field"><div class="label">Stone Type</div><div class="value">${orderData.stoneType || "—"}</div></div>
+        <div class="field"><div class="label">Stone Origin</div><div class="value">${orderData.stoneOrigin ? (orderData.stoneOrigin === "lab" ? "Lab" : "Natural") : "—"}</div></div>
+        <div class="field"><div class="label">Stone Size</div><div class="value">${orderData.stoneSize || "—"}</div></div>
+        <div class="field"><div class="label">Rhodium/Polish</div><div class="value">${orderData.rhodiumPolish ? "Yes" : "No"}</div></div>
+        <div class="field"><div class="label">Budget</div><div class="value">${orderData.budget ? "$" + orderData.budget : "—"}</div></div>
+        <div class="field"><div class="label">Deposit</div><div class="value">${orderData.deposit ? "$" + orderData.deposit : "—"}</div></div>
+        <div class="field"><div class="label">Delivery Date</div><div class="value">${orderData.deliveryDate || "—"}</div></div>
+      </div>
+      ${orderData.notes ? `<hr/><div class="field"><div class="label">Notes</div><div class="value">${orderData.notes}</div></div>` : ""}
+      </body></html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const confirmCreateOrder = async () => {
+    setShowConfirmCreate(false);
     const { error } = await supabase.from("orders").insert({
       customer_email: newOrder.customerEmail,
       order_type: newOrder.orderType,
@@ -218,6 +274,8 @@ const AdminDashboard = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Order Created" });
+      setCreatedOrderData({ ...newOrder });
+      setShowPrintPrompt(true);
       setShowNewOrder(false);
       setNewOrder({
         customerEmail: "", firstName: "", lastName: "", address: "",
