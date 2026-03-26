@@ -3,7 +3,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar as CalendarIcon, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle, Pencil, Check } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -105,7 +108,10 @@ const AdminDashboard = () => {
   // Quote form
   const [orderNotes, setOrderNotes] = useState<{ id: string; note: string; note_date: string; created_at: string }[]>([]);
   const [newNote, setNewNote] = useState("");
-  const [newNoteDate, setNewNoteDate] = useState(new Date().toISOString().split("T")[0]);
+  const [newNoteDate, setNewNoteDate] = useState<Date>(new Date());
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [editingNoteText, setEditingNoteText] = useState("");
+  const [editingNoteDate, setEditingNoteDate] = useState<Date>(new Date());
 
   const [quoteAmount, setQuoteAmount] = useState("");
   const [quoteDesc, setQuoteDesc] = useState("");
@@ -1013,18 +1019,53 @@ const AdminDashboard = () => {
                     </div>
                     {orderNotes.length > 0 && (
                       <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
-                        {orderNotes.map((n, idx) => (
+                        {[...orderNotes].sort((a, b) => new Date(a.note_date).getTime() - new Date(b.note_date).getTime()).map((n) => (
                           <div key={n.id} className="relative pl-4 border-l-2 border-accent/30">
                             <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-accent" />
-                            <p className="font-body text-[10px] text-muted-foreground font-medium">{new Date(n.note_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                            <p className="font-body text-xs text-foreground mt-0.5">{n.note}</p>
-                            <button
-                              className="font-body text-[10px] text-destructive hover:underline mt-1"
-                              onClick={async () => {
-                                await supabase.from("order_notes").delete().eq("id", n.id);
-                                setOrderNotes(orderNotes.filter(on => on.id !== n.id));
-                              }}
-                            >Delete</button>
+                            {editingNoteId === n.id ? (
+                              <div className="space-y-2">
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <Button variant="outline" size="sm" className="h-6 text-[10px] font-body w-auto">
+                                      <CalendarIcon className="w-3 h-3 mr-1" />
+                                      {format(editingNoteDate, "MMM d, yyyy")}
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar mode="single" selected={editingNoteDate} onSelect={(d) => d && setEditingNoteDate(d)} className="p-3 pointer-events-auto" />
+                                  </PopoverContent>
+                                </Popover>
+                                <Input value={editingNoteText} onChange={(e) => setEditingNoteText(e.target.value)} className="font-body text-xs" />
+                                <div className="flex gap-1">
+                                  <Button size="sm" className="h-6 text-[10px] bg-primary text-primary-foreground" onClick={async () => {
+                                    const dateStr = format(editingNoteDate, "yyyy-MM-dd");
+                                    const { error } = await supabase.from("order_notes").update({ note: editingNoteText.trim(), note_date: dateStr }).eq("id", n.id);
+                                    if (!error) {
+                                      setOrderNotes(orderNotes.map(on => on.id === n.id ? { ...on, note: editingNoteText.trim(), note_date: dateStr } : on));
+                                      setEditingNoteId(null);
+                                    }
+                                  }}><Check className="w-3 h-3 mr-1" />Save</Button>
+                                  <Button size="sm" variant="ghost" className="h-6 text-[10px]" onClick={() => setEditingNoteId(null)}>Cancel</Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="font-body text-[10px] text-muted-foreground font-medium">{new Date(n.note_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                <p className="font-body text-xs text-foreground mt-0.5">{n.note}</p>
+                                <div className="flex gap-2 mt-1">
+                                  <button className="font-body text-[10px] text-accent hover:underline" onClick={() => { setEditingNoteId(n.id); setEditingNoteText(n.note); setEditingNoteDate(new Date(n.note_date + 'T00:00:00')); }}>
+                                    <Pencil className="w-3 h-3 inline mr-0.5" />Edit
+                                  </button>
+                                  <button
+                                    className="font-body text-[10px] text-destructive hover:underline"
+                                    onClick={async () => {
+                                      await supabase.from("order_notes").delete().eq("id", n.id);
+                                      setOrderNotes(orderNotes.filter(on => on.id !== n.id));
+                                    }}
+                                  >Delete</button>
+                                </div>
+                              </>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -1038,24 +1079,30 @@ const AdminDashboard = () => {
                           className="font-body text-xs"
                         />
                       </div>
-                      <Input
-                        type="date"
-                        value={newNoteDate}
-                        onChange={(e) => setNewNoteDate(e.target.value)}
-                        className="font-body text-xs w-[130px]"
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-9 text-xs font-body w-[130px] justify-start">
+                            <CalendarIcon className="w-3 h-3 mr-1" />
+                            {format(newNoteDate, "MMM d, yyyy")}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar mode="single" selected={newNoteDate} onSelect={(d) => d && setNewNoteDate(d)} className="p-3 pointer-events-auto" />
+                        </PopoverContent>
+                      </Popover>
                       <Button size="sm" className="bg-primary text-primary-foreground" onClick={async () => {
                         if (!newNote.trim() || !selectedOrder || !user) return;
+                        const dateStr = format(newNoteDate, "yyyy-MM-dd");
                         const { data, error } = await supabase.from("order_notes").insert({
                           order_id: selectedOrder.id,
                           note: newNote.trim(),
-                          note_date: newNoteDate,
+                          note_date: dateStr,
                           created_by: user.id,
                         }).select().single();
                         if (!error && data) {
                           setOrderNotes([data, ...orderNotes]);
                           setNewNote("");
-                          setNewNoteDate(new Date().toISOString().split("T")[0]);
+                          setNewNoteDate(new Date());
                         }
                       }}>
                         <PlusCircle className="w-3 h-3" />
