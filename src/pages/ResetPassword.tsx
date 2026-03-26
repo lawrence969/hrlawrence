@@ -50,7 +50,7 @@ const ResetPassword = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Password Updated", description: "Your password has been reset successfully." });
-      navigate("/my-orders");
+      navigate("/");
     }
     setSubmitting(false);
   };
