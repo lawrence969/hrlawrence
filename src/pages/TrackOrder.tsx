@@ -21,8 +21,8 @@ const departmentLabels: Record<string, string> = {
   quality_control: "Quality Control", setting: "Setting", polishing: "Polishing", engraving: "Engraving",
 };
 
-const repairSteps = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
-const customSteps = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
+const repairSteps = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
+const customSteps = ["intake", "in_design", "in_production", "complete", "ready_pickup", "picked_up"];
 
 interface FoundOrder {
   order_number: string;
