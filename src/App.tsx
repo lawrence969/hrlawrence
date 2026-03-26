@@ -9,7 +9,7 @@ import BookConsultation from "./pages/BookConsultation";
 import TrackOrder from "./pages/TrackOrder";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
-import MyOrders from "./pages/MyOrders";
+
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -28,7 +28,7 @@ const App = () => (
             <Route path="/track-order" element={<TrackOrder />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/my-orders" element={<MyOrders />} />
+            
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

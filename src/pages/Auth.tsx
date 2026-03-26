@@ -28,7 +28,7 @@ const Auth = () => {
     smsConsent: false,
   });
 
-  if (!loading && user) return <Navigate to="/my-orders" replace />;
+  if (!loading && user) return <Navigate to="/" replace />;
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
