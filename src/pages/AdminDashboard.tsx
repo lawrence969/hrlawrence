@@ -443,7 +443,15 @@ const AdminDashboard = () => {
     setSendingEmailInvite(false);
   };
 
-  const filteredOrders = orders.filter((o) => o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
+  const filteredOrders = orders.filter((o) => {
+    const matchesSearch = o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase());
+    const matchesType = filterType === "all" || o.order_type === filterType;
+    const matchesDept = filterDept === "all" || o.current_department === filterDept;
+    const matchesStatus = filterStatus === "all" || o.status === filterStatus;
+    return matchesSearch && matchesType && matchesDept && matchesStatus;
+  });
+
+  const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
 
   const changeOrderType = async (orderId: string, newType: string) => {
     const newFlow = newType === "repair" ? repairStatusFlow : customStatusFlow;
