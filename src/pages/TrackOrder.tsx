@@ -187,15 +187,6 @@ const TrackOrder = () => {
                         </div>
                       </div>
                     )}
-                    {foundOrder.delivery_date && (
-                      <div className="flex items-start gap-2">
-                        <Clock className="w-3.5 h-3.5 text-accent mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Est. Delivery</p>
-                          <p className="font-body text-sm text-foreground font-medium">{formatDate(foundOrder.delivery_date)}</p>
-                        </div>
-                      </div>
-                    )}
                     <div className="flex items-start gap-2">
                       <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
                       <div>
