@@ -159,6 +159,14 @@ const TrackOrder = () => {
                     <div>
                       <p className="text-xs font-body tracking-[0.2em] uppercase text-muted-foreground mb-1">Order Number</p>
                       <p className="font-display text-2xl text-foreground">{foundOrder.order_number}</p>
+                      {(foundOrder.first_name || foundOrder.last_name) && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <User className="w-3.5 h-3.5 text-accent" />
+                          <p className="font-body text-sm text-foreground font-medium">
+                            {[foundOrder.first_name, foundOrder.last_name].filter(Boolean).join(" ")}
+                          </p>
+                        </div>
+                      )}
                     </div>
                     <div className="sm:text-right">
                       <span className={`inline-block px-3 py-1 text-xs font-body font-semibold tracking-wider uppercase ${
@@ -181,6 +189,79 @@ const TrackOrder = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Details grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
+                    {foundOrder.order_date && (
+                      <div className="flex items-start gap-2">
+                        <Clock className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Order Date</p>
+                          <p className="font-body text-sm text-foreground">{formatDate(foundOrder.order_date)}</p>
+                        </div>
+                      </div>
+                    )}
+                    {foundOrder.delivery_date && (
+                      <div className="flex items-start gap-2">
+                        <Clock className="w-3.5 h-3.5 text-accent mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Est. Delivery</p>
+                          <p className="font-body text-sm text-foreground font-medium">{formatDate(foundOrder.delivery_date)}</p>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex items-start gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Department</p>
+                        <p className="font-body text-sm text-foreground">{departmentLabels[foundOrder.current_department] || foundOrder.current_department}</p>
+                      </div>
+                    </div>
+                    {(foundOrder.metal || foundOrder.metal_type || foundOrder.colour) && (
+                      <div>
+                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Metal</p>
+                        <p className="font-body text-sm text-foreground">
+                          {[foundOrder.metal, foundOrder.colour, foundOrder.metal_type].filter(Boolean).join(" · ")}
+                        </p>
+                      </div>
+                    )}
+                    {foundOrder.stone_type && (
+                      <div>
+                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Stone</p>
+                        <p className="font-body text-sm text-foreground">
+                          {[foundOrder.stone_type, foundOrder.stone_size].filter(Boolean).join(" — ")}
+                        </p>
+                      </div>
+                    )}
+                    {foundOrder.ring_size && (
+                      <div>
+                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Ring Size</p>
+                        <p className="font-body text-sm text-foreground">{foundOrder.ring_size}</p>
+                      </div>
+                    )}
+                    {foundOrder.rhodium_polish && (
+                      <div className="flex items-start gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-accent mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Finish</p>
+                          <p className="font-body text-sm text-foreground">Rhodium & Polish</p>
+                        </div>
+                      </div>
+                    )}
+                    {foundOrder.deposit != null && (
+                      <div>
+                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Deposit</p>
+                        <p className="font-body text-sm text-foreground">${Number(foundOrder.deposit).toLocaleString()}</p>
+                      </div>
+                    )}
+                    {foundOrder.budget != null && (
+                      <div>
+                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Budget</p>
+                        <p className="font-body text-sm text-foreground">${Number(foundOrder.budget).toLocaleString()}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                   {/* Details grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
