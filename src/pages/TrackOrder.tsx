@@ -5,8 +5,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem, User, Sparkles } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem, User, Sparkles, Mail, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const statusLabels: Record<string, string> = {
   intake: "Intake", quote_sent: "Quote Sent", quote_approved: "Quote Approved",
