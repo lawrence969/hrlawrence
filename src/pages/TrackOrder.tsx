@@ -9,28 +9,16 @@ import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem, User, Sparkl
 import { supabase } from "@/integrations/supabase/client";
 
 const statusLabels: Record<string, string> = {
-  intake: "Intake",
-  quote_sent: "Quote Sent",
-  quote_approved: "Quote Approved",
-  in_design: "In Design",
-  design_approved: "Design Approved",
-  in_production: "In Production",
-  in_progress: "In Progress",
-  complete: "Work Complete",
-  ready_pickup: "Ready for Pickup",
-  picked_up: "Picked Up",
-  waiting_for_client: "Waiting For Client",
-  larry_follow_up: "Larry Follow Up",
+  intake: "Intake", quote_sent: "Quote Sent", quote_approved: "Quote Approved",
+  in_design: "In Design", design_approved: "Design Approved",
+  in_production: "In Production", in_progress: "In Progress",
+  complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
+  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
 };
 
 const departmentLabels: Record<string, string> = {
-  front_of_store: "Front of Store",
-  workshop: "Workshop",
-  design: "Design Studio",
-  quality_control: "Quality Control",
-  setting: "Setting",
-  polishing: "Polishing",
-  engraving: "Engraving",
+  front_of_store: "Front of Store", workshop: "Workshop", design: "Design Studio",
+  quality_control: "Quality Control", setting: "Setting", polishing: "Polishing", engraving: "Engraving",
 };
 
 const repairSteps = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
@@ -90,11 +78,7 @@ const TrackOrder = () => {
       <div className="pt-32 pb-24 bg-cream min-h-[80vh]">
         <div className="container mx-auto px-6 max-w-3xl">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-14"
-          >
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-14">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="h-px w-8 bg-accent" />
               <p className="text-xs font-body tracking-[0.35em] uppercase text-accent font-semibold">Order Status</p>
@@ -108,21 +92,10 @@ const TrackOrder = () => {
           </motion.div>
 
           {/* Search */}
-          <motion.form
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            onSubmit={handleSearch}
-            className="flex gap-3 mb-14"
-          >
+          <motion.form initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} onSubmit={handleSearch} className="flex gap-3 mb-14">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="e.g. HRL-2026-0001"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="font-body text-base pl-10 h-12 border-border focus:border-accent"
-              />
+              <Input placeholder="e.g. HRL-2026-0001" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="font-body text-base pl-10 h-12 border-border focus:border-accent" />
             </div>
             <Button type="submit" disabled={searching || !searchQuery.trim()} className="bg-primary text-primary-foreground px-8 h-12 font-body tracking-wide">
               {searching ? "Searching…" : "Track"}
@@ -131,13 +104,7 @@ const TrackOrder = () => {
 
           <AnimatePresence mode="wait">
             {searched && !foundOrder && (
-              <motion.div
-                key="not-found"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="text-center py-16"
-              >
+              <motion.div key="not-found" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-16">
                 <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
                   <Package className="w-7 h-7 text-muted-foreground" />
                 </div>
@@ -146,13 +113,7 @@ const TrackOrder = () => {
             )}
 
             {foundOrder && (
-              <motion.div
-                key="found"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-6"
-              >
+              <motion.div key="found" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
                 {/* Order header card */}
                 <div className="bg-background border border-border p-6 md:p-8">
                   <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
@@ -170,9 +131,7 @@ const TrackOrder = () => {
                     </div>
                     <div className="sm:text-right">
                       <span className={`inline-block px-3 py-1 text-xs font-body font-semibold tracking-wider uppercase ${
-                        foundOrder.order_type === "custom"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-accent text-accent-foreground"
+                        foundOrder.order_type === "custom" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"
                       }`}>
                         {foundOrder.order_type === "custom" ? "Custom Piece" : "Repair"}
                       </span>
@@ -263,56 +222,6 @@ const TrackOrder = () => {
                   </div>
                 </div>
 
-                  {/* Details grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {foundOrder.order_date && (
-                      <div className="flex items-start gap-2">
-                        <Clock className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Order Date</p>
-                          <p className="font-body text-sm text-foreground">{formatDate(foundOrder.order_date)}</p>
-                        </div>
-                      </div>
-                    )}
-                    {foundOrder.delivery_date && (
-                      <div className="flex items-start gap-2">
-                        <Clock className="w-3.5 h-3.5 text-accent mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Est. Delivery</p>
-                          <p className="font-body text-sm text-foreground font-medium">{formatDate(foundOrder.delivery_date)}</p>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Department</p>
-                        <p className="font-body text-sm text-foreground">{departmentLabels[foundOrder.current_department] || foundOrder.current_department}</p>
-                      </div>
-                    </div>
-                    {(foundOrder.metal || foundOrder.metal_type || foundOrder.colour) && (
-                      <div>
-                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Metal</p>
-                        <p className="font-body text-sm text-foreground">
-                          {[foundOrder.metal, foundOrder.colour, foundOrder.metal_type].filter(Boolean).join(" · ")}
-                        </p>
-                      </div>
-                    )}
-                    {foundOrder.stone_type && (
-                      <div>
-                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Stone</p>
-                        <p className="font-body text-sm text-foreground">{foundOrder.stone_type}</p>
-                      </div>
-                    )}
-                    {foundOrder.ring_size && (
-                      <div>
-                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Ring Size</p>
-                        <p className="font-body text-sm text-foreground">{foundOrder.ring_size}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
                 {/* Progress tracker */}
                 <div className="bg-background border border-border p-6 md:p-8">
                   <p className="text-xs font-body tracking-[0.2em] uppercase text-muted-foreground mb-6">Progress</p>
@@ -327,13 +236,11 @@ const TrackOrder = () => {
 
                       return (
                         <div key={step} className="flex items-start gap-4 relative">
-                          {/* Vertical line */}
                           {!isLast && (
                             <div className="absolute left-[11px] top-6 bottom-0 w-px">
                               <div className={`h-full ${isPast ? "bg-accent" : "bg-border"}`} />
                             </div>
                           )}
-                          {/* Icon */}
                           <div className="relative z-10 flex-shrink-0">
                             {isComplete ? (
                               <CheckCircle2 className="w-6 h-6 text-accent" />
@@ -345,8 +252,7 @@ const TrackOrder = () => {
                               <Circle className="w-6 h-6 text-border" />
                             )}
                           </div>
-                          {/* Label */}
-                          <div className={`pb-5 ${isCurrent ? "pt-0" : ""}`}>
+                          <div className={`pb-5`}>
                             <span className={`font-body text-sm ${
                               isCurrent ? "text-foreground font-semibold" : isComplete ? "text-foreground" : "text-muted-foreground"
                             }`}>
