@@ -205,7 +205,7 @@ const AdminDashboard = () => {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body">Loading...</div>;
   if (!user) return <Navigate to="/auth" replace />;
-  if (!isStaff) return <Navigate to="/my-orders" replace />;
+  if (!isStaff) return <Navigate to="/" replace />;
 
   const advanceOrder = async (order: Order) => {
     const flow = order.order_type === "repair" ? repairStatusFlow : customStatusFlow;
