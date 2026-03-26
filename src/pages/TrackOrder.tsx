@@ -69,7 +69,7 @@ const TrackOrder = () => {
     setSearching(true);
     const { data } = await supabase
       .from("orders")
-      .select("order_number, order_type, status, item_description, current_department, order_date, delivery_date, metal, metal_type, colour, stone_type, ring_size")
+      .select("order_number, order_type, status, item_description, current_department, order_date, delivery_date, metal, metal_type, colour, stone_type, stone_size, ring_size, first_name, last_name, rhodium_polish, deposit, budget")
       .eq("order_number", searchQuery.toUpperCase().trim())
       .maybeSingle();
     setFoundOrder(data);
