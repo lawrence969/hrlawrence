@@ -808,6 +808,7 @@ const AdminDashboard = () => {
                           <tr><th>Delivery Date</th><td>${selectedOrder.delivery_date || "—"}</td></tr>
                         </table>
                         ${selectedOrder.notes ? `<div class="notes"><h3>Notes</h3><p>${selectedOrder.notes}</p></div>` : ""}
+                        ${orderNotes.length > 0 ? `<div class="notes" style="margin-top:16px"><h3>Follow-Up Timeline</h3>${[...orderNotes].sort((a, b) => new Date(a.note_date).getTime() - new Date(b.note_date).getTime()).map(n => `<div style="margin-bottom:8px;padding-left:12px;border-left:2px solid #ccc"><span style="font-size:11px;color:#888">${new Date(n.note_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span><p style="margin:2px 0 0;font-size:13px">${n.note}</p></div>`).join("")}</div>` : ""}
                         </body></html>
                       `);
                       printWindow.document.close();
