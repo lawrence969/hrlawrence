@@ -941,12 +941,21 @@ const AdminDashboard = () => {
                   </div>
 
                   {/* Notes */}
-                  {selectedOrder.notes && (
-                    <div className="border border-border p-4">
-                      <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">Notes</p>
-                      <p className="font-body text-sm text-foreground whitespace-pre-wrap">{selectedOrder.notes}</p>
-                    </div>
-                  )}
+                  <div className="border border-border p-4">
+                    <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">Notes</p>
+                    <Textarea
+                      value={selectedOrder.notes || ""}
+                      onChange={(e) => setSelectedOrder({ ...selectedOrder, notes: e.target.value })}
+                      onBlur={async (e) => {
+                        const val = e.target.value || null;
+                        const { error } = await supabase.from("orders").update({ notes: val }).eq("id", selectedOrder.id);
+                        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        else toast({ title: "Notes Updated" });
+                      }}
+                      className="font-body text-sm min-h-[80px]"
+                      placeholder="Add notes..."
+                    />
+                  </div>
 
                   <div>
                     <p className="font-body text-xs text-muted-foreground mb-2">Department Location</p>
