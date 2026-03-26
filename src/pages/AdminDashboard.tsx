@@ -981,7 +981,20 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <p className="font-body text-xs text-muted-foreground mb-1">Deposit</p>
-                      <p className="font-body text-sm text-foreground">{selectedOrder.deposit ? `$${selectedOrder.deposit}` : "—"}</p>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="$"
+                        className="font-body text-sm h-8"
+                        value={selectedOrder.deposit ?? ""}
+                        onChange={(e) => setSelectedOrder({ ...selectedOrder, deposit: e.target.value ? parseFloat(e.target.value) : null })}
+                        onBlur={async (e) => {
+                          const val = e.target.value ? parseFloat(e.target.value) : null;
+                          const { error } = await supabase.from("orders").update({ deposit: val }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          else toast({ title: "Deposit Updated" });
+                        }}
+                      />
                     </div>
                   </div>
 
