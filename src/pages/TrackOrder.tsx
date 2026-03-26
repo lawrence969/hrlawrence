@@ -24,6 +24,33 @@ const departmentLabels: Record<string, string> = {
 const repairSteps = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
 const customSteps = ["intake", "in_design", "in_production", "complete", "ready_pickup", "picked_up"];
 
+// Map granular staff statuses to the simplified client-facing steps
+const statusToClientStep: Record<string, Record<string, string>> = {
+  repair: {
+    intake: "intake",
+    in_progress: "in_progress",
+    waiting_for_client: "in_progress",
+    larry_follow_up: "in_progress",
+    complete: "complete",
+    ready_pickup: "ready_pickup",
+    picked_up: "picked_up",
+  },
+  custom: {
+    intake: "intake",
+    quote_sent: "intake",
+    quote_approved: "intake",
+    in_design: "in_design",
+    design_approved: "in_design",
+    ordered_stones: "in_production",
+    in_production: "in_production",
+    waiting_for_client: "in_production",
+    larry_follow_up: "in_production",
+    complete: "complete",
+    ready_pickup: "ready_pickup",
+    picked_up: "picked_up",
+  },
+};
+
 interface FoundOrder {
   order_number: string;
   order_type: string;
@@ -228,7 +255,8 @@ const TrackOrder = () => {
                   <div className="relative">
                     {getSteps(foundOrder.order_type).map((step, index) => {
                       const steps = getSteps(foundOrder.order_type);
-                      const currentIdx = steps.indexOf(foundOrder.status);
+                      const mappedStatus = statusToClientStep[foundOrder.order_type]?.[foundOrder.status] || foundOrder.status;
+                      const currentIdx = steps.indexOf(mappedStatus);
                       const isComplete = index < currentIdx;
                       const isCurrent = index === currentIdx;
                       const isPast = index <= currentIdx;
