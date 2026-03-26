@@ -96,6 +96,37 @@ Deno.serve(async (req) => {
 
     for (const staffEmail of staffEmails) {
       const messageId = crypto.randomUUID();
+      let unsubscribeToken: string | null = null;
+
+      const { data: existingToken, error: tokenLookupErr } = await supabaseAdmin
+        .from("email_unsubscribe_tokens")
+        .select("token")
+        .eq("email", staffEmail)
+        .is("used_at", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (tokenLookupErr) {
+        console.error(`Failed to lookup unsubscribe token for ${staffEmail}:`, tokenLookupErr);
+      }
+
+      unsubscribeToken = existingToken?.token ?? crypto.randomUUID();
+
+      if (!existingToken?.token) {
+        const { error: tokenInsertErr } = await supabaseAdmin
+          .from("email_unsubscribe_tokens")
+          .insert({
+            email: staffEmail,
+            token: unsubscribeToken,
+          });
+
+        if (tokenInsertErr) {
+          console.error(`Failed to create unsubscribe token for ${staffEmail}:`, tokenInsertErr);
+          continue;
+        }
+      }
+
       const { error: enqueueErr } = await supabaseAdmin.rpc("enqueue_email", {
         queue_name: "transactional_emails",
         payload: {
@@ -109,6 +140,7 @@ Deno.serve(async (req) => {
           label: "order-inquiry",
           message_id: messageId,
           idempotency_key: `order-inquiry-${orderNumber}-${messageId}`,
+          unsubscribe_token: unsubscribeToken,
           queued_at: new Date().toISOString(),
         },
       });
