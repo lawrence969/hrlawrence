@@ -14,6 +14,7 @@ const statusLabels: Record<string, string> = {
   in_production: "In Production", in_progress: "In Progress",
   complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
+  on_hold: "On Hold",
 };
 
 const departmentLabels: Record<string, string> = {
