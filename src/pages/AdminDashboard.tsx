@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar as CalendarIcon, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle, Pencil, Check } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar as CalendarIcon, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle, Pencil, Check, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
