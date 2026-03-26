@@ -98,6 +98,32 @@ const TrackOrder = () => {
     setFoundOrder(data);
     setSearched(true);
     setSearching(false);
+    setSent(false);
+    setInquiryMessage("");
+  };
+
+  const handleSendInquiry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!foundOrder || !inquiryEmail.trim() || !inquiryMessage.trim()) return;
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-order-inquiry", {
+        body: {
+          orderNumber: foundOrder.order_number,
+          clientName: inquiryName.trim(),
+          clientEmail: inquiryEmail.trim(),
+          message: inquiryMessage.trim(),
+        },
+      });
+      if (error) throw error;
+      setSent(true);
+      toast({ title: "Message sent", description: "We'll get back to you as soon as possible." });
+    } catch (err) {
+      console.error("Failed to send inquiry:", err);
+      toast({ title: "Failed to send", description: "Please try again or contact us directly.", variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
   };
 
   const getSteps = (type: string) => type === "repair" ? repairSteps : customSteps;
