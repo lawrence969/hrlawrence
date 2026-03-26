@@ -13,10 +13,11 @@ const statusLabels: Record<string, string> = {
   in_design: "In Design", design_approved: "Design Approved",
   in_production: "In Production", in_progress: "In Progress",
   complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
+  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
 };
 
-const repairSteps = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
-const customSteps = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
+const repairSteps = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
+const customSteps = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
 
 interface FoundOrder {
   order_number: string;

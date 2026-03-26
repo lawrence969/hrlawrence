@@ -16,14 +16,17 @@ const statusLabels: Record<string, string> = {
   intake: "Intake", quote_sent: "Quote Sent", quote_approved: "Quote Approved",
   in_design: "In Design", design_approved: "Design Approved", in_production: "In Production",
   complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up", in_progress: "In Progress",
+  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
 };
 
-const departmentLabels: Record<string, string> = {
-  front_of_store: "Front of Store", repair: "Repair", design: "Design", setting: "Setting",
+const statusColor = (status: string) => {
+  if (["intake"].includes(status)) return "bg-yellow-100 text-yellow-800";
+  if (["complete", "ready_pickup", "picked_up"].includes(status)) return "bg-green-100 text-green-800";
+  return "bg-blue-100 text-blue-800";
 };
 
-const repairSteps = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
-const customSteps = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
+const repairSteps = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
+const customSteps = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
 const messagingStages = ["quote_sent", "quote_approved", "in_design", "design_approved"];
 
 interface Order {
