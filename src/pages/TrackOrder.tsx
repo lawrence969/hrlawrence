@@ -5,8 +5,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem, User, Sparkles } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem, User, Sparkles, Mail, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const statusLabels: Record<string, string> = {
   intake: "Intake", quote_sent: "Quote Sent", quote_approved: "Quote Approved",
@@ -77,6 +79,12 @@ const TrackOrder = () => {
   const [foundOrder, setFoundOrder] = useState<FoundOrder | null>(null);
   const [searched, setSearched] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [inquiryName, setInquiryName] = useState("");
+  const [inquiryEmail, setInquiryEmail] = useState("");
+  const [inquiryMessage, setInquiryMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const { toast } = useToast();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +98,32 @@ const TrackOrder = () => {
     setFoundOrder(data);
     setSearched(true);
     setSearching(false);
+    setSent(false);
+    setInquiryMessage("");
+  };
+
+  const handleSendInquiry = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!foundOrder || !inquiryEmail.trim() || !inquiryMessage.trim()) return;
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-order-inquiry", {
+        body: {
+          orderNumber: foundOrder.order_number,
+          clientName: inquiryName.trim(),
+          clientEmail: inquiryEmail.trim(),
+          message: inquiryMessage.trim(),
+        },
+      });
+      if (error) throw error;
+      setSent(true);
+      toast({ title: "Message sent", description: "We'll get back to you as soon as possible." });
+    } catch (err) {
+      console.error("Failed to send inquiry:", err);
+      toast({ title: "Failed to send", description: "Please try again or contact us directly.", variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
   };
 
   const getSteps = (type: string) => type === "repair" ? repairSteps : customSteps;
@@ -287,6 +321,63 @@ const TrackOrder = () => {
                       );
                     })}
                   </div>
+                </div>
+
+                {/* Contact form */}
+                <div className="bg-background border border-border p-6 md:p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Mail className="w-4 h-4 text-accent" />
+                    <p className="text-xs font-body tracking-[0.2em] uppercase text-muted-foreground">Have a Question?</p>
+                  </div>
+                  {sent ? (
+                    <div className="text-center py-6">
+                      <CheckCircle2 className="w-8 h-8 text-accent mx-auto mb-3" />
+                      <p className="font-body text-foreground font-medium mb-1">Message Sent</p>
+                      <p className="font-body text-sm text-muted-foreground">We'll get back to you as soon as possible.</p>
+                      <Button variant="outline" className="mt-4 font-body text-xs" onClick={() => { setSent(false); setInquiryMessage(""); }}>
+                        Send Another Message
+                      </Button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSendInquiry} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1 block">Your Name</label>
+                          <Input
+                            placeholder="Full name"
+                            value={inquiryName}
+                            onChange={(e) => setInquiryName(e.target.value)}
+                            className="font-body text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1 block">Email <span className="text-destructive">*</span></label>
+                          <Input
+                            type="email"
+                            required
+                            placeholder="your@email.com"
+                            value={inquiryEmail}
+                            onChange={(e) => setInquiryEmail(e.target.value)}
+                            className="font-body text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1 block">Message <span className="text-destructive">*</span></label>
+                        <Textarea
+                          required
+                          placeholder="How can we help you?"
+                          value={inquiryMessage}
+                          onChange={(e) => setInquiryMessage(e.target.value)}
+                          className="font-body text-sm min-h-[100px] resize-none"
+                        />
+                      </div>
+                      <Button type="submit" disabled={sending || !inquiryEmail.trim() || !inquiryMessage.trim()} className="bg-primary text-primary-foreground font-body tracking-wide">
+                        <Send className="w-3.5 h-3.5 mr-2" />
+                        {sending ? "Sending…" : "Send Message"}
+                      </Button>
+                    </form>
+                  )}
                 </div>
               </motion.div>
             )}
