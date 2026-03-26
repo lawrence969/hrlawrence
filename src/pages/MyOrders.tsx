@@ -29,6 +29,13 @@ const repairSteps = ["intake", "in_progress", "waiting_for_client", "larry_follo
 const customSteps = ["intake", "quote_sent", "quote_approved", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
 const messagingStages = ["quote_sent", "quote_approved", "in_design", "design_approved"];
 
+const departmentLabels: Record<string, string> = {
+  front_of_store: "Front of Store",
+  repair: "Repair",
+  design: "Design",
+  setting: "Setting",
+};
+
 interface Order {
   id: string;
   order_number: string;
