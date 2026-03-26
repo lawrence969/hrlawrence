@@ -1211,10 +1211,52 @@ const AdminDashboard = () => {
           </motion.div>
         )}
 
-        {/* Search */}
-        <div className="relative max-w-sm mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 font-body" />
+        {/* Search & Filters */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="relative max-w-sm flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 font-body" />
+          </div>
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="h-10 w-[130px] text-xs font-body">
+              <Filter className="w-3 h-3 mr-1 opacity-50" />
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs font-body">All Types</SelectItem>
+              <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
+              <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterDept} onValueChange={setFilterDept}>
+            <SelectTrigger className="h-10 w-[160px] text-xs font-body">
+              <Filter className="w-3 h-3 mr-1 opacity-50" />
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs font-body">All Depts</SelectItem>
+              {[...departments].sort((a, b) => departmentLabels[a].localeCompare(departmentLabels[b])).map((d) => (
+                <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="h-10 w-[170px] text-xs font-body">
+              <Filter className="w-3 h-3 mr-1 opacity-50" />
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs font-body">All Statuses</SelectItem>
+              {allStatuses.map((s) => (
+                <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {(filterType !== "all" || filterDept !== "all" || filterStatus !== "all") && (
+            <Button variant="ghost" size="sm" className="text-xs font-body text-muted-foreground" onClick={() => { setFilterType("all"); setFilterDept("all"); setFilterStatus("all"); }}>
+              <X className="w-3 h-3 mr-1" /> Clear filters
+            </Button>
+          )}
         </div>
 
         <OrderTable items={filteredOrders} />
