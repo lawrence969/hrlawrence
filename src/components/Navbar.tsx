@@ -31,7 +31,6 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
-              <Link to="/my-orders" className={`text-sm font-body font-medium tracking-widest uppercase transition-colors hover:text-accent ${location.pathname === "/my-orders" ? "text-accent" : "text-foreground"}`}>My Orders</Link>
               {isStaff && <Link to="/admin" className="text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors">Staff Portal</Link>}
             </>
           ) : (
@@ -52,7 +51,6 @@ const Navbar = () => {
           ))}
           {user ? (
             <>
-              <Link to="/my-orders" onClick={() => setIsOpen(false)} className="block text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent">My Orders</Link>
               {isStaff && <Link to="/admin" onClick={() => setIsOpen(false)} className="block text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground">Staff Portal</Link>}
             </>
           ) : (
