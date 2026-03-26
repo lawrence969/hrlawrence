@@ -322,6 +322,63 @@ const TrackOrder = () => {
                     })}
                   </div>
                 </div>
+
+                {/* Contact form */}
+                <div className="bg-background border border-border p-6 md:p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Mail className="w-4 h-4 text-accent" />
+                    <p className="text-xs font-body tracking-[0.2em] uppercase text-muted-foreground">Have a Question?</p>
+                  </div>
+                  {sent ? (
+                    <div className="text-center py-6">
+                      <CheckCircle2 className="w-8 h-8 text-accent mx-auto mb-3" />
+                      <p className="font-body text-foreground font-medium mb-1">Message Sent</p>
+                      <p className="font-body text-sm text-muted-foreground">We'll get back to you as soon as possible.</p>
+                      <Button variant="outline" className="mt-4 font-body text-xs" onClick={() => { setSent(false); setInquiryMessage(""); }}>
+                        Send Another Message
+                      </Button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSendInquiry} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1 block">Your Name</label>
+                          <Input
+                            placeholder="Full name"
+                            value={inquiryName}
+                            onChange={(e) => setInquiryName(e.target.value)}
+                            className="font-body text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1 block">Email <span className="text-destructive">*</span></label>
+                          <Input
+                            type="email"
+                            required
+                            placeholder="your@email.com"
+                            value={inquiryEmail}
+                            onChange={(e) => setInquiryEmail(e.target.value)}
+                            className="font-body text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1 block">Message <span className="text-destructive">*</span></label>
+                        <Textarea
+                          required
+                          placeholder="How can we help you?"
+                          value={inquiryMessage}
+                          onChange={(e) => setInquiryMessage(e.target.value)}
+                          className="font-body text-sm min-h-[100px] resize-none"
+                        />
+                      </div>
+                      <Button type="submit" disabled={sending || !inquiryEmail.trim() || !inquiryMessage.trim()} className="bg-primary text-primary-foreground font-body tracking-wide">
+                        <Send className="w-3.5 h-3.5 mr-2" />
+                        {sending ? "Sending…" : "Send Message"}
+                      </Button>
+                    </form>
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
