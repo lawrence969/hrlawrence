@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem } from "lucide-react";
+import { Search, Package, Clock, MapPin, CheckCircle2, Circle, Gem, User, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const statusLabels: Record<string, string> = {
