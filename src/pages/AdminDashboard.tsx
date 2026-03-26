@@ -3,7 +3,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar as CalendarIcon, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle, Pencil, Check } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -105,7 +108,10 @@ const AdminDashboard = () => {
   // Quote form
   const [orderNotes, setOrderNotes] = useState<{ id: string; note: string; note_date: string; created_at: string }[]>([]);
   const [newNote, setNewNote] = useState("");
-  const [newNoteDate, setNewNoteDate] = useState(new Date().toISOString().split("T")[0]);
+  const [newNoteDate, setNewNoteDate] = useState<Date>(new Date());
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [editingNoteText, setEditingNoteText] = useState("");
+  const [editingNoteDate, setEditingNoteDate] = useState<Date>(new Date());
 
   const [quoteAmount, setQuoteAmount] = useState("");
   const [quoteDesc, setQuoteDesc] = useState("");
