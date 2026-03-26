@@ -54,7 +54,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    const subject = `Order Inquiry – ${orderNumber} from ${clientName || "Client"}`;
+    const senderName = clientName?.trim() || "Client";
+    const subject = `Order Inquiry – ${orderNumber} from ${senderName}`;
     const html = `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <h1 style="color: #1a2a3a; font-size: 22px; margin-bottom: 24px;">New Order Inquiry</h1>
@@ -81,6 +82,17 @@ Deno.serve(async (req) => {
         </p>
       </div>
     `;
+    const text = [
+      "New Order Inquiry",
+      `Order: ${orderNumber}`,
+      `Client: ${clientName || "Not provided"}`,
+      `Email: ${clientEmail}`,
+      "",
+      "Message:",
+      message,
+      "",
+      "This inquiry was sent from the Track Your Order page on H.R. Lawrence Fine Jewelry.",
+    ].join("\n");
 
     for (const staffEmail of staffEmails) {
       const messageId = crypto.randomUUID();
@@ -88,10 +100,11 @@ Deno.serve(async (req) => {
         queue_name: "transactional_emails",
         payload: {
           to: staffEmail,
-          from: "noreply@hrlawrence.com",
+          from: "HR Lawrence <noreply@notify.hrlawrence.com>",
           sender_domain: "notify.hrlawrence.com",
           subject,
           html,
+          text,
           purpose: "transactional",
           label: "order-inquiry",
           message_id: messageId,
