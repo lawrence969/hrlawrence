@@ -79,6 +79,12 @@ const TrackOrder = () => {
   const [foundOrder, setFoundOrder] = useState<FoundOrder | null>(null);
   const [searched, setSearched] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [inquiryName, setInquiryName] = useState("");
+  const [inquiryEmail, setInquiryEmail] = useState("");
+  const [inquiryMessage, setInquiryMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const { toast } = useToast();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
