@@ -14,6 +14,7 @@ const statusLabels: Record<string, string> = {
   in_production: "In Production", in_progress: "In Progress",
   complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
+  on_hold: "On Hold",
 };
 
 const departmentLabels: Record<string, string> = {
@@ -21,16 +22,15 @@ const departmentLabels: Record<string, string> = {
   quality_control: "Quality Control", setting: "Setting", polishing: "Polishing", engraving: "Engraving",
 };
 
-const repairSteps = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
-const customSteps = ["intake", "in_design", "in_production", "complete", "ready_pickup", "picked_up"];
+const repairSteps = ["intake", "in_progress", "on_hold", "complete", "ready_pickup", "picked_up"];
+const customSteps = ["intake", "in_design", "in_production", "on_hold", "complete", "ready_pickup", "picked_up"];
 
-// Map granular staff statuses to the simplified client-facing steps
 const statusToClientStep: Record<string, Record<string, string>> = {
   repair: {
     intake: "intake",
     in_progress: "in_progress",
-    waiting_for_client: "in_progress",
-    larry_follow_up: "in_progress",
+    waiting_for_client: "on_hold",
+    larry_follow_up: "on_hold",
     complete: "complete",
     ready_pickup: "ready_pickup",
     picked_up: "picked_up",
@@ -43,8 +43,8 @@ const statusToClientStep: Record<string, Record<string, string>> = {
     design_approved: "in_design",
     ordered_stones: "in_production",
     in_production: "in_production",
-    waiting_for_client: "in_production",
-    larry_follow_up: "in_production",
+    waiting_for_client: "on_hold",
+    larry_follow_up: "on_hold",
     complete: "complete",
     ready_pickup: "ready_pickup",
     picked_up: "picked_up",
