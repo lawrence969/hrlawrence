@@ -48,7 +48,13 @@ interface FoundOrder {
   metal_type: string | null;
   colour: string | null;
   stone_type: string | null;
+  stone_size: string | null;
   ring_size: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  rhodium_polish: boolean | null;
+  deposit: number | null;
+  budget: number | null;
 }
 
 const TrackOrder = () => {
