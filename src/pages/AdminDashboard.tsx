@@ -16,8 +16,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 
-const repairStatusFlow = ["intake", "in_progress", "complete", "ready_pickup", "picked_up"];
-const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "in_design", "design_approved", "in_production", "complete", "ready_pickup", "picked_up"];
+const repairStatusFlow = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
+const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
 
 const departments = ["front_of_store", "repair", "design", "setting"] as const;
 const departmentLabels: Record<string, string> = {
@@ -34,11 +34,12 @@ const statusLabels: Record<string, string> = {
   ordered_stones: "Ordered Stones",
   in_design: "In Design", design_approved: "Design Approved",
   in_production: "In Production",
+  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
 };
 
 const statusColor = (status: string) => {
   if (["intake"].includes(status)) return "bg-secondary text-secondary-foreground";
-  if (["in_progress", "in_design", "in_production", "ordered_stones"].includes(status)) return "bg-accent/20 text-accent";
+  if (["in_progress", "in_design", "in_production", "ordered_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
   if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
   if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
   return "bg-secondary text-secondary-foreground";
