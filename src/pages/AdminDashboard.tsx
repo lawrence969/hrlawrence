@@ -524,7 +524,7 @@ const AdminDashboard = () => {
                   <SelectTrigger className={`h-7 w-[150px] text-xs font-body border-0 ${statusColor(order.status)}`}>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[300px] overflow-y-auto">
                     {[...flow].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
                       <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
                     ))}
