@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar as CalendarIcon, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle, Pencil, Check } from "lucide-react";
+import { ChevronRight, Plus, Search, LogOut, X, DollarSign, Calendar as CalendarIcon, MapPin, Send, MessageSquare, Mail, Trash2, Printer, Clock, PlusCircle, Pencil, Check, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -98,6 +98,9 @@ const AdminDashboard = () => {
   const { user, isStaff, loading, signOut } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterDept, setFilterDept] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showNewOrder, setShowNewOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [activePanel, setActivePanel] = useState<"detail" | "quote" | "invite" | null>(null);
@@ -440,7 +443,15 @@ const AdminDashboard = () => {
     setSendingEmailInvite(false);
   };
 
-  const filteredOrders = orders.filter((o) => o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase()));
+  const filteredOrders = orders.filter((o) => {
+    const matchesSearch = o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase());
+    const matchesType = filterType === "all" || o.order_type === filterType;
+    const matchesDept = filterDept === "all" || o.current_department === filterDept;
+    const matchesStatus = filterStatus === "all" || o.status === filterStatus;
+    return matchesSearch && matchesType && matchesDept && matchesStatus;
+  });
+
+  const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
 
   const changeOrderType = async (orderId: string, newType: string) => {
     const newFlow = newType === "repair" ? repairStatusFlow : customStatusFlow;
@@ -1200,10 +1211,52 @@ const AdminDashboard = () => {
           </motion.div>
         )}
 
-        {/* Search */}
-        <div className="relative max-w-sm mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 font-body" />
+        {/* Search & Filters */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="relative max-w-sm flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 font-body" />
+          </div>
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="h-10 w-[130px] text-xs font-body">
+              <Filter className="w-3 h-3 mr-1 opacity-50" />
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs font-body">All Types</SelectItem>
+              <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
+              <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterDept} onValueChange={setFilterDept}>
+            <SelectTrigger className="h-10 w-[160px] text-xs font-body">
+              <Filter className="w-3 h-3 mr-1 opacity-50" />
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs font-body">All Depts</SelectItem>
+              {[...departments].sort((a, b) => departmentLabels[a].localeCompare(departmentLabels[b])).map((d) => (
+                <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="h-10 w-[170px] text-xs font-body">
+              <Filter className="w-3 h-3 mr-1 opacity-50" />
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs font-body">All Statuses</SelectItem>
+              {allStatuses.map((s) => (
+                <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {(filterType !== "all" || filterDept !== "all" || filterStatus !== "all") && (
+            <Button variant="ghost" size="sm" className="text-xs font-body text-muted-foreground" onClick={() => { setFilterType("all"); setFilterDept("all"); setFilterStatus("all"); }}>
+              <X className="w-3 h-3 mr-1" /> Clear filters
+            </Button>
+          )}
         </div>
 
         <OrderTable items={filteredOrders} />
