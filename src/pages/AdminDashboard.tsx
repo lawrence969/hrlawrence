@@ -831,7 +831,7 @@ const AdminDashboard = () => {
                   <DollarSign className="w-3 h-3 mr-1" /> Quote
                 </Button>
                 <Button size="sm" variant={activePanel === "invite" ? "default" : "outline"} onClick={() => setActivePanel("invite")} className="font-body text-xs">
-                  <Calendar className="w-3 h-3 mr-1" /> Invite
+                  <CalendarIcon className="w-3 h-3 mr-1" /> Invite
                 </Button>
               </div>
 
