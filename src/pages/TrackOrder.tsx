@@ -255,7 +255,8 @@ const TrackOrder = () => {
                   <div className="relative">
                     {getSteps(foundOrder.order_type).map((step, index) => {
                       const steps = getSteps(foundOrder.order_type);
-                      const currentIdx = steps.indexOf(foundOrder.status);
+                      const mappedStatus = statusToClientStep[foundOrder.order_type]?.[foundOrder.status] || foundOrder.status;
+                      const currentIdx = steps.indexOf(mappedStatus);
                       const isComplete = index < currentIdx;
                       const isCurrent = index === currentIdx;
                       const isPast = index <= currentIdx;
