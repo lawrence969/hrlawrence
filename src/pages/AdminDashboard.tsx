@@ -98,6 +98,9 @@ const AdminDashboard = () => {
   const { user, isStaff, loading, signOut } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterDept, setFilterDept] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showNewOrder, setShowNewOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [activePanel, setActivePanel] = useState<"detail" | "quote" | "invite" | null>(null);
