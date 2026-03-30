@@ -855,30 +855,91 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">First Name</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.first_name || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.first_name || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, first_name: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ first_name: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="First name"
+                        />
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Last Name</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.last_name || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.last_name || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, last_name: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ last_name: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="Last name"
+                        />
                       </div>
                     </div>
                     <div>
                       <p className="font-body text-xs text-muted-foreground mb-0.5">Email</p>
-                      <p className="font-body text-sm text-foreground">{selectedOrder.customer_email}</p>
+                      <Input
+                        className="font-body text-sm h-8"
+                        value={selectedOrder.customer_email}
+                        onChange={(e) => setSelectedOrder({ ...selectedOrder, customer_email: e.target.value })}
+                        onBlur={async (e) => {
+                          const val = e.target.value;
+                          if (!val) return;
+                          const { error } = await supabase.from("orders").update({ customer_email: val }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}
+                        placeholder="Email"
+                      />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Phone 1</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.phone1 || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.phone1 || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, phone1: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ phone1: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="Phone 1"
+                        />
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Phone 2</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.phone2 || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.phone2 || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, phone2: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ phone2: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="Phone 2"
+                        />
                       </div>
                     </div>
                     <div>
                       <p className="font-body text-xs text-muted-foreground mb-0.5">Address</p>
-                      <p className="font-body text-sm text-foreground">{selectedOrder.address || "—"}</p>
+                      <Input
+                        className="font-body text-sm h-8"
+                        value={selectedOrder.address || ""}
+                        onChange={(e) => setSelectedOrder({ ...selectedOrder, address: e.target.value || null })}
+                        onBlur={async (e) => {
+                          const val = e.target.value || null;
+                          const { error } = await supabase.from("orders").update({ address: val }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}
+                        placeholder="Address"
+                      />
                     </div>
                   </div>
 
