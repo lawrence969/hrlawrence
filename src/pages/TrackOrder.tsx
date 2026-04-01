@@ -44,6 +44,7 @@ const statusToClientStep: Record<string, Record<string, string>> = {
     in_design: "in_design",
     design_approved: "in_design",
     ordered_stones: "in_production",
+    received_stones: "in_production",
     in_production: "in_production",
     waiting_for_client: "on_hold",
     larry_follow_up: "on_hold",

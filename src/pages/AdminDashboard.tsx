@@ -42,7 +42,7 @@ const statusLabels: Record<string, string> = {
 
 const statusColor = (status: string) => {
   if (["intake"].includes(status)) return "bg-secondary text-secondary-foreground";
-  if (["in_progress", "in_design", "in_production", "ordered_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
+  if (["in_progress", "in_design", "in_production", "ordered_stones", "received_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
   if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
   if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
   return "bg-secondary text-secondary-foreground";
