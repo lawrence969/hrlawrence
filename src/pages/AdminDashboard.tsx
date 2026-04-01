@@ -20,7 +20,7 @@ import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 
 const repairStatusFlow = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
-const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
+const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "received_stones", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
 
 const departments = ["front_of_store", "repair", "design", "setting"] as const;
 const departmentLabels: Record<string, string> = {
