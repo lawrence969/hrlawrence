@@ -49,7 +49,7 @@ const GoldCalculator = () => {
 
     const k = parseInt(karat);
     const adjustedGold = gp + 5000;
-    const perGram = adjustedGold * (k / 24);
+    const perGram = (adjustedGold / 1000) * (k / 24);
     const pricePerGramWithLabour = perGram + LABOUR[karat];
     const adjustedWeight = weight * WEIGHT_MULT[karat];
     const cost = pricePerGramWithLabour * adjustedWeight;
