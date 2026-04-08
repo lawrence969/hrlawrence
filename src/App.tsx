@@ -10,6 +10,7 @@ import TrackOrder from "./pages/TrackOrder";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
+import GoldCalculator from "./pages/GoldCalculator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/gold-calculator" element={<GoldCalculator />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
