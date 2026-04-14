@@ -155,9 +155,20 @@ const GoldCalculator = () => {
                 </div>
                 <div className="border-t border-border my-2" />
                 <div className="flex justify-between items-baseline">
-                  <span className="text-sm font-body text-muted-foreground">Final Cost</span>
-                  <span className="text-2xl font-display text-foreground font-bold">
+                  <span className="text-sm font-body text-muted-foreground">Base Cost</span>
+                  <span className="text-lg font-display text-foreground font-semibold">
                     ${result.cost.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm font-body text-muted-foreground">
+                  <span>Markup (50%)</span>
+                  <span className="text-foreground font-medium">${result.markup.toFixed(2)}</span>
+                </div>
+                <div className="border-t border-border my-2" />
+                <div className="flex justify-between items-baseline">
+                  <span className="text-sm font-body text-muted-foreground">Total with Markup</span>
+                  <span className="text-2xl font-display text-foreground font-bold">
+                    ${result.totalWithMarkup.toFixed(2)}
                   </span>
                 </div>
               </CardContent>
