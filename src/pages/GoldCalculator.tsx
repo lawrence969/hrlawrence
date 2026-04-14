@@ -53,8 +53,10 @@ const GoldCalculator = () => {
     const pricePerGramWithLabour = perGram + LABOUR[karat];
     const adjustedWeight = weight * WEIGHT_MULT[karat];
     const cost = pricePerGramWithLabour * adjustedWeight;
+    const markup = cost * 0.5;
+    const totalWithMarkup = cost + markup;
 
-    return { weight, pricePerGramWithLabour, adjustedWeight, cost };
+    return { weight, pricePerGramWithLabour, adjustedWeight, cost, markup, totalWithMarkup };
   }, [goldPrice, ringType, width, size, karat]);
 
   return (
