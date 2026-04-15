@@ -950,16 +950,46 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Type</p>
-                        <p className="font-body text-sm text-foreground capitalize">{selectedOrder.order_type}</p>
+                        <Select value={selectedOrder.order_type} onValueChange={async (val) => {
+                          setSelectedOrder({ ...selectedOrder, order_type: val });
+                          const { error } = await supabase.from("orders").update({ order_type: val }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}>
+                          <SelectTrigger className="font-body text-sm h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
+                            <SelectItem value="custom" className="font-body text-sm">Custom</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Order Date</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.order_date ? new Date(selectedOrder.order_date + "T00:00:00").toLocaleDateString() : "—"}</p>
+                        <Input
+                          type="date"
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.order_date || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, order_date: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ order_date: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                        />
                       </div>
                     </div>
                     <div>
                       <p className="font-body text-xs text-muted-foreground mb-0.5">Item Description</p>
-                      <p className="font-body text-sm text-foreground">{selectedOrder.item_description}</p>
+                      <Textarea
+                        className="font-body text-sm min-h-[60px]"
+                        value={selectedOrder.item_description}
+                        onChange={(e) => setSelectedOrder({ ...selectedOrder, item_description: e.target.value })}
+                        onBlur={async (e) => {
+                          const val = e.target.value;
+                          const { error } = await supabase.from("orders").update({ item_description: val }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}
+                        placeholder="Item description"
+                      />
                     </div>
                   </div>
 
@@ -969,35 +999,123 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Metal</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.metal || "—"}</p>
+                        <Select value={selectedOrder.metal || ""} onValueChange={async (val) => {
+                          const v = val || null;
+                          setSelectedOrder({ ...selectedOrder, metal: v });
+                          const { error } = await supabase.from("orders").update({ metal: v }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}>
+                          <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="10k" className="font-body text-sm">10K</SelectItem>
+                            <SelectItem value="14k" className="font-body text-sm">14K</SelectItem>
+                            <SelectItem value="18k" className="font-body text-sm">18K</SelectItem>
+                            <SelectItem value="22k" className="font-body text-sm">22K</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Metal Type</p>
-                        <p className="font-body text-sm text-foreground capitalize">{selectedOrder.metal_type || "—"}</p>
+                        <Select value={selectedOrder.metal_type || ""} onValueChange={async (val) => {
+                          const v = val || null;
+                          setSelectedOrder({ ...selectedOrder, metal_type: v });
+                          const { error } = await supabase.from("orders").update({ metal_type: v }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}>
+                          <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="gold" className="font-body text-sm">Gold</SelectItem>
+                            <SelectItem value="platinum" className="font-body text-sm">Platinum</SelectItem>
+                            <SelectItem value="silver" className="font-body text-sm">Silver</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Colour</p>
-                        <p className="font-body text-sm text-foreground capitalize">{selectedOrder.colour || "—"}</p>
+                        <Select value={selectedOrder.colour || ""} onValueChange={async (val) => {
+                          const v = val || null;
+                          setSelectedOrder({ ...selectedOrder, colour: v });
+                          const { error } = await supabase.from("orders").update({ colour: v }).eq("id", selectedOrder.id);
+                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                        }}>
+                          <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="white" className="font-body text-sm">White</SelectItem>
+                            <SelectItem value="yellow" className="font-body text-sm">Yellow</SelectItem>
+                            <SelectItem value="rose" className="font-body text-sm">Rose</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Ring Size</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.ring_size || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.ring_size || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, ring_size: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ ring_size: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="Ring size"
+                        />
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Stone Type</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.stone_type || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.stone_type || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, stone_type: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ stone_type: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="Stone type"
+                        />
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Stone Size</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.stone_size || "—"}</p>
+                        <Input
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.stone_size || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, stone_size: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ stone_size: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                          placeholder="Stone size"
+                        />
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Rhodium/Polish</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.rhodium_polish ? "Yes" : "No"}</p>
+                        <div className="flex items-center gap-2 h-8">
+                          <Checkbox
+                            checked={selectedOrder.rhodium_polish || false}
+                            onCheckedChange={async (checked) => {
+                              const val = !!checked;
+                              setSelectedOrder({ ...selectedOrder, rhodium_polish: val });
+                              const { error } = await supabase.from("orders").update({ rhodium_polish: val }).eq("id", selectedOrder.id);
+                              if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                            }}
+                          />
+                          <span className="font-body text-sm">{selectedOrder.rhodium_polish ? "Yes" : "No"}</span>
+                        </div>
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Delivery Date</p>
-                        <p className="font-body text-sm text-foreground">{selectedOrder.delivery_date ? new Date(selectedOrder.delivery_date + "T00:00:00").toLocaleDateString() : "—"}</p>
+                        <Input
+                          type="date"
+                          className="font-body text-sm h-8"
+                          value={selectedOrder.delivery_date || ""}
+                          onChange={(e) => setSelectedOrder({ ...selectedOrder, delivery_date: e.target.value || null })}
+                          onBlur={async (e) => {
+                            const val = e.target.value || null;
+                            const { error } = await supabase.from("orders").update({ delivery_date: val }).eq("id", selectedOrder.id);
+                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
