@@ -613,16 +613,23 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Active Orders", value: orders.filter((o) => o.status !== "picked_up").length },
+            { label: "Active Orders", value: orders.filter((o) => o.status !== "picked_up" && o.status !== "complete").length, view: "active" as const },
+            { label: "Complete Orders", value: orders.filter((o) => o.status === "complete").length, view: "complete" as const },
             { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_pickup").length },
             { label: "Total Orders", value: orders.length },
           ].map((stat) => (
-            <div key={stat.label} className="bg-background border border-border p-5">
+            <button
+              key={stat.label}
+              onClick={() => stat.view && setOrderView(stat.view)}
+              className={`bg-background border p-5 text-left transition-colors ${
+                stat.view && orderView === stat.view ? "border-primary ring-1 ring-primary" : "border-border"
+              } ${stat.view ? "hover:border-primary cursor-pointer" : "cursor-default"}`}
+            >
               <p className="font-body text-sm text-muted-foreground">{stat.label}</p>
               <p className="font-display text-2xl text-foreground mt-1">{stat.value}</p>
-            </div>
+            </button>
           ))}
         </div>
 
