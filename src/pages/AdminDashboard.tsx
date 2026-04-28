@@ -1461,6 +1461,12 @@ const AdminDashboard = () => {
           )}
         </div>
 
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-display text-lg text-foreground">
+            {orderView === "active" ? "Active Orders" : "Complete Orders"}
+            <span className="ml-2 font-body text-sm text-muted-foreground">({filteredOrders.length})</span>
+          </h2>
+        </div>
         <OrderTable items={filteredOrders} />
       </div>
 
