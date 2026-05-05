@@ -172,6 +172,54 @@ const FinishedProducts = () => {
         </div>
 
         <Card>
+          <CardHeader><CardTitle className="font-display">Order (optional)</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Label>Order Number</Label>
+              <Select
+                value={form.order_id || NONE}
+                onValueChange={(v) => {
+                  if (v === NONE) {
+                    setForm({ ...form, order_id: "", customer_profile_id: "" });
+                  } else {
+                    const o = orders.find((x) => x.id === v);
+                    setForm({ ...form, order_id: v, customer_profile_id: o?.customer_profile_id || "" });
+                  }
+                }}
+              >
+                <SelectTrigger><SelectValue placeholder="Select an order number" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>— No order —</SelectItem>
+                  {orders.map((o) => (
+                    <SelectItem key={o.id} value={o.id}>{o.order_number}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {form.order_id && (() => {
+              const o = orders.find((x) => x.id === form.order_id);
+              const p = profiles.find((x) => x.id === (o?.customer_profile_id || ""));
+              const first = p?.first_name || o?.first_name || "";
+              const last = p?.last_name || o?.last_name || "";
+              const hasName = (first || last).trim().length > 0;
+              return (
+                <div className="rounded-md border border-border bg-muted/40 p-3">
+                  <h3 className="font-display text-base mb-2">Profile</h3>
+                  {hasName ? (
+                    <div className="grid grid-cols-2 gap-3 text-sm font-body">
+                      <div><span className="text-muted-foreground">First Name:</span> <span className="font-medium">{first || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Last Name:</span> <span className="font-medium">{last || "—"}</span></div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No client linked to this order.</p>
+                  )}
+                </div>
+              );
+            })()}
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardHeader><CardTitle className="font-display">New Finished Product</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
