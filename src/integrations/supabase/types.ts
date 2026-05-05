@@ -199,6 +199,66 @@ export type Database = {
         }
         Relationships: []
       }
+      finished_products: {
+        Row: {
+          client_cost: number | null
+          cost: number | null
+          created_at: string
+          created_by: string | null
+          customer_profile_id: string | null
+          gem_sku: string | null
+          id: string
+          metal_color: string
+          metal_color_other: string | null
+          metal_type: string
+          notes: string | null
+          order_id: string | null
+          product_type: string
+          product_type_other: string | null
+          stone_type: string | null
+          updated_at: string
+          weight: string | null
+        }
+        Insert: {
+          client_cost?: number | null
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          customer_profile_id?: string | null
+          gem_sku?: string | null
+          id?: string
+          metal_color: string
+          metal_color_other?: string | null
+          metal_type: string
+          notes?: string | null
+          order_id?: string | null
+          product_type: string
+          product_type_other?: string | null
+          stone_type?: string | null
+          updated_at?: string
+          weight?: string | null
+        }
+        Update: {
+          client_cost?: number | null
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          customer_profile_id?: string | null
+          gem_sku?: string | null
+          id?: string
+          metal_color?: string
+          metal_color_other?: string | null
+          metal_type?: string
+          notes?: string | null
+          order_id?: string | null
+          product_type?: string
+          product_type_other?: string | null
+          stone_type?: string | null
+          updated_at?: string
+          weight?: string | null
+        }
+        Relationships: []
+      }
       order_messages: {
         Row: {
           created_at: string
