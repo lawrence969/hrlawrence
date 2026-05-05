@@ -231,69 +231,35 @@ const FinishedProducts = () => {
               </div>
 
               <div className="md:col-span-2 border-t border-border pt-4 mt-2">
-                <h3 className="font-display text-lg mb-3">Link to Client (optional)</h3>
-                <div className="space-y-2 relative">
-                  <Label>Client</Label>
-                  {form.customer_profile_id ? (
-                    <div className="flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm">
-                      <span>{profileLabel(form.customer_profile_id)}{(() => { const p = profiles.find(x => x.id === form.customer_profile_id); return p ? ` — ${p.email}` : ""; })()}</span>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => { setForm({ ...form, customer_profile_id: "", order_id: "" }); setClientSearch(""); }}>Change</Button>
-                    </div>
+                <h3 className="font-display text-lg mb-3">Attach to Order (optional)</h3>
+                <div className="space-y-2">
+                  <Label>Order Number</Label>
+                  <Input
+                    placeholder="e.g. HRL-2025-0012"
+                    value={clientSearch}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setClientSearch(val);
+                      const match = orders.find((o) => o.order_number.toLowerCase() === val.trim().toLowerCase());
+                      if (match) {
+                        setForm({ ...form, order_id: match.id, customer_profile_id: match.customer_profile_id || "" });
+                      } else {
+                        setForm({ ...form, order_id: "", customer_profile_id: "" });
+                      }
+                    }}
+                    autoComplete="off"
+                  />
+                  {form.order_id ? (
+                    <p className="text-sm text-foreground">
+                      Client: <span className="font-medium">{profileLabel(form.customer_profile_id) !== "—" ? profileLabel(form.customer_profile_id) : "No client linked to this order"}</span>
+                    </p>
+                  ) : clientSearch.trim() ? (
+                    <p className="text-xs text-muted-foreground">No order found with that number.</p>
                   ) : (
-                    <>
-                      <Input
-                        placeholder="Start typing client name or email…"
-                        value={clientSearch}
-                        onChange={(e) => setClientSearch(e.target.value)}
-                        autoComplete="off"
-                      />
-                      {clientSearch.trim() && filteredProfiles.length > 0 && (
-                        <div className="absolute z-10 left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-md">
-                          {filteredProfiles.slice(0, 20).map((p) => (
-                            <button
-                              key={p.id}
-                              type="button"
-                              className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
-                              onClick={() => { setForm({ ...form, customer_profile_id: p.id, order_id: "" }); setClientSearch(""); }}
-                            >
-                              {p.first_name} {p.last_name} <span className="text-muted-foreground">— {p.email}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      {clientSearch.trim() && filteredProfiles.length === 0 && (
-                        <p className="text-xs text-muted-foreground">No matching clients.</p>
-                      )}
-                    </>
+                    <p className="text-xs text-muted-foreground">Enter the order number to auto-link the client.</p>
                   )}
                 </div>
               </div>
-
-              {form.customer_profile_id && (
-                <div className="md:col-span-2 border-t border-border pt-4">
-                  <h3 className="font-display text-lg mb-3">Attach to Order (optional)</h3>
-                  <div className="space-y-2">
-                    <Label>Order for {profileLabel(form.customer_profile_id)}</Label>
-                    <Select
-                      value={form.order_id || NONE}
-                      onValueChange={(v) => setForm({ ...form, order_id: v === NONE ? "" : v })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={clientOrders.length ? "Select order" : "No orders for this client"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={NONE}>— No order —</SelectItem>
-                        {clientOrders.map((o) => (
-                          <SelectItem key={o.id} value={o.id}>{o.order_number} — {(o.item_description || "").slice(0, 60) || "—"}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {clientOrders.length === 0 && (
-                      <p className="text-xs text-muted-foreground">This client has no orders. The product will be saved without an order link.</p>
-                    )}
-                  </div>
-                </div>
-              )}
 
               <div className="space-y-2 md:col-span-2">
                 <Label>Notes</Label>
