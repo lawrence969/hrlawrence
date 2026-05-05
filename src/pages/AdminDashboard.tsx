@@ -131,6 +131,7 @@ const AdminDashboard = () => {
   const [showPrintPrompt, setShowPrintPrompt] = useState(false);
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
+  const [orderView, setOrderView] = useState<"active" | "complete">("active");
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
