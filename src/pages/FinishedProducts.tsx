@@ -232,26 +232,40 @@ const FinishedProducts = () => {
 
               <div className="md:col-span-2 border-t border-border pt-4 mt-2">
                 <h3 className="font-display text-lg mb-3">Link to Client (optional)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Search Client</Label>
-                    <Input placeholder="Name or email…" value={clientSearch} onChange={(e) => setClientSearch(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Client</Label>
-                    <Select
-                      value={form.customer_profile_id || NONE}
-                      onValueChange={(v) => setForm({ ...form, customer_profile_id: v === NONE ? "" : v, order_id: "" })}
-                    >
-                      <SelectTrigger><SelectValue placeholder="Select client" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={NONE}>— No client —</SelectItem>
-                        {filteredProfiles.map((p) => (
-                          <SelectItem key={p.id} value={p.id}>{p.first_name} {p.last_name} — {p.email}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2 relative">
+                  <Label>Client</Label>
+                  {form.customer_profile_id ? (
+                    <div className="flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm">
+                      <span>{profileLabel(form.customer_profile_id)}{(() => { const p = profiles.find(x => x.id === form.customer_profile_id); return p ? ` — ${p.email}` : ""; })()}</span>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => { setForm({ ...form, customer_profile_id: "", order_id: "" }); setClientSearch(""); }}>Change</Button>
+                    </div>
+                  ) : (
+                    <>
+                      <Input
+                        placeholder="Start typing client name or email…"
+                        value={clientSearch}
+                        onChange={(e) => setClientSearch(e.target.value)}
+                        autoComplete="off"
+                      />
+                      {clientSearch.trim() && filteredProfiles.length > 0 && (
+                        <div className="absolute z-10 left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-md">
+                          {filteredProfiles.slice(0, 20).map((p) => (
+                            <button
+                              key={p.id}
+                              type="button"
+                              className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
+                              onClick={() => { setForm({ ...form, customer_profile_id: p.id, order_id: "" }); setClientSearch(""); }}
+                            >
+                              {p.first_name} {p.last_name} <span className="text-muted-foreground">— {p.email}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {clientSearch.trim() && filteredProfiles.length === 0 && (
+                        <p className="text-xs text-muted-foreground">No matching clients.</p>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
 
