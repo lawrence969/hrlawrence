@@ -131,6 +131,7 @@ const AdminDashboard = () => {
   const [showPrintPrompt, setShowPrintPrompt] = useState(false);
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
+  const [orderView, setOrderView] = useState<"active" | "complete">("active");
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
@@ -442,8 +443,6 @@ const AdminDashboard = () => {
     }
     setSendingEmailInvite(false);
   };
-
-  const [orderView, setOrderView] = useState<"active" | "complete">("active");
 
   const baseFiltered = orders.filter((o) => {
     const matchesSearch = o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase());
