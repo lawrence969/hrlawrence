@@ -444,8 +444,6 @@ const AdminDashboard = () => {
     setSendingEmailInvite(false);
   };
 
-  const [orderView, setOrderView] = useState<"active" | "complete">("active");
-
   const baseFiltered = orders.filter((o) => {
     const matchesSearch = o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase());
     const matchesType = filterType === "all" || o.order_type === filterType;
