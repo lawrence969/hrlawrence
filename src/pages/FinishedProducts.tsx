@@ -70,7 +70,7 @@ const FinishedProducts = () => {
   useEffect(() => {
     if (!user || !isStaff) return;
     supabase.from("profiles").select("id, first_name, last_name, email").order("last_name").then(({ data }) => setProfiles(data || []));
-    supabase.from("orders").select("id, order_number, customer_profile_id, item_description").order("order_number", { ascending: false }).then(({ data }) => setOrders((data as any) || []));
+    supabase.from("orders").select("id, order_number, customer_profile_id, item_description, first_name, last_name").order("order_number", { ascending: false }).then(({ data }) => setOrders((data as any) || []));
     fetchProducts();
   }, [user, isStaff]);
 
