@@ -278,37 +278,6 @@ const FinishedProducts = () => {
                 <Input type="number" step="0.01" min="0" value={form.client_cost} onChange={(e) => setForm({ ...form, client_cost: e.target.value })} />
               </div>
 
-              <div className="md:col-span-2 border-t border-border pt-4 mt-2">
-                <h3 className="font-display text-lg mb-3">Attach to Order (optional)</h3>
-                <div className="space-y-2">
-                  <Label>Order Number</Label>
-                  <Input
-                    placeholder="e.g. HRL-2025-0012"
-                    value={clientSearch}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setClientSearch(val);
-                      const match = orders.find((o) => o.order_number.toLowerCase() === val.trim().toLowerCase());
-                      if (match) {
-                        setForm({ ...form, order_id: match.id, customer_profile_id: match.customer_profile_id || "" });
-                      } else {
-                        setForm({ ...form, order_id: "", customer_profile_id: "" });
-                      }
-                    }}
-                    autoComplete="off"
-                  />
-                  {form.order_id ? (
-                    <p className="text-sm text-foreground">
-                      Client: <span className="font-medium">{profileLabel(form.customer_profile_id) !== "—" ? profileLabel(form.customer_profile_id) : "No client linked to this order"}</span>
-                    </p>
-                  ) : clientSearch.trim() ? (
-                    <p className="text-xs text-muted-foreground">No order found with that number.</p>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">Enter the order number to auto-link the client.</p>
-                  )}
-                </div>
-              </div>
-
               <div className="space-y-2 md:col-span-2">
                 <Label>Notes</Label>
                 <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} />
