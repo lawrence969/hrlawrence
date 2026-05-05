@@ -36,7 +36,7 @@ const schema = z.object({
 });
 
 interface Profile { id: string; first_name: string; last_name: string; email: string }
-interface Order { id: string; order_number: string; customer_profile_id: string | null; item_description: string }
+interface Order { id: string; order_number: string; customer_profile_id: string | null; item_description: string; first_name: string | null; last_name: string | null }
 interface FinishedProduct {
   id: string; created_at: string; product_type: string; product_type_other: string | null;
   metal_type: string; metal_color: string; metal_color_other: string | null;
