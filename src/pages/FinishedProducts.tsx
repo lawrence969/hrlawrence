@@ -23,7 +23,7 @@ const productTypes = [
   { v: "pendant", l: "Pendant" },
   { v: "other", l: "Other" },
 ];
-const metalTypes = ["Gold", "Silver", "Platinum"];
+const metalTypes = ["10k", "14k", "18k", "22k", "Silver", "Platinum"];
 const metalColors = ["White", "Yellow", "Rose", "Other"];
 const NONE = "__none__";
 
