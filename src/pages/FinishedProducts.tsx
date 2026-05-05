@@ -36,7 +36,7 @@ const schema = z.object({
 });
 
 interface Profile { id: string; first_name: string; last_name: string; email: string }
-interface Order { id: string; order_number: string; customer_profile_id: string | null; item_description: string }
+interface Order { id: string; order_number: string; customer_profile_id: string | null; item_description: string; first_name: string | null; last_name: string | null }
 interface FinishedProduct {
   id: string; created_at: string; product_type: string; product_type_other: string | null;
   metal_type: string; metal_color: string; metal_color_other: string | null;
@@ -70,7 +70,7 @@ const FinishedProducts = () => {
   useEffect(() => {
     if (!user || !isStaff) return;
     supabase.from("profiles").select("id, first_name, last_name, email").order("last_name").then(({ data }) => setProfiles(data || []));
-    supabase.from("orders").select("id, order_number, customer_profile_id, item_description").order("order_number", { ascending: false }).then(({ data }) => setOrders((data as any) || []));
+    supabase.from("orders").select("id, order_number, customer_profile_id, item_description, first_name, last_name").order("order_number", { ascending: false }).then(({ data }) => setOrders((data as any) || []));
     fetchProducts();
   }, [user, isStaff]);
 
@@ -172,6 +172,54 @@ const FinishedProducts = () => {
         </div>
 
         <Card>
+          <CardHeader><CardTitle className="font-display">Order (optional)</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Label>Order Number</Label>
+              <Select
+                value={form.order_id || NONE}
+                onValueChange={(v) => {
+                  if (v === NONE) {
+                    setForm({ ...form, order_id: "", customer_profile_id: "" });
+                  } else {
+                    const o = orders.find((x) => x.id === v);
+                    setForm({ ...form, order_id: v, customer_profile_id: o?.customer_profile_id || "" });
+                  }
+                }}
+              >
+                <SelectTrigger><SelectValue placeholder="Select an order number" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>— No order —</SelectItem>
+                  {orders.map((o) => (
+                    <SelectItem key={o.id} value={o.id}>{o.order_number}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {form.order_id && (() => {
+              const o = orders.find((x) => x.id === form.order_id);
+              const p = profiles.find((x) => x.id === (o?.customer_profile_id || ""));
+              const first = p?.first_name || o?.first_name || "";
+              const last = p?.last_name || o?.last_name || "";
+              const hasName = (first || last).trim().length > 0;
+              return (
+                <div className="rounded-md border border-border bg-muted/40 p-3">
+                  <h3 className="font-display text-base mb-2">Profile</h3>
+                  {hasName ? (
+                    <div className="grid grid-cols-2 gap-3 text-sm font-body">
+                      <div><span className="text-muted-foreground">First Name:</span> <span className="font-medium">{first || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Last Name:</span> <span className="font-medium">{last || "—"}</span></div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No client linked to this order.</p>
+                  )}
+                </div>
+              );
+            })()}
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardHeader><CardTitle className="font-display">New Finished Product</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -228,37 +276,6 @@ const FinishedProducts = () => {
               <div className="space-y-2">
                 <Label>Client Cost</Label>
                 <Input type="number" step="0.01" min="0" value={form.client_cost} onChange={(e) => setForm({ ...form, client_cost: e.target.value })} />
-              </div>
-
-              <div className="md:col-span-2 border-t border-border pt-4 mt-2">
-                <h3 className="font-display text-lg mb-3">Attach to Order (optional)</h3>
-                <div className="space-y-2">
-                  <Label>Order Number</Label>
-                  <Input
-                    placeholder="e.g. HRL-2025-0012"
-                    value={clientSearch}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setClientSearch(val);
-                      const match = orders.find((o) => o.order_number.toLowerCase() === val.trim().toLowerCase());
-                      if (match) {
-                        setForm({ ...form, order_id: match.id, customer_profile_id: match.customer_profile_id || "" });
-                      } else {
-                        setForm({ ...form, order_id: "", customer_profile_id: "" });
-                      }
-                    }}
-                    autoComplete="off"
-                  />
-                  {form.order_id ? (
-                    <p className="text-sm text-foreground">
-                      Client: <span className="font-medium">{profileLabel(form.customer_profile_id) !== "—" ? profileLabel(form.customer_profile_id) : "No client linked to this order"}</span>
-                    </p>
-                  ) : clientSearch.trim() ? (
-                    <p className="text-xs text-muted-foreground">No order found with that number.</p>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">Enter the order number to auto-link the client.</p>
-                  )}
-                </div>
               </div>
 
               <div className="space-y-2 md:col-span-2">
