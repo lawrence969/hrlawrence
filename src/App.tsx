@@ -11,7 +11,7 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import GoldCalculator from "./pages/GoldCalculator";
-import FinishedProducts from "./pages/FinishedProducts";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,7 +32,7 @@ const App = () => (
             
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
-            <Route path="/admin/finished-products" element={<FinishedProducts />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
