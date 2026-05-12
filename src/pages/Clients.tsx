@@ -3,8 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, LogOut, ChevronRight, X } from "lucide-react";
+import { Search, LogOut, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import logoNavy from "@/assets/logo-navy.jpg";
 import { format } from "date-fns";
@@ -34,7 +33,6 @@ const Clients = () => {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<ClientRow | null>(null);
 
   useEffect(() => {
     if (!user || !isStaff) return;
@@ -77,7 +75,7 @@ const Clients = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   if (!user || !isStaff) return <Navigate to="/" replace />;
 
-  const selectedOrders = selected ? (ordersByClient.get(selected.id) || []) : [];
+  
 
   return (
     <div className="min-h-screen bg-background">
@@ -114,113 +112,50 @@ const Clients = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-6">
-          <div className="bg-card border border-border rounded-lg overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted/40 border-b border-border">
-                <tr>
-                  <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider">Client #</th>
-                  <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider">Name</th>
-                  <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider hidden md:table-cell">Email</th>
-                  <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Phone</th>
-                  <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider">Orders</th>
-                  <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Order</th>
-                  <th className="w-10"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((c) => {
-                  const cOrders = ordersByClient.get(c.id) || [];
-                  const last = cOrders[0];
-                  return (
-                    <motion.tr
-                      key={c.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      onClick={() => setSelected(c)}
-                      className={`border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer ${selected?.id === c.id ? "bg-muted/40" : ""}`}
-                    >
-                      <td className="px-4 py-3 font-body text-sm font-medium text-accent">{c.client_number || "—"}</td>
-                      <td className="px-4 py-3 font-body text-sm text-foreground">
-                        {`${c.first_name || ""} ${c.last_name || ""}`.trim() || <span className="text-muted-foreground">—</span>}
-                      </td>
-                      <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[220px]">{c.email}</td>
-                      <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
-                      <td className="px-4 py-3 font-body text-sm text-foreground">{cOrders.length}</td>
-                      <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden lg:table-cell">
-                        {last ? format(new Date(last.created_at), "MMM d, yyyy") : "—"}
-                      </td>
-                      <td className="px-4 py-3"><ChevronRight className="w-4 h-4 text-muted-foreground" /></td>
-                    </motion.tr>
-                  );
-                })}
-                {filtered.length === 0 && (
-                  <tr><td colSpan={7} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">No clients found</td></tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {!selected && (
-            <div className="hidden xl:flex bg-card border border-border border-dashed rounded-lg p-6 h-fit xl:sticky xl:top-24 items-center justify-center text-center min-h-[240px]">
-              <p className="font-body text-sm text-muted-foreground">Select a client to view their full order history.</p>
-            </div>
-          )}
-
-          {selected && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-card border border-border rounded-lg p-6 h-fit xl:sticky xl:top-24"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="font-body text-sm text-accent font-medium">{selected.client_number}</div>
-                  <h2 className="font-display text-2xl text-foreground mt-1">
-                    {`${selected.first_name || ""} ${selected.last_name || ""}`.trim() || "Unnamed Client"}
-                  </h2>
-                </div>
-                <Button variant="ghost" size="icon" onClick={() => setSelected(null)}>
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <div className="space-y-2 mb-6 font-body text-sm">
-                <div><span className="text-muted-foreground">Email:</span> {selected.email}</div>
-                <div><span className="text-muted-foreground">Phone:</span> {selected.phone || "—"}</div>
-                <div><span className="text-muted-foreground">Since:</span> {format(new Date(selected.created_at), "MMM d, yyyy")}</div>
-              </div>
-
-              <h3 className="font-body text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                Orders ({selectedOrders.length})
-              </h3>
-              <div className="space-y-2 max-h-[480px] overflow-y-auto">
-                {selectedOrders.map((o) => (
-                  <a
-                    key={o.id}
-                    href={`/admin?order=${o.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block border border-border rounded-md p-3 hover:bg-muted/30 transition-colors"
+        <div className="bg-card border border-border rounded-lg overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-muted/40 border-b border-border">
+              <tr>
+                <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider">Client #</th>
+                <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider hidden md:table-cell">Email</th>
+                <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Phone</th>
+                <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider">Orders</th>
+                <th className="px-4 py-3 text-left font-body text-xs text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Last Order</th>
+                <th className="w-10"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((c) => {
+                const cOrders = ordersByClient.get(c.id) || [];
+                const last = cOrders[0];
+                return (
+                  <motion.tr
+                    key={c.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onClick={() => window.open(`/admin/clients/${c.id}`, "_blank", "noopener")}
+                    className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-body text-sm font-medium">{o.order_number}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded font-body ${o.order_type === "repair" ? "bg-orange-100 text-orange-800" : "bg-purple-100 text-purple-800"}`}>
-                        {o.order_type}
-                      </span>
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1 truncate">{o.item_description}</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {format(new Date(o.created_at), "MMM d, yyyy")} · {o.status.replace(/_/g, " ")}
-                    </div>
-                  </a>
-                ))}
-                {selectedOrders.length === 0 && (
-                  <div className="text-sm text-muted-foreground font-body">No orders yet.</div>
-                )}
-              </div>
-            </motion.div>
-          )}
+                    <td className="px-4 py-3 font-body text-sm font-medium text-accent">{c.client_number || "—"}</td>
+                    <td className="px-4 py-3 font-body text-sm text-foreground">
+                      {`${c.first_name || ""} ${c.last_name || ""}`.trim() || <span className="text-muted-foreground">—</span>}
+                    </td>
+                    <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[220px]">{c.email}</td>
+                    <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden lg:table-cell">{c.phone || "—"}</td>
+                    <td className="px-4 py-3 font-body text-sm text-foreground">{cOrders.length}</td>
+                    <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden lg:table-cell">
+                      {last ? format(new Date(last.created_at), "MMM d, yyyy") : "—"}
+                    </td>
+                    <td className="px-4 py-3"><ChevronRight className="w-4 h-4 text-muted-foreground" /></td>
+                  </motion.tr>
+                );
+              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">No clients found</td></tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
