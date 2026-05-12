@@ -34,6 +34,7 @@ const App = () => (
             
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/clients" element={<Clients />} />
+            <Route path="/admin/clients/:id" element={<ClientDetail />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
             
             <Route path="*" element={<NotFound />} />
