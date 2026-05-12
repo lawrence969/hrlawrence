@@ -145,17 +145,27 @@ const AdminDashboard = () => {
     deliveryDate: "",
   });
 
+  const [clientNumbers, setClientNumbers] = useState<Record<string, string>>({});
+
   const fetchOrders = async () => {
     const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
     setOrders(data || []);
   };
 
+  const fetchClientNumbers = async () => {
+    const { data } = await supabase.from("profiles").select("id, client_number");
+    const map: Record<string, string> = {};
+    (data || []).forEach((p: any) => { if (p.client_number) map[p.id] = p.client_number; });
+    setClientNumbers(map);
+  };
+
   useEffect(() => {
     if (!user || !isStaff) return;
     fetchOrders();
+    fetchClientNumbers();
     const channel = supabase
       .channel("admin-orders")
-      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => fetchOrders())
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => { fetchOrders(); fetchClientNumbers(); })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
