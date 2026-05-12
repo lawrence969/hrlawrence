@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ const statusLabel = (s: string) => s.replace(/_/g, " ");
 
 const ClientDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user, isStaff, loading, signOut } = useAuth();
   const [client, setClient] = useState<ClientRow | null>(null);
   const [orders, setOrders] = useState<OrderRow[]>([]);
@@ -115,7 +116,7 @@ const ClientDetail = () => {
                   {orders.map((o) => (
                     <tr
                       key={o.id}
-                      onClick={() => window.open(`/admin?order=${o.id}`, "_blank", "noopener")}
+                      onClick={() => navigate(`/admin?order=${o.id}`)}
                       className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer"
                     >
                       <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{o.order_number}</td>
