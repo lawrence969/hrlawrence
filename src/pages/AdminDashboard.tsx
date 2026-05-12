@@ -806,7 +806,12 @@ const AdminDashboard = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 z-50 flex justify-end" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
             <motion.div initial={{ x: 400 }} animate={{ x: 0 }} className="bg-background w-full max-w-md h-full overflow-y-auto border-l border-border p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                <div>
+                  <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                  {selectedOrder.customer_profile_id && clientNumbers[selectedOrder.customer_profile_id] && (
+                    <Link to="/admin/clients" className="font-body text-xs text-accent hover:underline">{clientNumbers[selectedOrder.customer_profile_id]}</Link>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
