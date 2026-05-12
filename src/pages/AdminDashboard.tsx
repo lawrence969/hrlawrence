@@ -171,6 +171,19 @@ const AdminDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
 
+  // Open an order from ?order=<id> query param (deep link from Clients page)
+  useEffect(() => {
+    const orderId = searchParams.get("order");
+    if (!orderId || orders.length === 0) return;
+    const match = orders.find((o) => o.id === orderId);
+    if (match) {
+      setSelectedOrder(match);
+      setActivePanel("detail");
+      searchParams.delete("order");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [orders, searchParams, setSearchParams]);
+
   // Fetch messages and quotes when order selected
   useEffect(() => {
     if (!selectedOrder) return;
