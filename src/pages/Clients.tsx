@@ -196,9 +196,11 @@ const Clients = () => {
               </h3>
               <div className="space-y-2 max-h-[480px] overflow-y-auto">
                 {selectedOrders.map((o) => (
-                  <Link
+                  <a
                     key={o.id}
-                    to={`/admin?order=${o.id}`}
+                    href={`/admin?order=${o.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="block border border-border rounded-md p-3 hover:bg-muted/30 transition-colors"
                   >
                     <div className="flex items-center justify-between">
@@ -211,7 +213,7 @@ const Clients = () => {
                     <div className="text-xs text-muted-foreground mt-1">
                       {format(new Date(o.created_at), "MMM d, yyyy")} · {o.status.replace(/_/g, " ")}
                     </div>
-                  </Link>
+                  </a>
                 ))}
                 {selectedOrders.length === 0 && (
                   <div className="text-sm text-muted-foreground font-body">No orders yet.</div>
