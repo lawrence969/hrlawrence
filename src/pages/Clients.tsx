@@ -97,7 +97,7 @@ const Clients = () => {
         </div>
       </nav>
 
-      <div className="pt-16 p-6 lg:p-10 lg:pt-20">
+      <div className="pt-20 px-4 sm:px-6 pb-10 max-w-[1600px] mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-3xl text-foreground">Clients</h1>
@@ -114,7 +114,7 @@ const Clients = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-6">
           <div className="bg-card border border-border rounded-lg overflow-x-auto">
             <table className="w-full">
               <thead className="bg-muted/40 border-b border-border">
@@ -161,11 +161,17 @@ const Clients = () => {
             </table>
           </div>
 
+          {!selected && (
+            <div className="hidden xl:flex bg-card border border-border border-dashed rounded-lg p-6 h-fit xl:sticky xl:top-24 items-center justify-center text-center min-h-[240px]">
+              <p className="font-body text-sm text-muted-foreground">Select a client to view their full order history.</p>
+            </div>
+          )}
+
           {selected && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-card border border-border rounded-lg p-6 h-fit lg:sticky lg:top-24"
+              className="bg-card border border-border rounded-lg p-6 h-fit xl:sticky xl:top-24"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
