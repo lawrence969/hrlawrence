@@ -114,7 +114,7 @@ const Clients = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-6">
           <div className="bg-card border border-border rounded-lg overflow-x-auto">
             <table className="w-full">
               <thead className="bg-muted/40 border-b border-border">
