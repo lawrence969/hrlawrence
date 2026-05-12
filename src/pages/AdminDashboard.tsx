@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -96,6 +96,7 @@ interface Quote {
 
 const AdminDashboard = () => {
   const { user, isStaff, loading, signOut } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
@@ -169,6 +170,19 @@ const AdminDashboard = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
+
+  // Open an order from ?order=<id> query param (deep link from Clients page)
+  useEffect(() => {
+    const orderId = searchParams.get("order");
+    if (!orderId || orders.length === 0) return;
+    const match = orders.find((o) => o.id === orderId);
+    if (match) {
+      setSelectedOrder(match);
+      setActivePanel("detail");
+      searchParams.delete("order");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [orders, searchParams, setSearchParams]);
 
   // Fetch messages and quotes when order selected
   useEffect(() => {
