@@ -96,6 +96,7 @@ interface Quote {
 
 const AdminDashboard = () => {
   const { user, isStaff, loading, signOut } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
