@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import GoldCalculator from "./pages/GoldCalculator";
+import Clients from "./pages/Clients";
 
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/clients" element={<Clients />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
             
             <Route path="*" element={<NotFound />} />

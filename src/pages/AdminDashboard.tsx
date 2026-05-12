@@ -145,17 +145,27 @@ const AdminDashboard = () => {
     deliveryDate: "",
   });
 
+  const [clientNumbers, setClientNumbers] = useState<Record<string, string>>({});
+
   const fetchOrders = async () => {
     const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
     setOrders(data || []);
   };
 
+  const fetchClientNumbers = async () => {
+    const { data } = await supabase.from("profiles").select("id, client_number");
+    const map: Record<string, string> = {};
+    (data || []).forEach((p: any) => { if (p.client_number) map[p.id] = p.client_number; });
+    setClientNumbers(map);
+  };
+
   useEffect(() => {
     if (!user || !isStaff) return;
     fetchOrders();
+    fetchClientNumbers();
     const channel = supabase
       .channel("admin-orders")
-      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => fetchOrders())
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => { fetchOrders(); fetchClientNumbers(); })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
@@ -492,9 +502,16 @@ const AdminDashboard = () => {
             <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
               <td className="px-4 py-3 font-body text-sm text-foreground">
-                {order.first_name || order.last_name
-                  ? `${order.first_name || ''} ${order.last_name || ''}`.trim()
-                  : <span className="text-muted-foreground">{order.customer_email}</span>}
+                <div className="flex flex-col">
+                  <span>
+                    {order.first_name || order.last_name
+                      ? `${order.first_name || ''} ${order.last_name || ''}`.trim()
+                      : <span className="text-muted-foreground">{order.customer_email}</span>}
+                  </span>
+                  {order.customer_profile_id && clientNumbers[order.customer_profile_id] && (
+                    <span className="text-xs text-accent font-medium">{clientNumbers[order.customer_profile_id]}</span>
+                  )}
+                </div>
               </td>
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
               <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
@@ -591,6 +608,7 @@ const AdminDashboard = () => {
             <Link to="/" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Home</Link>
             <Link to="/book-consultation" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Book Consultation</Link>
             <Link to="/track-order" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Track Order</Link>
+            <Link to="/admin/clients" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Clients</Link>
             <Link to="/gold-calculator" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Gold Calculator</Link>
             
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Staff Portal</span>
@@ -788,7 +806,12 @@ const AdminDashboard = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 z-50 flex justify-end" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
             <motion.div initial={{ x: 400 }} animate={{ x: 0 }} className="bg-background w-full max-w-md h-full overflow-y-auto border-l border-border p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                <div>
+                  <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                  {selectedOrder.customer_profile_id && clientNumbers[selectedOrder.customer_profile_id] && (
+                    <Link to="/admin/clients" className="font-body text-xs text-accent hover:underline">{clientNumbers[selectedOrder.customer_profile_id]}</Link>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
