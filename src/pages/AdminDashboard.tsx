@@ -591,6 +591,7 @@ const AdminDashboard = () => {
             <Link to="/" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Home</Link>
             <Link to="/book-consultation" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Book Consultation</Link>
             <Link to="/track-order" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Track Order</Link>
+            <Link to="/admin/clients" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Clients</Link>
             <Link to="/gold-calculator" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Gold Calculator</Link>
             
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Staff Portal</span>
