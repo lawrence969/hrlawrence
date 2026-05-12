@@ -213,7 +213,7 @@ const Clients = () => {
                     <div className="text-xs text-muted-foreground mt-1">
                       {format(new Date(o.created_at), "MMM d, yyyy")} · {o.status.replace(/_/g, " ")}
                     </div>
-                  </Link>
+                  </a>
                 ))}
                 {selectedOrders.length === 0 && (
                   <div className="text-sm text-muted-foreground font-body">No orders yet.</div>
