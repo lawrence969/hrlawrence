@@ -161,6 +161,12 @@ const Clients = () => {
             </table>
           </div>
 
+          {!selected && (
+            <div className="hidden xl:flex bg-card border border-border border-dashed rounded-lg p-6 h-fit xl:sticky xl:top-24 items-center justify-center text-center min-h-[240px]">
+              <p className="font-body text-sm text-muted-foreground">Select a client to view their full order history.</p>
+            </div>
+          )}
+
           {selected && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
