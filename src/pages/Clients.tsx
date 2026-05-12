@@ -75,7 +75,7 @@ const Clients = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   if (!user || !isStaff) return <Navigate to="/" replace />;
 
-  const selectedOrders = selected ? (ordersByClient.get(selected.id) || []) : [];
+  
 
   return (
     <div className="min-h-screen bg-background">
