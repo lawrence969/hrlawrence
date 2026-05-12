@@ -171,7 +171,7 @@ const Clients = () => {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-card border border-border rounded-lg p-6 h-fit lg:sticky lg:top-24"
+              className="bg-card border border-border rounded-lg p-6 h-fit xl:sticky xl:top-24"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
