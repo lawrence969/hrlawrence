@@ -97,7 +97,7 @@ const Clients = () => {
         </div>
       </nav>
 
-      <div className="pt-16 p-6 lg:p-10 lg:pt-20">
+      <div className="pt-20 px-4 sm:px-6 pb-10 max-w-[1600px] mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-display text-3xl text-foreground">Clients</h1>
