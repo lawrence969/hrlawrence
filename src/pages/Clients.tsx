@@ -33,7 +33,6 @@ const Clients = () => {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<ClientRow | null>(null);
 
   useEffect(() => {
     if (!user || !isStaff) return;
