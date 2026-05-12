@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ interface OrderRow {
 
 const Clients = () => {
   const { user, isStaff, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [search, setSearch] = useState("");
@@ -134,7 +135,7 @@ const Clients = () => {
                     key={c.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    onClick={() => window.open(`/admin/clients/${c.id}`, "_blank", "noopener")}
+                    onClick={() => navigate(`/admin/clients/${c.id}`)}
                     className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer"
                   >
                     <td className="px-4 py-3 font-body text-sm font-medium text-accent">{c.client_number || "—"}</td>
