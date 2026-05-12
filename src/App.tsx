@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import GoldCalculator from "./pages/GoldCalculator";
 import Clients from "./pages/Clients";
+import ClientDetail from "./pages/ClientDetail";
 
 import NotFound from "./pages/NotFound";
 
