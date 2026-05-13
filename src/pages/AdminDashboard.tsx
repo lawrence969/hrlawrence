@@ -659,13 +659,14 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="font-body text-sm">Order Type</Label>
-                  <Select value={newOrder.orderType || undefined} onValueChange={(val: "repair" | "custom") => setNewOrder({ ...newOrder, orderType: val })}>
+                  <Select value={newOrder.orderType || undefined} onValueChange={(val: "repair" | "custom" | "showroom") => setNewOrder({ ...newOrder, orderType: val })}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="custom" className="font-body text-sm">Custom Piece</SelectItem>
                       <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
+                      <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
