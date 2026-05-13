@@ -468,7 +468,7 @@ const AdminDashboard = () => {
   const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
 
   const changeOrderType = async (orderId: string, newType: string) => {
-    const newFlow = newType === "repair" ? repairStatusFlow : customStatusFlow;
+    const newFlow = getStatusFlow(newType);
     // Reset status to intake if current status isn't in the new flow
     const order = orders.find((o) => o.id === orderId);
     const updates: Record<string, string> = { order_type: newType };
