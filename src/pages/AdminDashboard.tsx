@@ -253,6 +253,7 @@ const AdminDashboard = () => {
         .value { font-size: 14px; min-height: 20px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
         .full { grid-column: 1 / -1; }
         hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+        @page { size: portrait; }
         @media print { body { padding: 20px; } }
       </style></head><body>
       ${orderNumber ? `<div class="order-num">${orderNumber}</div>` : ""}
@@ -818,6 +819,7 @@ const AdminDashboard = () => {
                           .notes { margin-top: 24px; padding: 16px; background: #f9f9f9; border: 1px solid #e5e5e5; }
                           .notes h3 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 8px; }
                           .notes p { font-size: 14px; margin: 0; white-space: pre-wrap; }
+                          @page { size: portrait; }
                           @media print { body { padding: 20px; } }
                         </style></head><body>
                         <h1>Order ${selectedOrder.order_number}</h1>
