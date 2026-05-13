@@ -268,7 +268,7 @@ const AdminDashboard = () => {
       </div>
       <hr/>
       <div class="grid">
-        <div class="field"><div class="label">Order Type</div><div class="value">${orderData.orderType === "custom" ? "Custom Piece" : "Repair"}</div></div>
+        <div class="field"><div class="label">Order Type</div><div class="value">${orderTypeLabel(orderData.orderType)}</div></div>
         <div class="field"><div class="label">Order Date</div><div class="value">${orderData.orderDate || "—"}</div></div>
         <div class="field full"><div class="label">Item Description</div><div class="value">${orderData.itemDescription || "—"}</div></div>
         <div class="field"><div class="label">Metal</div><div class="value">${orderData.metal || "—"}</div></div>
