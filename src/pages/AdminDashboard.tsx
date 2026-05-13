@@ -257,7 +257,7 @@ const AdminDashboard = () => {
       </style></head><body>
       ${orderNumber ? `<div class="order-num">${orderNumber}</div>` : ""}
       <h1>Order Form</h1>
-      <h2>${orderData.orderType === "custom" ? "Custom Piece" : "Repair"} — ${new Date().toLocaleDateString()}</h2>
+      <h2>${orderTypeLabel(orderData.orderType)} — ${new Date().toLocaleDateString()}</h2>
       <div class="grid">
         <div class="field"><div class="label">First Name</div><div class="value">${orderData.firstName || "—"}</div></div>
         <div class="field"><div class="label">Last Name</div><div class="value">${orderData.lastName || "—"}</div></div>
