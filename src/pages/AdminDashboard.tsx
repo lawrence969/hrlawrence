@@ -1440,6 +1440,7 @@ const AdminDashboard = () => {
               <SelectItem value="all" className="text-xs font-body">All Types</SelectItem>
               <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
               <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+              <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
             </SelectContent>
           </Select>
           <Select value={filterDept} onValueChange={setFilterDept}>
