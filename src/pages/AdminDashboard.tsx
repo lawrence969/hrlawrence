@@ -21,6 +21,15 @@ import logoNavy from "@/assets/logo-navy.jpg";
 
 const repairStatusFlow = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
 const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "received_stones", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
+const showroomStatusFlow = ["intake", "complete", "picked_up"];
+
+const getStatusFlow = (orderType: string) => {
+  if (orderType === "repair") return repairStatusFlow;
+  if (orderType === "showroom") return showroomStatusFlow;
+  return customStatusFlow;
+};
+
+const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : "Custom Piece";
 
 const departments = ["front_of_store", "repair", "design", "setting"] as const;
 const departmentLabels: Record<string, string> = {
@@ -209,7 +218,7 @@ const AdminDashboard = () => {
   if (!isStaff) return <Navigate to="/" replace />;
 
   const advanceOrder = async (order: Order) => {
-    const flow = order.order_type === "repair" ? repairStatusFlow : customStatusFlow;
+    const flow = getStatusFlow(order.order_type);
     const idx = flow.indexOf(order.status);
     if (idx < flow.length - 1) {
       const { error } = await supabase.from("orders").update({ status: flow[idx + 1] }).eq("id", order.id);

@@ -432,6 +432,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          client_number: string | null
           created_at: string
           email: string
           first_name: string
@@ -443,6 +444,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          client_number?: string | null
           created_at?: string
           email: string
           first_name: string
@@ -454,6 +456,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          client_number?: string | null
           created_at?: string
           email?: string
           first_name?: string
@@ -554,10 +557,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _merge_profile: {
+        Args: { _canonical: string; _dup: string }
+        Returns: undefined
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      email_domain: { Args: { _e: string }; Returns: string }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -579,6 +587,8 @@ export type Database = {
         }
         Returns: number
       }
+      norm_name: { Args: { _first: string; _last: string }; Returns: string }
+      norm_phone: { Args: { _p: string }; Returns: string }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
