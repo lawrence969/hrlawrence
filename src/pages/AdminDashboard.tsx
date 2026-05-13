@@ -218,7 +218,7 @@ const AdminDashboard = () => {
   if (!isStaff) return <Navigate to="/" replace />;
 
   const advanceOrder = async (order: Order) => {
-    const flow = order.order_type === "repair" ? repairStatusFlow : customStatusFlow;
+    const flow = getStatusFlow(order.order_type);
     const idx = flow.indexOf(order.status);
     if (idx < flow.length - 1) {
       const { error } = await supabase.from("orders").update({ status: flow[idx + 1] }).eq("id", order.id);
