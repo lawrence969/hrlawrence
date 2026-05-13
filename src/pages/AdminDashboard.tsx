@@ -508,12 +508,13 @@ const AdminDashboard = () => {
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
               <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                 <Select value={order.order_type} onValueChange={(val) => changeOrderType(order.id, val)}>
-                  <SelectTrigger className={`h-7 w-[110px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : "bg-purple-100 text-purple-800"}`}>
+                  <SelectTrigger className={`h-7 w-[110px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : order.order_type === "showroom" ? "bg-amber-100 text-amber-800" : "bg-purple-100 text-purple-800"}`}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
                     <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+                    <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
                   </SelectContent>
                 </Select>
               </td>
