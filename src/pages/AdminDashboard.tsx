@@ -144,7 +144,7 @@ const AdminDashboard = () => {
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
-    orderType: "" as "" | "repair" | "custom",
+    orderType: "" as "" | "repair" | "custom" | "showroom",
     itemDescription: "", notes: "",
     orderDate: new Date().toISOString().split("T")[0],
     rhodiumPolish: false,
@@ -257,7 +257,7 @@ const AdminDashboard = () => {
       </style></head><body>
       ${orderNumber ? `<div class="order-num">${orderNumber}</div>` : ""}
       <h1>Order Form</h1>
-      <h2>${orderData.orderType === "custom" ? "Custom Piece" : "Repair"} — ${new Date().toLocaleDateString()}</h2>
+      <h2>${orderTypeLabel(orderData.orderType)} — ${new Date().toLocaleDateString()}</h2>
       <div class="grid">
         <div class="field"><div class="label">First Name</div><div class="value">${orderData.firstName || "—"}</div></div>
         <div class="field"><div class="label">Last Name</div><div class="value">${orderData.lastName || "—"}</div></div>
@@ -268,7 +268,7 @@ const AdminDashboard = () => {
       </div>
       <hr/>
       <div class="grid">
-        <div class="field"><div class="label">Order Type</div><div class="value">${orderData.orderType === "custom" ? "Custom Piece" : "Repair"}</div></div>
+        <div class="field"><div class="label">Order Type</div><div class="value">${orderTypeLabel(orderData.orderType)}</div></div>
         <div class="field"><div class="label">Order Date</div><div class="value">${orderData.orderDate || "—"}</div></div>
         <div class="field full"><div class="label">Item Description</div><div class="value">${orderData.itemDescription || "—"}</div></div>
         <div class="field"><div class="label">Metal</div><div class="value">${orderData.metal || "—"}</div></div>
@@ -327,7 +327,7 @@ const AdminDashboard = () => {
       setShowNewOrder(false);
       setNewOrder({
         customerEmail: "", firstName: "", lastName: "", address: "",
-        phone1: "", phone2: "", orderType: "" as "" | "repair" | "custom",
+        phone1: "", phone2: "", orderType: "" as "" | "repair" | "custom" | "showroom",
         itemDescription: "", notes: "",
         orderDate: new Date().toISOString().split("T")[0],
         rhodiumPolish: false, stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
@@ -468,7 +468,7 @@ const AdminDashboard = () => {
   const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
 
   const changeOrderType = async (orderId: string, newType: string) => {
-    const newFlow = newType === "repair" ? repairStatusFlow : customStatusFlow;
+    const newFlow = getStatusFlow(newType);
     // Reset status to intake if current status isn't in the new flow
     const order = orders.find((o) => o.id === orderId);
     const updates: Record<string, string> = { order_type: newType };
@@ -496,7 +496,7 @@ const AdminDashboard = () => {
         </thead>
         <tbody>
           {items.map((order) => {
-            const flow = order.order_type === "repair" ? repairStatusFlow : customStatusFlow;
+            const flow = getStatusFlow(order.order_type);
             return (
             <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
@@ -508,12 +508,13 @@ const AdminDashboard = () => {
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
               <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                 <Select value={order.order_type} onValueChange={(val) => changeOrderType(order.id, val)}>
-                  <SelectTrigger className={`h-7 w-[110px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : "bg-purple-100 text-purple-800"}`}>
+                  <SelectTrigger className={`h-7 w-[110px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : order.order_type === "showroom" ? "bg-amber-100 text-amber-800" : "bg-purple-100 text-purple-800"}`}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
                     <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+                    <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
                   </SelectContent>
                 </Select>
               </td>
@@ -658,13 +659,14 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="font-body text-sm">Order Type</Label>
-                  <Select value={newOrder.orderType || undefined} onValueChange={(val: "repair" | "custom") => setNewOrder({ ...newOrder, orderType: val })}>
+                  <Select value={newOrder.orderType || undefined} onValueChange={(val: "repair" | "custom" | "showroom") => setNewOrder({ ...newOrder, orderType: val })}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="custom" className="font-body text-sm">Custom Piece</SelectItem>
                       <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
+                      <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -981,6 +983,7 @@ const AdminDashboard = () => {
                           <SelectContent>
                             <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
                             <SelectItem value="custom" className="font-body text-sm">Custom</SelectItem>
+                            <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -1437,6 +1440,7 @@ const AdminDashboard = () => {
               <SelectItem value="all" className="text-xs font-body">All Types</SelectItem>
               <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
               <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
+              <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
             </SelectContent>
           </Select>
           <Select value={filterDept} onValueChange={setFilterDept}>
@@ -1485,7 +1489,7 @@ const AdminDashboard = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="font-body">Confirm Order Creation</AlertDialogTitle>
             <AlertDialogDescription className="font-body">
-              Are you sure you want to create this {newOrder.orderType === "custom" ? "Custom Piece" : "Repair"} order for {newOrder.firstName || newOrder.customerEmail}?
+              Are you sure you want to create this {orderTypeLabel(newOrder.orderType)} order for {newOrder.firstName || newOrder.customerEmail}?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
