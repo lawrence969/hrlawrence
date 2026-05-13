@@ -983,6 +983,7 @@ const AdminDashboard = () => {
                           <SelectContent>
                             <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
                             <SelectItem value="custom" className="font-body text-sm">Custom</SelectItem>
+                            <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
