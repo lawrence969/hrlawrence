@@ -1489,7 +1489,7 @@ const AdminDashboard = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="font-body">Confirm Order Creation</AlertDialogTitle>
             <AlertDialogDescription className="font-body">
-              Are you sure you want to create this {newOrder.orderType === "custom" ? "Custom Piece" : "Repair"} order for {newOrder.firstName || newOrder.customerEmail}?
+              Are you sure you want to create this {orderTypeLabel(newOrder.orderType)} order for {newOrder.firstName || newOrder.customerEmail}?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
