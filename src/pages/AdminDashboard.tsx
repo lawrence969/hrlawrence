@@ -462,8 +462,9 @@ const AdminDashboard = () => {
     return matchesSearch && matchesType && matchesDept && matchesStatus;
   });
 
-  const activeOrders = baseFiltered.filter((o) => o.status !== "complete");
-  const completeOrders = baseFiltered.filter((o) => o.status === "complete");
+  const completeStatuses = new Set(["complete", "picked_up", "delivered"]);
+  const activeOrders = baseFiltered.filter((o) => !completeStatuses.has(o.status));
+  const completeOrders = baseFiltered.filter((o) => completeStatuses.has(o.status));
   const filteredOrders = orderView === "active" ? activeOrders : completeOrders;
 
   const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
