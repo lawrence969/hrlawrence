@@ -627,8 +627,8 @@ const AdminDashboard = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Active Orders", value: orders.filter((o) => o.status !== "picked_up" && o.status !== "complete").length, view: "active" as const },
-            { label: "Complete Orders", value: orders.filter((o) => o.status === "complete").length, view: "complete" as const },
+            { label: "Active Orders", value: orders.filter((o) => !completeStatuses.has(o.status)).length, view: "active" as const },
+            { label: "Complete Orders", value: orders.filter((o) => completeStatuses.has(o.status)).length, view: "complete" as const },
             { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_pickup").length },
             { label: "Total Orders", value: orders.length },
           ].map((stat) => (
