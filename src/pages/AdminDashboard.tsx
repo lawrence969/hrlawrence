@@ -462,8 +462,9 @@ const AdminDashboard = () => {
     return matchesSearch && matchesType && matchesDept && matchesStatus;
   });
 
-  const activeOrders = baseFiltered.filter((o) => o.status !== "complete");
-  const completeOrders = baseFiltered.filter((o) => o.status === "complete");
+  const completeStatuses = new Set(["complete", "picked_up", "delivered"]);
+  const activeOrders = baseFiltered.filter((o) => !completeStatuses.has(o.status));
+  const completeOrders = baseFiltered.filter((o) => completeStatuses.has(o.status));
   const filteredOrders = orderView === "active" ? activeOrders : completeOrders;
 
   const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
@@ -626,8 +627,8 @@ const AdminDashboard = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Active Orders", value: orders.filter((o) => o.status !== "picked_up" && o.status !== "complete").length, view: "active" as const },
-            { label: "Complete Orders", value: orders.filter((o) => o.status === "complete").length, view: "complete" as const },
+            { label: "Active Orders", value: orders.filter((o) => !completeStatuses.has(o.status)).length, view: "active" as const },
+            { label: "Complete Orders", value: orders.filter((o) => completeStatuses.has(o.status)).length, view: "complete" as const },
             { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_pickup").length },
             { label: "Total Orders", value: orders.length },
           ].map((stat) => (
