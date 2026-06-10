@@ -10,6 +10,8 @@ import TrackOrder from "./pages/TrackOrder";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminClients from "./pages/AdminClients";
+import AdminClientDetail from "./pages/AdminClientDetail";
 import GoldCalculator from "./pages/GoldCalculator";
 
 import NotFound from "./pages/NotFound";
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/clients" element={<AdminClients />} />
+            <Route path="/admin/clients/:id" element={<AdminClientDetail />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
             
             <Route path="*" element={<NotFound />} />
