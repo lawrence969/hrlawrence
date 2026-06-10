@@ -112,6 +112,101 @@ export type Database = {
           },
         ]
       }
+      client_interactions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          interaction_type: string
+          occurred_at: string
+          profile_id: string
+          summary: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          interaction_type: string
+          occurred_at?: string
+          profile_id: string
+          summary: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          interaction_type?: string
+          occurred_at?: string
+          profile_id?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_interactions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_tag_assignments: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_tag_assignments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tag_assignments_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "client_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_tags: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          label: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          label: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          label?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
