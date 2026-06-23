@@ -47,6 +47,7 @@ const statusLabels: Record<string, string> = {
   in_design: "In Design", design_approved: "Design Approved",
   in_production: "In Production",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
+  on_hold: "On Hold",
 };
 
 const statusColor = (status: string) => {
@@ -54,6 +55,7 @@ const statusColor = (status: string) => {
   if (["in_progress", "in_design", "in_production", "ordered_stones", "received_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
   if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
   if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
+  if (["on_hold"].includes(status)) return "bg-orange-100 text-orange-800";
   return "bg-secondary text-secondary-foreground";
 };
 
@@ -467,14 +469,14 @@ const AdminDashboard = () => {
   const completeOrders = baseFiltered.filter((o) => completeStatuses.has(o.status));
   const filteredOrders = orderView === "active" ? activeOrders : completeOrders;
 
-  const allStatuses = [...new Set(orders.map(o => o.status))].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b));
+  const allStatuses = Object.keys(statusLabels).sort((a, b) => statusLabels[a].localeCompare(statusLabels[b]));
 
   const changeOrderType = async (orderId: string, newType: string) => {
     const newFlow = getStatusFlow(newType);
     // Reset status to intake if current status isn't in the new flow
     const order = orders.find((o) => o.id === orderId);
     const updates: Record<string, string> = { order_type: newType };
-    if (order && !newFlow.includes(order.status)) {
+    if (order && !newFlow.includes(order.status) && order.status !== "on_hold") {
       updates.status = "intake";
     }
     const { error } = await supabase.from("orders").update(updates).eq("id", orderId);
@@ -542,7 +544,7 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] overflow-y-auto">
-                    {[...flow].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
+                    {[...flow, "on_hold"].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
                       <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
                     ))}
                   </SelectContent>
