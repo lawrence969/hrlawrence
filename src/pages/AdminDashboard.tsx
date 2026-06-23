@@ -48,6 +48,7 @@ const statusLabels: Record<string, string> = {
   in_production: "In Production",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
   on_hold: "On Hold",
+  no_follow_up_client: "No Follow Up (Client)",
 };
 
 const statusColor = (status: string) => {
@@ -56,6 +57,7 @@ const statusColor = (status: string) => {
   if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
   if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
   if (["on_hold"].includes(status)) return "bg-orange-100 text-orange-800";
+  if (["no_follow_up_client"].includes(status)) return "bg-slate-100 text-slate-700";
   return "bg-secondary text-secondary-foreground";
 };
 
@@ -544,7 +546,7 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] overflow-y-auto">
-                    {[...flow, "on_hold"].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
+                    {[...flow, "on_hold", "no_follow_up_client"].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
                       <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
                     ))}
                   </SelectContent>
