@@ -17,6 +17,7 @@ const statusLabels: Record<string, string> = {
   complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
   on_hold: "On Hold",
+  no_follow_up_client: "No Follow Up (Client)",
 };
 
 const departmentLabels: Record<string, string> = {
@@ -33,6 +34,7 @@ const statusToClientStep: Record<string, Record<string, string>> = {
     in_progress: "in_progress",
     waiting_for_client: "on_hold",
     larry_follow_up: "on_hold",
+    no_follow_up_client: "on_hold",
     complete: "complete",
     ready_pickup: "ready_pickup",
     picked_up: "picked_up",
@@ -48,6 +50,7 @@ const statusToClientStep: Record<string, Record<string, string>> = {
     in_production: "in_production",
     waiting_for_client: "on_hold",
     larry_follow_up: "on_hold",
+    no_follow_up_client: "on_hold",
     complete: "complete",
     ready_pickup: "ready_pickup",
     picked_up: "picked_up",
