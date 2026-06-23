@@ -47,6 +47,7 @@ const statusLabels: Record<string, string> = {
   in_design: "In Design", design_approved: "Design Approved",
   in_production: "In Production",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
+  on_hold: "On Hold",
 };
 
 const statusColor = (status: string) => {
@@ -54,6 +55,7 @@ const statusColor = (status: string) => {
   if (["in_progress", "in_design", "in_production", "ordered_stones", "received_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
   if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
   if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
+  if (["on_hold"].includes(status)) return "bg-orange-100 text-orange-800";
   return "bg-secondary text-secondary-foreground";
 };
 
