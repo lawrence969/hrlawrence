@@ -48,6 +48,7 @@ const statusLabels: Record<string, string> = {
   in_production: "In Production",
   waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
   on_hold: "On Hold",
+  no_follow_up_client: "No Follow Up (Client)",
 };
 
 const statusColor = (status: string) => {
