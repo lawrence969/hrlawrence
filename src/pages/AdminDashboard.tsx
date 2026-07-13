@@ -145,6 +145,9 @@ const AdminDashboard = () => {
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
   const [orderView, setOrderView] = useState<"active" | "complete">("active");
+  const [clientSearch, setClientSearch] = useState("");
+  const [clientResults, setClientResults] = useState<Array<{ id: string; first_name: string | null; last_name: string | null; email: string | null; phone: string | null; client_number: string | null }>>([]);
+  const [showClientResults, setShowClientResults] = useState(false);
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
