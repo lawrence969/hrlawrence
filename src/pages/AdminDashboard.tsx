@@ -712,6 +712,37 @@ const AdminDashboard = () => {
                     <Input type="date" value={newOrder.orderDate} onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })} className="mt-1" />
                   </div>
                 </div>
+                <div className="relative">
+                  <Label className="font-body text-sm">Search Existing Client (optional)</Label>
+                  <Input
+                    value={clientSearch}
+                    onChange={(e) => { setClientSearch(e.target.value); setShowClientResults(true); }}
+                    onFocus={() => setShowClientResults(true)}
+                    onBlur={() => setTimeout(() => setShowClientResults(false), 150)}
+                    placeholder="Type name, email, phone, or CL-####"
+                    className="mt-1"
+                  />
+                  {showClientResults && clientResults.length > 0 && (
+                    <div className="absolute z-50 left-0 right-0 mt-1 bg-background border border-border shadow-lg max-h-64 overflow-y-auto">
+                      {clientResults.map((c) => (
+                        <button
+                          type="button"
+                          key={c.id}
+                          onMouseDown={(e) => { e.preventDefault(); selectExistingClient(c); }}
+                          className="w-full text-left px-3 py-2 hover:bg-muted font-body text-sm border-b border-border last:border-0"
+                        >
+                          <div className="font-medium">
+                            {[c.first_name, c.last_name].filter(Boolean).join(" ") || c.email || "—"}
+                            {c.client_number && <span className="ml-2 text-xs text-muted-foreground">{c.client_number}</span>}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {[c.email, c.phone].filter(Boolean).join(" · ")}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="font-body text-sm">First Name</Label>
