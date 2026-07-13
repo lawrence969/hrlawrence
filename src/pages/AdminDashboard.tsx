@@ -145,6 +145,9 @@ const AdminDashboard = () => {
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
   const [orderView, setOrderView] = useState<"active" | "complete">("active");
+  const [clientSearch, setClientSearch] = useState("");
+  const [clientResults, setClientResults] = useState<Array<{ id: string; first_name: string | null; last_name: string | null; email: string | null; phone: string | null; client_number: string | null }>>([]);
+  const [showClientResults, setShowClientResults] = useState(false);
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
@@ -161,6 +164,33 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
     setOrders(data || []);
+  };
+
+  // Search existing clients while typing in intake form
+  useEffect(() => {
+    const q = clientSearch.trim();
+    if (q.length < 2) { setClientResults([]); return; }
+    const t = setTimeout(async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, email, phone, client_number")
+        .or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%,phone.ilike.%${q}%,client_number.ilike.%${q}%`)
+        .limit(8);
+      setClientResults(data || []);
+    }, 200);
+    return () => clearTimeout(t);
+  }, [clientSearch]);
+
+  const selectExistingClient = (c: { first_name: string | null; last_name: string | null; email: string | null; phone: string | null }) => {
+    setNewOrder((prev) => ({
+      ...prev,
+      firstName: c.first_name || "",
+      lastName: c.last_name || "",
+      customerEmail: c.email || "",
+      phone1: c.phone || prev.phone1,
+    }));
+    setClientSearch(`${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "");
+    setShowClientResults(false);
   };
 
   useEffect(() => {
@@ -681,6 +711,37 @@ const AdminDashboard = () => {
                     <Label className="font-body text-sm">Order Date</Label>
                     <Input type="date" value={newOrder.orderDate} onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })} className="mt-1" />
                   </div>
+                </div>
+                <div className="relative">
+                  <Label className="font-body text-sm">Search Existing Client (optional)</Label>
+                  <Input
+                    value={clientSearch}
+                    onChange={(e) => { setClientSearch(e.target.value); setShowClientResults(true); }}
+                    onFocus={() => setShowClientResults(true)}
+                    onBlur={() => setTimeout(() => setShowClientResults(false), 150)}
+                    placeholder="Type name, email, phone, or CL-####"
+                    className="mt-1"
+                  />
+                  {showClientResults && clientResults.length > 0 && (
+                    <div className="absolute z-50 left-0 right-0 mt-1 bg-background border border-border shadow-lg max-h-64 overflow-y-auto">
+                      {clientResults.map((c) => (
+                        <button
+                          type="button"
+                          key={c.id}
+                          onMouseDown={(e) => { e.preventDefault(); selectExistingClient(c); }}
+                          className="w-full text-left px-3 py-2 hover:bg-muted font-body text-sm border-b border-border last:border-0"
+                        >
+                          <div className="font-medium">
+                            {[c.first_name, c.last_name].filter(Boolean).join(" ") || c.email || "—"}
+                            {c.client_number && <span className="ml-2 text-xs text-muted-foreground">{c.client_number}</span>}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {[c.email, c.phone].filter(Boolean).join(" · ")}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
