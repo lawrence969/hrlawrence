@@ -166,6 +166,33 @@ const AdminDashboard = () => {
     setOrders(data || []);
   };
 
+  // Search existing clients while typing in intake form
+  useEffect(() => {
+    const q = clientSearch.trim();
+    if (q.length < 2) { setClientResults([]); return; }
+    const t = setTimeout(async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, email, phone, client_number")
+        .or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%,phone.ilike.%${q}%,client_number.ilike.%${q}%`)
+        .limit(8);
+      setClientResults(data || []);
+    }, 200);
+    return () => clearTimeout(t);
+  }, [clientSearch]);
+
+  const selectExistingClient = (c: { first_name: string | null; last_name: string | null; email: string | null; phone: string | null }) => {
+    setNewOrder((prev) => ({
+      ...prev,
+      firstName: c.first_name || "",
+      lastName: c.last_name || "",
+      customerEmail: c.email || "",
+      phone1: c.phone || prev.phone1,
+    }));
+    setClientSearch(`${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "");
+    setShowClientResults(false);
+  };
+
   useEffect(() => {
     if (!user || !isStaff) return;
     fetchOrders();
