@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user, isStaff } = useAuth();
+  const { user } = useAuth();
 
   const links = [
     { to: "/", label: "Home" },
