@@ -7,13 +7,14 @@ import { useAuth } from "@/hooks/useAuth";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user, isStaff } = useAuth();
+  const { user } = useAuth();
 
   const links = [
     { to: "/", label: "Home" },
     { to: "/book-consultation", label: "Book Consultation" },
     { to: "/track-order", label: "Track Order" },
     { to: "/gold-calculator", label: "Gold Calculator" },
+    { to: "/admin", label: "Admin Dashboard" },
   ];
 
   return (
@@ -30,11 +31,7 @@ const Navbar = () => {
                 location.pathname === link.to ? "text-accent" : "text-foreground"
               }`}>{link.label}</Link>
           ))}
-          {user ? (
-            <>
-              {isStaff && <Link to="/admin" className="text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors">Staff Portal</Link>}
-            </>
-          ) : (
+          {!user && (
             <Link to="/auth" className="text-sm font-body font-medium tracking-widest uppercase text-accent hover:text-foreground transition-colors">Sign In</Link>
           )}
         </div>
@@ -50,11 +47,7 @@ const Navbar = () => {
             <Link key={link.to} to={link.to} onClick={() => setIsOpen(false)}
               className="block text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent">{link.label}</Link>
           ))}
-          {user ? (
-            <>
-              {isStaff && <Link to="/admin" onClick={() => setIsOpen(false)} className="block text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground">Staff Portal</Link>}
-            </>
-          ) : (
+          {!user && (
             <Link to="/auth" onClick={() => setIsOpen(false)} className="block text-sm font-body font-medium tracking-widest uppercase text-accent hover:text-foreground">Sign In</Link>
           )}
         </div>
