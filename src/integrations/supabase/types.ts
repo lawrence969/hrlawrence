@@ -661,6 +661,7 @@ export type Database = {
         Returns: boolean
       }
       email_domain: { Args: { _e: string }; Returns: string }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
