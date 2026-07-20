@@ -372,10 +372,8 @@ const AdminDashboard = () => {
       return;
     }
 
-    // Update order status to quote_sent if applicable
-    if (selectedOrder.order_type === "custom" && selectedOrder.status === "intake") {
-      await supabase.from("orders").update({ status: "quote_sent" }).eq("id", selectedOrder.id);
-    }
+    // Quote sent as an interaction is separate from status; leave status unchanged.
+
 
     // Send SMS if phone provided
     if (quotePhone) {
