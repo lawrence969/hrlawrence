@@ -47,6 +47,34 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "appointment_invitations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_due_today"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_invitations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_overdue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_invitations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_orders_no_followup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_invitations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_production_stale"
+            referencedColumns: ["id"]
+          },
         ]
       }
       appointments: {
@@ -110,34 +138,74 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "appointments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_due_today"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_overdue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_orders_no_followup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_production_stale"
+            referencedColumns: ["id"]
+          },
         ]
       }
       client_interactions: {
         Row: {
           created_at: string
           created_by: string | null
+          follow_up_reason: string | null
           id: string
           interaction_type: string
+          next_follow_up_date: string | null
           occurred_at: string
           profile_id: string
+          related_order_id: string | null
+          resolved_follow_up: boolean
           summary: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
+          follow_up_reason?: string | null
           id?: string
           interaction_type: string
+          next_follow_up_date?: string | null
           occurred_at?: string
           profile_id: string
+          related_order_id?: string | null
+          resolved_follow_up?: boolean
           summary: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
+          follow_up_reason?: string | null
           id?: string
           interaction_type?: string
+          next_follow_up_date?: string | null
           occurred_at?: string
           profile_id?: string
+          related_order_id?: string | null
+          resolved_follow_up?: boolean
           summary?: string
         }
         Relationships: [
@@ -146,6 +214,41 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_interactions_related_order_id_fkey"
+            columns: ["related_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_interactions_related_order_id_fkey"
+            columns: ["related_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_due_today"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_interactions_related_order_id_fkey"
+            columns: ["related_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_overdue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_interactions_related_order_id_fkey"
+            columns: ["related_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_orders_no_followup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_interactions_related_order_id_fkey"
+            columns: ["related_order_id"]
+            isOneToOne: false
+            referencedRelation: "v_production_stale"
             referencedColumns: ["id"]
           },
         ]
@@ -387,6 +490,34 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_due_today"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_overdue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_orders_no_followup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_production_stale"
+            referencedColumns: ["id"]
+          },
         ]
       }
       order_notes: {
@@ -422,11 +553,40 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_notes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_due_today"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_notes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_overdue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_notes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_orders_no_followup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_notes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_production_stale"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
         Row: {
           address: string | null
+          blocked_reason: string | null
           budget: number | null
           colour: string | null
           created_at: string
@@ -437,17 +597,26 @@ export type Database = {
           delivery_date: string | null
           deposit: number | null
           first_name: string | null
+          follow_up_owner_id: string | null
+          follow_up_reason: string | null
+          google_calendar_event_id: string | null
           id: string
+          internal_priority: string
           item_description: string
+          last_contacted_at: string | null
           last_name: string | null
           metal: string | null
           metal_type: string | null
+          next_follow_up_date: string | null
           notes: string | null
           order_date: string | null
           order_number: string
           order_type: string
           phone1: string | null
           phone2: string | null
+          preferred_contact_method: string
+          private_follow_up_notes: string | null
+          production_updated_at: string | null
           rhodium_polish: boolean | null
           ring_size: string | null
           status: string
@@ -457,6 +626,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          blocked_reason?: string | null
           budget?: number | null
           colour?: string | null
           created_at?: string
@@ -467,17 +637,26 @@ export type Database = {
           delivery_date?: string | null
           deposit?: number | null
           first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
           id?: string
+          internal_priority?: string
           item_description: string
+          last_contacted_at?: string | null
           last_name?: string | null
           metal?: string | null
           metal_type?: string | null
+          next_follow_up_date?: string | null
           notes?: string | null
           order_date?: string | null
           order_number?: string
           order_type: string
           phone1?: string | null
           phone2?: string | null
+          preferred_contact_method?: string
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
           rhodium_polish?: boolean | null
           ring_size?: string | null
           status?: string
@@ -487,6 +666,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          blocked_reason?: string | null
           budget?: number | null
           colour?: string | null
           created_at?: string
@@ -497,17 +677,26 @@ export type Database = {
           delivery_date?: string | null
           deposit?: number | null
           first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
           id?: string
+          internal_priority?: string
           item_description?: string
+          last_contacted_at?: string | null
           last_name?: string | null
           metal?: string | null
           metal_type?: string | null
+          next_follow_up_date?: string | null
           notes?: string | null
           order_date?: string | null
           order_number?: string
           order_type?: string
           phone1?: string | null
           phone2?: string | null
+          preferred_contact_method?: string
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
           rhodium_polish?: boolean | null
           ring_size?: string | null
           status?: string
@@ -603,6 +792,34 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_due_today"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_followups_overdue"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_orders_no_followup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "v_production_stale"
+            referencedColumns: ["id"]
+          },
         ]
       }
       suppressed_emails: {
@@ -649,7 +866,530 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_followups_due_today: {
+        Row: {
+          address: string | null
+          blocked_reason: string | null
+          budget: number | null
+          colour: string | null
+          created_at: string | null
+          created_by: string | null
+          current_department: string | null
+          customer_email: string | null
+          customer_profile_id: string | null
+          delivery_date: string | null
+          deposit: number | null
+          first_name: string | null
+          follow_up_owner_id: string | null
+          follow_up_reason: string | null
+          google_calendar_event_id: string | null
+          id: string | null
+          internal_priority: string | null
+          item_description: string | null
+          last_contacted_at: string | null
+          last_name: string | null
+          metal: string | null
+          metal_type: string | null
+          next_follow_up_date: string | null
+          notes: string | null
+          order_date: string | null
+          order_number: string | null
+          order_type: string | null
+          phone1: string | null
+          phone2: string | null
+          preferred_contact_method: string | null
+          private_follow_up_notes: string | null
+          production_updated_at: string | null
+          rhodium_polish: boolean | null
+          ring_size: string | null
+          status: string | null
+          stone_size: string | null
+          stone_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_followups_overdue: {
+        Row: {
+          address: string | null
+          blocked_reason: string | null
+          budget: number | null
+          colour: string | null
+          created_at: string | null
+          created_by: string | null
+          current_department: string | null
+          customer_email: string | null
+          customer_profile_id: string | null
+          delivery_date: string | null
+          deposit: number | null
+          first_name: string | null
+          follow_up_owner_id: string | null
+          follow_up_reason: string | null
+          google_calendar_event_id: string | null
+          id: string | null
+          internal_priority: string | null
+          item_description: string | null
+          last_contacted_at: string | null
+          last_name: string | null
+          metal: string | null
+          metal_type: string | null
+          next_follow_up_date: string | null
+          notes: string | null
+          order_date: string | null
+          order_number: string | null
+          order_type: string | null
+          phone1: string | null
+          phone2: string | null
+          preferred_contact_method: string | null
+          private_follow_up_notes: string | null
+          production_updated_at: string | null
+          rhodium_polish: boolean | null
+          ring_size: string | null
+          status: string | null
+          stone_size: string | null
+          stone_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_orders_no_followup: {
+        Row: {
+          address: string | null
+          blocked_reason: string | null
+          budget: number | null
+          colour: string | null
+          created_at: string | null
+          created_by: string | null
+          current_department: string | null
+          customer_email: string | null
+          customer_profile_id: string | null
+          delivery_date: string | null
+          deposit: number | null
+          first_name: string | null
+          follow_up_owner_id: string | null
+          follow_up_reason: string | null
+          google_calendar_event_id: string | null
+          id: string | null
+          internal_priority: string | null
+          item_description: string | null
+          last_contacted_at: string | null
+          last_name: string | null
+          metal: string | null
+          metal_type: string | null
+          next_follow_up_date: string | null
+          notes: string | null
+          order_date: string | null
+          order_number: string | null
+          order_type: string | null
+          phone1: string | null
+          phone2: string | null
+          preferred_contact_method: string | null
+          private_follow_up_notes: string | null
+          production_updated_at: string | null
+          rhodium_polish: boolean | null
+          ring_size: string | null
+          status: string | null
+          stone_size: string | null
+          stone_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_production_stale: {
+        Row: {
+          address: string | null
+          blocked_reason: string | null
+          budget: number | null
+          colour: string | null
+          created_at: string | null
+          created_by: string | null
+          current_department: string | null
+          customer_email: string | null
+          customer_profile_id: string | null
+          delivery_date: string | null
+          deposit: number | null
+          first_name: string | null
+          follow_up_owner_id: string | null
+          follow_up_reason: string | null
+          google_calendar_event_id: string | null
+          id: string | null
+          internal_priority: string | null
+          item_description: string | null
+          last_contacted_at: string | null
+          last_name: string | null
+          metal: string | null
+          metal_type: string | null
+          next_follow_up_date: string | null
+          notes: string | null
+          order_date: string | null
+          order_number: string | null
+          order_type: string | null
+          phone1: string | null
+          phone2: string | null
+          preferred_contact_method: string | null
+          private_follow_up_notes: string | null
+          production_updated_at: string | null
+          rhodium_polish: boolean | null
+          ring_size: string | null
+          status: string | null
+          stone_size: string | null
+          stone_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          blocked_reason?: string | null
+          budget?: number | null
+          colour?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_department?: string | null
+          customer_email?: string | null
+          customer_profile_id?: string | null
+          delivery_date?: string | null
+          deposit?: number | null
+          first_name?: string | null
+          follow_up_owner_id?: string | null
+          follow_up_reason?: string | null
+          google_calendar_event_id?: string | null
+          id?: string | null
+          internal_priority?: string | null
+          item_description?: string | null
+          last_contacted_at?: string | null
+          last_name?: string | null
+          metal?: string | null
+          metal_type?: string | null
+          next_follow_up_date?: string | null
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string | null
+          order_type?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          preferred_contact_method?: string | null
+          private_follow_up_notes?: string | null
+          production_updated_at?: string | null
+          rhodium_polish?: boolean | null
+          ring_size?: string | null
+          status?: string | null
+          stone_size?: string | null
+          stone_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       _merge_profile: {

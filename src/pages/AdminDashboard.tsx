@@ -19,15 +19,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 
-const repairStatusFlow = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
-const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "received_stones", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
-const showroomStatusFlow = ["intake", "complete", "picked_up"];
-
-const getStatusFlow = (orderType: string) => {
-  if (orderType === "repair") return repairStatusFlow;
-  if (orderType === "showroom") return showroomStatusFlow;
-  return customStatusFlow;
-};
+import {
+  statusLabels,
+  statusColor,
+  statusDescriptions,
+  getStatusFlow,
+  COMPLETE_STATUSES,
+  PRIORITIES,
+  priorityLabels,
+  priorityColor,
+  FOLLOW_UP_REASONS,
+  followUpReasonLabels,
+  CONTACT_METHODS,
+  contactMethodLabels,
+  isValidEmail,
+  formatPhone,
+} from "@/lib/order-status";
 
 const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : "Custom Piece";
 
@@ -37,28 +44,6 @@ const departmentLabels: Record<string, string> = {
   repair: "Repair",
   design: "Design",
   setting: "Setting",
-};
-
-const statusLabels: Record<string, string> = {
-  intake: "Intake", in_progress: "In Progress", complete: "Complete",
-  ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
-  quote_sent: "Quote Sent", quote_approved: "Quote Approved",
-  ordered_stones: "Ordered Stones", received_stones: "Received Stones",
-  in_design: "In Design", design_approved: "Design Approved",
-  in_production: "In Production",
-  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
-  on_hold: "On Hold",
-  no_follow_up_client: "No Follow Up (Client)",
-};
-
-const statusColor = (status: string) => {
-  if (["intake"].includes(status)) return "bg-secondary text-secondary-foreground";
-  if (["in_progress", "in_design", "in_production", "ordered_stones", "received_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
-  if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
-  if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
-  if (["on_hold"].includes(status)) return "bg-orange-100 text-orange-800";
-  if (["no_follow_up_client"].includes(status)) return "bg-slate-100 text-slate-700";
-  return "bg-secondary text-secondary-foreground";
 };
 
 const deptColor = (dept: string) => {
@@ -159,6 +144,11 @@ const AdminDashboard = () => {
     metal: "", metalType: "", colour: "",
     budget: "", deposit: "",
     deliveryDate: "",
+    preferredContact: "any",
+    priority: "normal",
+    followUpReason: "no_follow_up_needed",
+    nextFollowUpDate: "",
+    privateNotes: "",
   });
 
   const fetchOrders = async () => {
@@ -253,7 +243,7 @@ const AdminDashboard = () => {
 
   const advanceOrder = async (order: Order) => {
     const flow = getStatusFlow(order.order_type);
-    const idx = flow.indexOf(order.status);
+    const idx = (flow as readonly string[]).indexOf(order.status);
     if (idx < flow.length - 1) {
       const { error } = await supabase.from("orders").update({ status: flow[idx + 1] }).eq("id", order.id);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -326,6 +316,11 @@ const AdminDashboard = () => {
   };
 
   const confirmCreateOrder = async () => {
+    // Client-side validation
+    if (newOrder.customerEmail && !isValidEmail(newOrder.customerEmail)) {
+      toast({ title: "Invalid email", description: "Please enter a valid email address.", variant: "destructive" });
+      return;
+    }
     setShowConfirmCreate(false);
     const { data, error } = await supabase.from("orders").insert({
       customer_email: newOrder.customerEmail,
@@ -350,6 +345,11 @@ const AdminDashboard = () => {
       budget: newOrder.budget ? parseFloat(newOrder.budget) : null,
       deposit: newOrder.deposit ? parseFloat(newOrder.deposit) : null,
       delivery_date: newOrder.deliveryDate || null,
+      preferred_contact_method: newOrder.preferredContact || "any",
+      internal_priority: newOrder.priority || "normal",
+      follow_up_reason: newOrder.followUpReason || "no_follow_up_needed",
+      next_follow_up_date: newOrder.nextFollowUpDate || null,
+      private_follow_up_notes: newOrder.privateNotes || null,
     } as any).select("order_number").single();
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -367,6 +367,7 @@ const AdminDashboard = () => {
         orderDate: new Date().toISOString().split("T")[0],
         rhodiumPolish: false, stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
         metal: "", metalType: "", colour: "", budget: "", deposit: "", deliveryDate: "",
+        preferredContact: "any", priority: "normal", followUpReason: "no_follow_up_needed", nextFollowUpDate: "", privateNotes: "",
       });
     }
   };
@@ -387,10 +388,8 @@ const AdminDashboard = () => {
       return;
     }
 
-    // Update order status to quote_sent if applicable
-    if (selectedOrder.order_type === "custom" && selectedOrder.status === "intake") {
-      await supabase.from("orders").update({ status: "quote_sent" }).eq("id", selectedOrder.id);
-    }
+    // Quote sent as an interaction is separate from status; leave status unchanged.
+
 
     // Send SMS if phone provided
     if (quotePhone) {
@@ -496,7 +495,7 @@ const AdminDashboard = () => {
     return matchesSearch && matchesType && matchesDept && matchesStatus;
   });
 
-  const completeStatuses = new Set(["complete", "picked_up", "delivered"]);
+  const completeStatuses = COMPLETE_STATUSES;
   const activeOrders = baseFiltered.filter((o) => !completeStatuses.has(o.status));
   const completeOrders = baseFiltered.filter((o) => completeStatuses.has(o.status));
   const filteredOrders = orderView === "active" ? activeOrders : completeOrders;
@@ -508,7 +507,7 @@ const AdminDashboard = () => {
     // Reset status to intake if current status isn't in the new flow
     const order = orders.find((o) => o.id === orderId);
     const updates: Record<string, string> = { order_type: newType };
-    if (order && !newFlow.includes(order.status) && order.status !== "on_hold") {
+    if (order && !(newFlow as readonly string[]).includes(order.status) && order.status !== "on_hold") {
       updates.status = "intake";
     }
     const { error } = await supabase.from("orders").update(updates).eq("id", orderId);
@@ -576,7 +575,7 @@ const AdminDashboard = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px] overflow-y-auto">
-                    {[...flow, "on_hold", "no_follow_up_client"].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
+                    {[...new Set([...flow, "on_hold", "no_follow_up_needed"])].sort((a, b) => (statusLabels[a] || a).localeCompare(statusLabels[b] || b)).map((s) => (
                       <SelectItem key={s} value={s} className="text-xs font-body">{statusLabels[s] || s}</SelectItem>
                     ))}
                   </SelectContent>
@@ -639,6 +638,7 @@ const AdminDashboard = () => {
             <Link to="/track-order" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Track Order</Link>
             <Link to="/gold-calculator" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Gold Calculator</Link>
             
+            <Link to="/admin/follow-ups" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Follow-Ups</Link>
             <Link to="/admin/clients" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Clients</Link>
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Staff Portal</span>
             <button onClick={signOut} className="flex items-center gap-2 text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
@@ -659,12 +659,44 @@ const AdminDashboard = () => {
           </Button>
         </div>
 
+        {/* Follow-up quick cards */}
+        {(() => {
+          const today = new Date(); today.setHours(0,0,0,0);
+          const active = orders.filter((o) => !completeStatuses.has(o.status));
+          const withDate = active.filter((o) => (o as any).next_follow_up_date);
+          const dueToday = withDate.filter((o) => new Date((o as any).next_follow_up_date) <= today).length;
+          const overdue = withDate.filter((o) => new Date((o as any).next_follow_up_date) < today).length;
+          const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
+          const ready = active.filter((o) => o.status === "ready_for_pickup").length;
+          const noFollowUp = active.filter((o) => !(o as any).next_follow_up_date && (o as any).follow_up_reason !== "no_follow_up_needed").length;
+          const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
+          const stale = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).production_updated_at || new Date((o as any).production_updated_at) < sevenDaysAgo)).length;
+          const cards = [
+            { label: "Due Today", value: dueToday, tab: "due_today", tone: "bg-blue-50 border-blue-300 text-blue-900" },
+            { label: "Overdue", value: overdue, tab: "overdue", tone: "bg-red-50 border-red-300 text-red-900" },
+            { label: "Waiting Client", value: waitingClient, tab: "waiting", tone: "bg-amber-50 border-amber-300 text-amber-900" },
+            { label: "Ready For Pickup", value: ready, tab: "ready", tone: "bg-green-50 border-green-300 text-green-900" },
+            { label: "No Follow-Up", value: noFollowUp, tab: "no_followup", tone: "bg-slate-50 border-slate-300 text-slate-800" },
+            { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },
+          ];
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+              {cards.map((c) => (
+                <Link key={c.label} to={`/admin/follow-ups?tab=${c.tab}`} className={`border p-4 hover:shadow-sm transition-shadow ${c.tone}`}>
+                  <p className="font-body text-xs uppercase tracking-widest opacity-80">{c.label}</p>
+                  <p className="font-display text-2xl mt-1">{c.value}</p>
+                </Link>
+              ))}
+            </div>
+          );
+        })()}
+
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
             { label: "Active Orders", value: orders.filter((o) => !completeStatuses.has(o.status)).length, view: "active" as const },
             { label: "Complete Orders", value: orders.filter((o) => completeStatuses.has(o.status)).length, view: "complete" as const },
-            { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_pickup").length },
+            { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_for_pickup").length },
             { label: "Total Orders", value: orders.length },
           ].map((stat) => (
             <button
@@ -856,6 +888,49 @@ const AdminDashboard = () => {
                   <Label className="font-body text-sm">Notes</Label>
                   <Textarea value={newOrder.notes} onChange={(e) => setNewOrder({ ...newOrder, notes: e.target.value })} className="mt-1" />
                 </div>
+
+                {/* Follow-Up section */}
+                <div className="pt-4 border-t border-border">
+                  <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">Follow-Up</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="font-body text-sm">Preferred Contact</Label>
+                      <Select value={newOrder.preferredContact} onValueChange={(v) => setNewOrder({ ...newOrder, preferredContact: v })}>
+                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {CONTACT_METHODS.map((m) => <SelectItem key={m} value={m}>{contactMethodLabels[m]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="font-body text-sm">Priority</Label>
+                      <Select value={newOrder.priority} onValueChange={(v) => setNewOrder({ ...newOrder, priority: v })}>
+                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {PRIORITIES.map((p) => <SelectItem key={p} value={p}>{priorityLabels[p]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="font-body text-sm">Follow-Up Reason</Label>
+                      <Select value={newOrder.followUpReason} onValueChange={(v) => setNewOrder({ ...newOrder, followUpReason: v })}>
+                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {FOLLOW_UP_REASONS.map((r) => <SelectItem key={r} value={r}>{followUpReasonLabels[r]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="font-body text-sm">Next Follow-Up Date</Label>
+                      <Input type="date" value={newOrder.nextFollowUpDate} onChange={(e) => setNewOrder({ ...newOrder, nextFollowUpDate: e.target.value })} className="mt-1" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Label className="font-body text-sm">Private Follow-Up Notes</Label>
+                    <Textarea value={newOrder.privateNotes} onChange={(e) => setNewOrder({ ...newOrder, privateNotes: e.target.value })} className="mt-1" placeholder="Internal only — not visible to client" />
+                  </div>
+                </div>
+
                 <Button type="submit" className="w-full bg-primary text-primary-foreground font-body text-sm tracking-widest uppercase">Create Order</Button>
               </form>
             </div>

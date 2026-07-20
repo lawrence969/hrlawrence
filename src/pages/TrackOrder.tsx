@@ -11,13 +11,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const statusLabels: Record<string, string> = {
-  intake: "Intake", quote_sent: "Quote Sent", quote_approved: "Quote Approved",
-  in_design: "In Design", design_approved: "Design Approved",
-  in_production: "In Production", in_progress: "In Progress",
-  complete: "Work Complete", ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
-  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
+  intake: "Intake",
+  in_design: "In Design",
+  in_production: "In Production",
+  waiting_for_client: "Waiting For Client",
   on_hold: "On Hold",
-  no_follow_up_client: "No Follow Up (Client)",
+  work_complete: "Work Complete",
+  ready_for_pickup: "Ready for Pickup",
+  picked_up: "Picked Up",
+  no_follow_up_needed: "On Hold",
+  // Legacy fallbacks (rendered only if old values still exist)
+  in_progress: "In Progress", complete: "Work Complete", ready_pickup: "Ready for Pickup",
+  quote_sent: "Intake", quote_approved: "Intake", design_approved: "In Design",
+  ordered_stones: "In Production", received_stones: "In Production",
+  larry_follow_up: "On Hold", no_follow_up_client: "On Hold",
 };
 
 const departmentLabels: Record<string, string> = {
@@ -31,11 +38,16 @@ const customSteps = ["intake", "in_design", "in_production", "on_hold", "complet
 const statusToClientStep: Record<string, Record<string, string>> = {
   repair: {
     intake: "intake",
+    in_production: "in_progress",
     in_progress: "in_progress",
     waiting_for_client: "on_hold",
+    on_hold: "on_hold",
+    no_follow_up_needed: "on_hold",
     larry_follow_up: "on_hold",
     no_follow_up_client: "on_hold",
+    work_complete: "complete",
     complete: "complete",
+    ready_for_pickup: "ready_pickup",
     ready_pickup: "ready_pickup",
     picked_up: "picked_up",
   },
@@ -49,9 +61,13 @@ const statusToClientStep: Record<string, Record<string, string>> = {
     received_stones: "in_production",
     in_production: "in_production",
     waiting_for_client: "on_hold",
+    on_hold: "on_hold",
+    no_follow_up_needed: "on_hold",
     larry_follow_up: "on_hold",
     no_follow_up_client: "on_hold",
+    work_complete: "complete",
     complete: "complete",
+    ready_for_pickup: "ready_pickup",
     ready_pickup: "ready_pickup",
     picked_up: "picked_up",
   },
