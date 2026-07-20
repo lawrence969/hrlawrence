@@ -27,10 +27,8 @@ const statusLabels: Record<string, string> = {
   larry_follow_up: "On Hold", no_follow_up_client: "On Hold",
 };
 
-const departmentLabels: Record<string, string> = {
-  front_of_store: "Front of Store", workshop: "Workshop", design: "Design Studio",
-  quality_control: "Quality Control", setting: "Setting", polishing: "Polishing", engraving: "Engraving",
-};
+
+
 
 const repairSteps = ["intake", "in_progress", "on_hold", "complete", "ready_pickup", "picked_up"];
 const customSteps = ["intake", "in_design", "in_production", "on_hold", "complete", "ready_pickup", "picked_up"];
@@ -78,7 +76,7 @@ interface FoundOrder {
   order_type: string;
   status: string;
   item_description: string;
-  current_department: string;
+  
   order_date: string | null;
   delivery_date: string | null;
   metal: string | null;
@@ -112,7 +110,7 @@ const TrackOrder = () => {
     setSearching(true);
     const { data } = await supabase
       .from("orders")
-      .select("order_number, order_type, status, item_description, current_department, order_date, delivery_date, metal, metal_type, colour, stone_type, stone_size, ring_size, first_name, last_name, rhodium_polish, deposit, budget")
+      .select("order_number, order_type, status, item_description, order_date, delivery_date, metal, metal_type, colour, stone_type, stone_size, ring_size, first_name, last_name, rhodium_polish, deposit, budget")
       .eq("order_number", searchQuery.toUpperCase().trim())
       .maybeSingle();
     setFoundOrder(data);
@@ -241,13 +239,8 @@ const TrackOrder = () => {
                         </div>
                       </div>
                     )}
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Department</p>
-                        <p className="font-body text-sm text-foreground">{departmentLabels[foundOrder.current_department] || foundOrder.current_department}</p>
-                      </div>
-                    </div>
+
+
                     {(foundOrder.metal || foundOrder.metal_type || foundOrder.colour) && (
                       <div>
                         <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">Metal</p>
