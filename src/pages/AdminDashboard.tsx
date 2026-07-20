@@ -1057,7 +1057,7 @@ const AdminDashboard = () => {
                   >
                     <Printer className="w-4 h-4 text-muted-foreground" />
                   </button>
-                  <button onClick={() => { setSelectedOrder(null); setActivePanel(null); }}><X className="w-5 h-5 text-muted-foreground" /></button>
+                  <button onClick={requestCloseOrder}><X className="w-5 h-5 text-muted-foreground" /></button>
                 </div>
               </div>
 
