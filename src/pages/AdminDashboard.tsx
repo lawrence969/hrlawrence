@@ -19,15 +19,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 
-const repairStatusFlow = ["intake", "in_progress", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
-const customStatusFlow = ["intake", "quote_sent", "quote_approved", "ordered_stones", "received_stones", "in_design", "design_approved", "in_production", "waiting_for_client", "larry_follow_up", "complete", "ready_pickup", "picked_up"];
-const showroomStatusFlow = ["intake", "complete", "picked_up"];
-
-const getStatusFlow = (orderType: string) => {
-  if (orderType === "repair") return repairStatusFlow;
-  if (orderType === "showroom") return showroomStatusFlow;
-  return customStatusFlow;
-};
+import {
+  statusLabels,
+  statusColor,
+  statusDescriptions,
+  getStatusFlow,
+  COMPLETE_STATUSES,
+  PRIORITIES,
+  priorityLabels,
+  priorityColor,
+  FOLLOW_UP_REASONS,
+  followUpReasonLabels,
+  CONTACT_METHODS,
+  contactMethodLabels,
+  isValidEmail,
+  formatPhone,
+} from "@/lib/order-status";
 
 const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : "Custom Piece";
 
@@ -37,28 +44,6 @@ const departmentLabels: Record<string, string> = {
   repair: "Repair",
   design: "Design",
   setting: "Setting",
-};
-
-const statusLabels: Record<string, string> = {
-  intake: "Intake", in_progress: "In Progress", complete: "Complete",
-  ready_pickup: "Ready for Pickup", picked_up: "Picked Up",
-  quote_sent: "Quote Sent", quote_approved: "Quote Approved",
-  ordered_stones: "Ordered Stones", received_stones: "Received Stones",
-  in_design: "In Design", design_approved: "Design Approved",
-  in_production: "In Production",
-  waiting_for_client: "Waiting For Client", larry_follow_up: "Larry Follow Up",
-  on_hold: "On Hold",
-  no_follow_up_client: "No Follow Up (Client)",
-};
-
-const statusColor = (status: string) => {
-  if (["intake"].includes(status)) return "bg-secondary text-secondary-foreground";
-  if (["in_progress", "in_design", "in_production", "ordered_stones", "received_stones", "waiting_for_client", "larry_follow_up"].includes(status)) return "bg-accent/20 text-accent";
-  if (["complete", "ready_pickup"].includes(status)) return "bg-green-100 text-green-800";
-  if (["picked_up"].includes(status)) return "bg-muted text-muted-foreground";
-  if (["on_hold"].includes(status)) return "bg-orange-100 text-orange-800";
-  if (["no_follow_up_client"].includes(status)) return "bg-slate-100 text-slate-700";
-  return "bg-secondary text-secondary-foreground";
 };
 
 const deptColor = (dept: string) => {
