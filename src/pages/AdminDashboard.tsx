@@ -643,6 +643,38 @@ const AdminDashboard = () => {
           </Button>
         </div>
 
+        {/* Follow-up quick cards */}
+        {(() => {
+          const today = new Date(); today.setHours(0,0,0,0);
+          const active = orders.filter((o) => !completeStatuses.has(o.status));
+          const withDate = active.filter((o) => (o as any).next_follow_up_date);
+          const dueToday = withDate.filter((o) => new Date((o as any).next_follow_up_date) <= today).length;
+          const overdue = withDate.filter((o) => new Date((o as any).next_follow_up_date) < today).length;
+          const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
+          const ready = active.filter((o) => o.status === "ready_for_pickup").length;
+          const noFollowUp = active.filter((o) => !(o as any).next_follow_up_date && (o as any).follow_up_reason !== "no_follow_up_needed").length;
+          const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
+          const stale = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).production_updated_at || new Date((o as any).production_updated_at) < sevenDaysAgo)).length;
+          const cards = [
+            { label: "Due Today", value: dueToday, tab: "due_today", tone: "bg-blue-50 border-blue-300 text-blue-900" },
+            { label: "Overdue", value: overdue, tab: "overdue", tone: "bg-red-50 border-red-300 text-red-900" },
+            { label: "Waiting Client", value: waitingClient, tab: "waiting", tone: "bg-amber-50 border-amber-300 text-amber-900" },
+            { label: "Ready For Pickup", value: ready, tab: "ready", tone: "bg-green-50 border-green-300 text-green-900" },
+            { label: "No Follow-Up", value: noFollowUp, tab: "no_followup", tone: "bg-slate-50 border-slate-300 text-slate-800" },
+            { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },
+          ];
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+              {cards.map((c) => (
+                <Link key={c.label} to={`/admin/follow-ups?tab=${c.tab}`} className={`border p-4 hover:shadow-sm transition-shadow ${c.tone}`}>
+                  <p className="font-body text-xs uppercase tracking-widest opacity-80">{c.label}</p>
+                  <p className="font-display text-2xl mt-1">{c.value}</p>
+                </Link>
+              ))}
+            </div>
+          );
+        })()}
+
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
