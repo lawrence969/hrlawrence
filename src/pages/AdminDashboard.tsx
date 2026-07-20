@@ -981,11 +981,27 @@ const AdminDashboard = () => {
 
         {/* Order Detail Slide-out */}
         {selectedOrder && activePanel && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={requestCloseOrder}>
             <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-background w-full max-w-6xl max-h-[95vh] overflow-y-auto border border-border rounded-lg shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                  {dirty && (
+                    <span className="font-body text-[11px] uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded">
+                      Unsaved changes
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    onClick={saveOrderChanges}
+                    disabled={!dirty || saving}
+                    className="font-body text-xs bg-primary text-primary-foreground"
+                  >
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
+
                   <button
                     onClick={() => {
                       const printWindow = window.open("", "_blank");
