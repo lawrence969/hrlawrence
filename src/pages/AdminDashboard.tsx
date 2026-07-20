@@ -357,6 +357,7 @@ const AdminDashboard = () => {
         orderDate: new Date().toISOString().split("T")[0],
         rhodiumPolish: false, stoneType: "", stoneOrigin: "" as "" | "lab" | "natural", stoneSize: "", ringSize: "",
         metal: "", metalType: "", colour: "", budget: "", deposit: "", deliveryDate: "",
+        preferredContact: "any", priority: "normal", followUpReason: "no_follow_up_needed", nextFollowUpDate: "", privateNotes: "",
       });
     }
   };
