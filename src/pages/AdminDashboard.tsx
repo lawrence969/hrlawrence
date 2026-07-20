@@ -86,6 +86,8 @@ const AdminDashboard = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showNewOrder, setShowNewOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [activePanel, setActivePanel] = useState<"detail" | "quote" | "invite" | null>(null);
   const [messages, setMessages] = useState<{ id: string; message: string; sender_id: string; created_at: string }[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -222,6 +224,16 @@ const AdminDashboard = () => {
     };
   }, [selectedOrder]);
 
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body">Loading...</div>;
   if (!user) return <Navigate to="/auth" replace />;
   if (!isStaff) return <Navigate to="/" replace />;
@@ -234,6 +246,59 @@ const AdminDashboard = () => {
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     }
   };
+
+  const patchOrder = (patch: Partial<Order>) => {
+    setSelectedOrder(prev => prev ? { ...prev, ...patch } : prev);
+    setDirty(true);
+  };
+
+  const saveOrderChanges = async () => {
+    if (!selectedOrder) return;
+    setSaving(true);
+    const o = selectedOrder;
+    const updates: any = {
+      first_name: o.first_name,
+      last_name: o.last_name,
+      customer_email: o.customer_email,
+      phone1: o.phone1,
+      phone2: o.phone2,
+      address: o.address,
+      order_type: o.order_type,
+      order_date: o.order_date,
+      item_description: o.item_description,
+      metal: o.metal,
+      metal_type: o.metal_type,
+      colour: o.colour,
+      ring_size: o.ring_size,
+      stone_type: o.stone_type,
+      stone_size: o.stone_size,
+      rhodium_polish: o.rhodium_polish,
+      delivery_date: o.delivery_date,
+      notes: o.notes,
+      deposit: o.deposit,
+    };
+    const { error } = await supabase.from("orders").update(updates).eq("id", o.id);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      return false;
+    }
+    setDirty(false);
+    toast({ title: "Order saved" });
+    fetchOrders();
+    return true;
+  };
+
+  const requestCloseOrder = () => {
+    if (dirty) {
+      const ok = window.confirm("You have unsaved changes. Discard them and close?");
+      if (!ok) return;
+    }
+    setDirty(false);
+    setSelectedOrder(null);
+    setActivePanel(null);
+  };
+
 
 
 
@@ -526,7 +591,7 @@ const AdminDashboard = () => {
           {items.map((order) => {
             const flow = getStatusFlow(order.order_type);
             return (
-            <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
+            <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setDirty(false); setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
               <td className="px-4 py-3 font-body text-sm text-foreground">
                 {order.first_name || order.last_name
@@ -926,11 +991,27 @@ const AdminDashboard = () => {
 
         {/* Order Detail Slide-out */}
         {selectedOrder && activePanel && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={requestCloseOrder}>
             <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-background w-full max-w-6xl max-h-[95vh] overflow-y-auto border border-border rounded-lg shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
+                  {dirty && (
+                    <span className="font-body text-[11px] uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded">
+                      Unsaved changes
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    onClick={saveOrderChanges}
+                    disabled={!dirty || saving}
+                    className="font-body text-xs bg-primary text-primary-foreground"
+                  >
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
+
                   <button
                     onClick={() => {
                       const printWindow = window.open("", "_blank");
@@ -986,7 +1067,7 @@ const AdminDashboard = () => {
                   >
                     <Printer className="w-4 h-4 text-muted-foreground" />
                   </button>
-                  <button onClick={() => { setSelectedOrder(null); setActivePanel(null); }}><X className="w-5 h-5 text-muted-foreground" /></button>
+                  <button onClick={requestCloseOrder}><X className="w-5 h-5 text-muted-foreground" /></button>
                 </div>
               </div>
 
@@ -1015,12 +1096,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.first_name || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, first_name: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ first_name: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ first_name: e.target.value || null })}
                           placeholder="First name"
                         />
                       </div>
@@ -1029,12 +1105,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.last_name || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, last_name: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ last_name: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ last_name: e.target.value || null })}
                           placeholder="Last name"
                         />
                       </div>
@@ -1044,13 +1115,7 @@ const AdminDashboard = () => {
                       <Input
                         className="font-body text-sm h-8"
                         value={selectedOrder.customer_email}
-                        onChange={(e) => setSelectedOrder({ ...selectedOrder, customer_email: e.target.value })}
-                        onBlur={async (e) => {
-                          const val = e.target.value;
-                          if (!val) return;
-                          const { error } = await supabase.from("orders").update({ customer_email: val }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}
+                        onChange={(e) => patchOrder({ customer_email: e.target.value })}
                         placeholder="Email"
                       />
                     </div>
@@ -1060,12 +1125,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.phone1 || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, phone1: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ phone1: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ phone1: e.target.value || null })}
                           placeholder="Phone 1"
                         />
                       </div>
@@ -1074,12 +1134,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.phone2 || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, phone2: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ phone2: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ phone2: e.target.value || null })}
                           placeholder="Phone 2"
                         />
                       </div>
@@ -1089,12 +1144,7 @@ const AdminDashboard = () => {
                       <Input
                         className="font-body text-sm h-8"
                         value={selectedOrder.address || ""}
-                        onChange={(e) => setSelectedOrder({ ...selectedOrder, address: e.target.value || null })}
-                        onBlur={async (e) => {
-                          const val = e.target.value || null;
-                          const { error } = await supabase.from("orders").update({ address: val }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}
+                        onChange={(e) => patchOrder({ address: e.target.value || null })}
                         placeholder="Address"
                       />
                     </div>
@@ -1106,11 +1156,7 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Type</p>
-                        <Select value={selectedOrder.order_type} onValueChange={async (val) => {
-                          setSelectedOrder({ ...selectedOrder, order_type: val });
-                          const { error } = await supabase.from("orders").update({ order_type: val }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}>
+                        <Select value={selectedOrder.order_type} onValueChange={(val) => patchOrder({ order_type: val })}>
                           <SelectTrigger className="font-body text-sm h-8"><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
@@ -1125,12 +1171,7 @@ const AdminDashboard = () => {
                           type="date"
                           className="font-body text-sm h-8"
                           value={selectedOrder.order_date || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, order_date: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ order_date: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ order_date: e.target.value || null })}
                         />
                       </div>
                     </div>
@@ -1139,12 +1180,7 @@ const AdminDashboard = () => {
                       <Textarea
                         className="font-body text-sm min-h-[60px]"
                         value={selectedOrder.item_description}
-                        onChange={(e) => setSelectedOrder({ ...selectedOrder, item_description: e.target.value })}
-                        onBlur={async (e) => {
-                          const val = e.target.value;
-                          const { error } = await supabase.from("orders").update({ item_description: val }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}
+                        onChange={(e) => patchOrder({ item_description: e.target.value })}
                         placeholder="Item description"
                       />
                     </div>
@@ -1156,12 +1192,7 @@ const AdminDashboard = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Metal</p>
-                        <Select value={selectedOrder.metal || ""} onValueChange={async (val) => {
-                          const v = val || null;
-                          setSelectedOrder({ ...selectedOrder, metal: v });
-                          const { error } = await supabase.from("orders").update({ metal: v }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}>
+                        <Select value={selectedOrder.metal || ""} onValueChange={(val) => patchOrder({ metal: val || null })}>
                           <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="10k" className="font-body text-sm">10K</SelectItem>
@@ -1173,12 +1204,7 @@ const AdminDashboard = () => {
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Metal Type</p>
-                        <Select value={selectedOrder.metal_type || ""} onValueChange={async (val) => {
-                          const v = val || null;
-                          setSelectedOrder({ ...selectedOrder, metal_type: v });
-                          const { error } = await supabase.from("orders").update({ metal_type: v }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}>
+                        <Select value={selectedOrder.metal_type || ""} onValueChange={(val) => patchOrder({ metal_type: val || null })}>
                           <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="gold" className="font-body text-sm">Gold</SelectItem>
@@ -1189,12 +1215,7 @@ const AdminDashboard = () => {
                       </div>
                       <div>
                         <p className="font-body text-xs text-muted-foreground mb-0.5">Colour</p>
-                        <Select value={selectedOrder.colour || ""} onValueChange={async (val) => {
-                          const v = val || null;
-                          setSelectedOrder({ ...selectedOrder, colour: v });
-                          const { error } = await supabase.from("orders").update({ colour: v }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        }}>
+                        <Select value={selectedOrder.colour || ""} onValueChange={(val) => patchOrder({ colour: val || null })}>
                           <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="white" className="font-body text-sm">White</SelectItem>
@@ -1208,12 +1229,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.ring_size || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, ring_size: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ ring_size: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ ring_size: e.target.value || null })}
                           placeholder="Ring size"
                         />
                       </div>
@@ -1222,12 +1238,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.stone_type || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, stone_type: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ stone_type: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ stone_type: e.target.value || null })}
                           placeholder="Stone type"
                         />
                       </div>
@@ -1236,12 +1247,7 @@ const AdminDashboard = () => {
                         <Input
                           className="font-body text-sm h-8"
                           value={selectedOrder.stone_size || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, stone_size: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ stone_size: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ stone_size: e.target.value || null })}
                           placeholder="Stone size"
                         />
                       </div>
@@ -1250,12 +1256,7 @@ const AdminDashboard = () => {
                         <div className="flex items-center gap-2 h-8">
                           <Checkbox
                             checked={selectedOrder.rhodium_polish || false}
-                            onCheckedChange={async (checked) => {
-                              const val = !!checked;
-                              setSelectedOrder({ ...selectedOrder, rhodium_polish: val });
-                              const { error } = await supabase.from("orders").update({ rhodium_polish: val }).eq("id", selectedOrder.id);
-                              if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                            }}
+                            onCheckedChange={(checked) => patchOrder({ rhodium_polish: !!checked })}
                           />
                           <span className="font-body text-sm">{selectedOrder.rhodium_polish ? "Yes" : "No"}</span>
                         </div>
@@ -1266,12 +1267,7 @@ const AdminDashboard = () => {
                           type="date"
                           className="font-body text-sm h-8"
                           value={selectedOrder.delivery_date || ""}
-                          onChange={(e) => setSelectedOrder({ ...selectedOrder, delivery_date: e.target.value || null })}
-                          onBlur={async (e) => {
-                            const val = e.target.value || null;
-                            const { error } = await supabase.from("orders").update({ delivery_date: val }).eq("id", selectedOrder.id);
-                            if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          }}
+                          onChange={(e) => patchOrder({ delivery_date: e.target.value || null })}
                         />
                       </div>
                     </div>
@@ -1282,13 +1278,7 @@ const AdminDashboard = () => {
                     <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">Notes</p>
                     <Textarea
                       value={selectedOrder.notes || ""}
-                      onChange={(e) => setSelectedOrder({ ...selectedOrder, notes: e.target.value })}
-                      onBlur={async (e) => {
-                        const val = e.target.value || null;
-                        const { error } = await supabase.from("orders").update({ notes: val }).eq("id", selectedOrder.id);
-                        if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                        else toast({ title: "Notes Updated" });
-                      }}
+                      onChange={(e) => patchOrder({ notes: e.target.value })}
                       className="font-body text-sm min-h-[80px]"
                       placeholder="Add notes..."
                     />
@@ -1333,13 +1323,7 @@ const AdminDashboard = () => {
                         placeholder="$"
                         className="font-body text-sm h-8"
                         value={selectedOrder.deposit ?? ""}
-                        onChange={(e) => setSelectedOrder({ ...selectedOrder, deposit: e.target.value ? parseFloat(e.target.value) : null })}
-                        onBlur={async (e) => {
-                          const val = e.target.value ? parseFloat(e.target.value) : null;
-                          const { error } = await supabase.from("orders").update({ deposit: val }).eq("id", selectedOrder.id);
-                          if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-                          else toast({ title: "Deposit Updated" });
-                        }}
+                        onChange={(e) => patchOrder({ deposit: e.target.value ? parseFloat(e.target.value) : null })}
                       />
                     </div>
                   </div>
