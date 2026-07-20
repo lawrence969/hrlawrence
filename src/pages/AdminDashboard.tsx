@@ -237,6 +237,59 @@ const AdminDashboard = () => {
     }
   };
 
+  const patchOrder = (patch: Partial<Order>) => {
+    setSelectedOrder(prev => prev ? { ...prev, ...patch } : prev);
+    setDirty(true);
+  };
+
+  const saveOrderChanges = async () => {
+    if (!selectedOrder) return;
+    setSaving(true);
+    const o = selectedOrder;
+    const updates: any = {
+      first_name: o.first_name,
+      last_name: o.last_name,
+      customer_email: o.customer_email,
+      phone1: o.phone1,
+      phone2: o.phone2,
+      address: o.address,
+      order_type: o.order_type,
+      order_date: o.order_date,
+      item_description: o.item_description,
+      metal: o.metal,
+      metal_type: o.metal_type,
+      colour: o.colour,
+      ring_size: o.ring_size,
+      stone_type: o.stone_type,
+      stone_size: o.stone_size,
+      rhodium_polish: o.rhodium_polish,
+      delivery_date: o.delivery_date,
+      notes: o.notes,
+      deposit: o.deposit,
+    };
+    const { error } = await supabase.from("orders").update(updates).eq("id", o.id);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      return false;
+    }
+    setDirty(false);
+    toast({ title: "Order saved" });
+    load();
+    return true;
+  };
+
+  const requestCloseOrder = () => {
+    if (dirty) {
+      const ok = window.confirm("You have unsaved changes. Discard them and close?");
+      if (!ok) return;
+    }
+    setDirty(false);
+    setSelectedOrder(null);
+    setActivePanel(null);
+  };
+
+
 
 
 
