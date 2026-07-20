@@ -229,7 +229,7 @@ const AdminFollowUps = () => {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={10} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
+                <tr><td colSpan={11} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
               ) : filtered.map((o) => (
                 <FollowUpRow key={o.id} order={o} onLog={logInteraction} />
               ))}
