@@ -332,11 +332,23 @@ const AdminDashboard = () => {
       follow_up_reason: newOrder.followUpReason || "no_follow_up_needed",
       next_follow_up_date: newOrder.nextFollowUpDate || null,
       private_follow_up_notes: newOrder.privateNotes || null,
-    } as any).select("order_number").single();
+    } as any).select("id, order_number").single();
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       const orderNum = data?.order_number || "—";
+      // Auto-log follow-up date/note into the timeline
+      if (data?.id && newOrder.nextFollowUpDate) {
+        const noteText = newOrder.privateNotes?.trim()
+          ? `Follow-up scheduled: ${newOrder.privateNotes.trim()}`
+          : "Follow-up scheduled";
+        await supabase.from("order_notes").insert({
+          order_id: data.id,
+          note: noteText,
+          note_date: newOrder.nextFollowUpDate,
+          created_by: user.id,
+        });
+      }
       toast({ title: "Order Created", description: orderNum });
       setCreatedOrderData({ ...newOrder });
       setCreatedOrderNumber(orderNum);
