@@ -38,21 +38,6 @@ import {
 
 const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : "Custom Piece";
 
-const departments = ["front_of_store", "repair", "design", "setting"] as const;
-const departmentLabels: Record<string, string> = {
-  front_of_store: "Front of Store",
-  repair: "Repair",
-  design: "Design",
-  setting: "Setting",
-};
-
-const deptColor = (dept: string) => {
-  if (dept === "front_of_store") return "bg-primary/10 text-primary";
-  if (dept === "repair") return "bg-orange-100 text-orange-800";
-  if (dept === "design") return "bg-purple-100 text-purple-800";
-  if (dept === "setting") return "bg-blue-100 text-blue-800";
-  return "bg-muted text-muted-foreground";
-};
 
 interface Order {
   id: string;
