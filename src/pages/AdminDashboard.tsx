@@ -224,6 +224,16 @@ const AdminDashboard = () => {
     };
   }, [selectedOrder]);
 
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body">Loading...</div>;
   if (!user) return <Navigate to="/auth" replace />;
   if (!isStaff) return <Navigate to="/" replace />;
