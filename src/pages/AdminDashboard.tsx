@@ -855,6 +855,12 @@ const AdminDashboard = () => {
                   <div>
                     <Label className="font-body text-sm">Next Follow-Up Date</Label>
                     <Input type="date" value={newOrder.nextFollowUpDate} onChange={(e) => setNewOrder({ ...newOrder, nextFollowUpDate: e.target.value })} className="mt-1" />
+                    {newOrder.nextFollowUpDate && (
+                      <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                        <Label className="font-body text-sm">Follow-Up Note</Label>
+                        <Textarea value={newOrder.privateNotes} onChange={(e) => setNewOrder({ ...newOrder, privateNotes: e.target.value })} className="mt-1" placeholder="What is this follow-up about?" />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div>
