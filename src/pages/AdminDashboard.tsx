@@ -649,7 +649,7 @@ const AdminDashboard = () => {
           {[
             { label: "Active Orders", value: orders.filter((o) => !completeStatuses.has(o.status)).length, view: "active" as const },
             { label: "Complete Orders", value: orders.filter((o) => completeStatuses.has(o.status)).length, view: "complete" as const },
-            { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_pickup").length },
+            { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_for_pickup").length },
             { label: "Total Orders", value: orders.length },
           ].map((stat) => (
             <button
