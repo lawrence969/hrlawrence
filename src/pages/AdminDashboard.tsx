@@ -86,6 +86,8 @@ const AdminDashboard = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showNewOrder, setShowNewOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [activePanel, setActivePanel] = useState<"detail" | "quote" | "invite" | null>(null);
   const [messages, setMessages] = useState<{ id: string; message: string; sender_id: string; created_at: string }[]>([]);
   const [newMessage, setNewMessage] = useState("");
