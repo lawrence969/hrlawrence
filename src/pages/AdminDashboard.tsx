@@ -493,7 +493,7 @@ const AdminDashboard = () => {
     // Reset status to intake if current status isn't in the new flow
     const order = orders.find((o) => o.id === orderId);
     const updates: Record<string, string> = { order_type: newType };
-    if (order && !newFlow.includes(order.status) && order.status !== "on_hold") {
+    if (order && !(newFlow as readonly string[]).includes(order.status) && order.status !== "on_hold") {
       updates.status = "intake";
     }
     const { error } = await supabase.from("orders").update(updates).eq("id", orderId);
