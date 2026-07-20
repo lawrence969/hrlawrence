@@ -38,21 +38,6 @@ import {
 
 const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : "Custom Piece";
 
-const departments = ["front_of_store", "repair", "design", "setting"] as const;
-const departmentLabels: Record<string, string> = {
-  front_of_store: "Front of Store",
-  repair: "Repair",
-  design: "Design",
-  setting: "Setting",
-};
-
-const deptColor = (dept: string) => {
-  if (dept === "front_of_store") return "bg-primary/10 text-primary";
-  if (dept === "repair") return "bg-orange-100 text-orange-800";
-  if (dept === "design") return "bg-purple-100 text-purple-800";
-  if (dept === "setting") return "bg-blue-100 text-blue-800";
-  return "bg-muted text-muted-foreground";
-};
 
 interface Order {
   id: string;
@@ -62,7 +47,7 @@ interface Order {
   last_name: string | null;
   order_type: string;
   status: string;
-  current_department: string;
+  
   item_description: string;
   notes: string | null;
   created_at: string;
@@ -97,7 +82,7 @@ const AdminDashboard = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
-  const [filterDept, setFilterDept] = useState<string>("all");
+  
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showNewOrder, setShowNewOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -250,11 +235,8 @@ const AdminDashboard = () => {
     }
   };
 
-  const changeDepartment = async (orderId: string, dept: string) => {
-    const { error } = await supabase.from("orders").update({ current_department: dept }).eq("id", orderId);
-    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else toast({ title: "Department Updated" });
-  };
+
+
 
   const handleCreateOrderClick = (e: React.FormEvent) => {
     e.preventDefault();
@@ -490,9 +472,8 @@ const AdminDashboard = () => {
   const baseFiltered = orders.filter((o) => {
     const matchesSearch = o.customer_email.toLowerCase().includes(search.toLowerCase()) || o.order_number.toLowerCase().includes(search.toLowerCase()) || `${o.first_name || ''} ${o.last_name || ''}`.toLowerCase().includes(search.toLowerCase());
     const matchesType = filterType === "all" || o.order_type === filterType;
-    const matchesDept = filterDept === "all" || o.current_department === filterDept;
     const matchesStatus = filterStatus === "all" || o.status === filterStatus;
-    return matchesSearch && matchesType && matchesDept && matchesStatus;
+    return matchesSearch && matchesType && matchesStatus;
   });
 
   const completeStatuses = COMPLETE_STATUSES;
@@ -524,7 +505,7 @@ const AdminDashboard = () => {
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Client</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider hidden md:table-cell">Item</th>
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Type</th>
-            <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Dept</th>
+            
             <th className="text-left px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider">Status</th>
             <th className="px-4 py-3 font-body text-xs text-muted-foreground uppercase tracking-wider w-10"></th>
           </tr>
@@ -553,18 +534,8 @@ const AdminDashboard = () => {
                   </SelectContent>
                 </Select>
               </td>
-              <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                <Select value={order.current_department} onValueChange={(val) => changeDepartment(order.id, val)}>
-                  <SelectTrigger className={`h-7 w-[140px] text-xs font-body border-0 ${deptColor(order.current_department)}`}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[...departments].sort((a, b) => departmentLabels[a].localeCompare(departmentLabels[b])).map((d) => (
-                      <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </td>
+
+
               <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                 <Select value={order.status} onValueChange={async (val) => {
                   const { error } = await supabase.from("orders").update({ status: val }).eq("id", order.id);
@@ -975,7 +946,7 @@ const AdminDashboard = () => {
                           <tr><th>Order Date</th><td>${selectedOrder.order_date ? new Date(selectedOrder.order_date + "T00:00:00").toLocaleDateString() : "—"}</td></tr>
                           <tr><th>Item</th><td>${selectedOrder.item_description}</td></tr>
                           <tr><th>Status</th><td>${statusLabels[selectedOrder.status] || selectedOrder.status}</td></tr>
-                          <tr><th>Department</th><td>${departmentLabels[selectedOrder.current_department] || selectedOrder.current_department}</td></tr>
+                          
                           <tr><th>Metal</th><td>${selectedOrder.metal || "—"}</td></tr>
                           <tr><th>Metal Type</th><td>${selectedOrder.metal_type || "—"}</td></tr>
                           <tr><th>Colour</th><td>${selectedOrder.colour || "—"}</td></tr>
@@ -1306,19 +1277,8 @@ const AdminDashboard = () => {
                     />
                   </div>
 
-                  <div>
-                    <p className="font-body text-xs text-muted-foreground mb-2">Department Location</p>
-                    <Select value={selectedOrder.current_department} onValueChange={(val) => changeDepartment(selectedOrder.id, val)}>
-                      <SelectTrigger className="w-full font-body text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {departments.map((d) => (
-                          <SelectItem key={d} value={d} className="font-body text-sm">{departmentLabels[d]}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+
+
 
                   {/* Status */}
                   <div>
@@ -1587,18 +1547,8 @@ const AdminDashboard = () => {
               <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={filterDept} onValueChange={setFilterDept}>
-            <SelectTrigger className="h-10 w-[160px] text-xs font-body">
-              <Filter className="w-3 h-3 mr-1 opacity-50" />
-              <SelectValue placeholder="Department" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all" className="text-xs font-body">All Depts</SelectItem>
-              {[...departments].sort((a, b) => departmentLabels[a].localeCompare(departmentLabels[b])).map((d) => (
-                <SelectItem key={d} value={d} className="text-xs font-body">{departmentLabels[d]}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+
+
           <Select value={filterStatus} onValueChange={setFilterStatus}>
             <SelectTrigger className="h-10 w-[170px] text-xs font-body">
               <Filter className="w-3 h-3 mr-1 opacity-50" />
@@ -1611,8 +1561,9 @@ const AdminDashboard = () => {
               ))}
             </SelectContent>
           </Select>
-          {(filterType !== "all" || filterDept !== "all" || filterStatus !== "all") && (
-            <Button variant="ghost" size="sm" className="text-xs font-body text-muted-foreground" onClick={() => { setFilterType("all"); setFilterDept("all"); setFilterStatus("all"); }}>
+          {(filterType !== "all" || filterStatus !== "all") && (
+            <Button variant="ghost" size="sm" className="text-xs font-body text-muted-foreground" onClick={() => { setFilterType("all"); setFilterStatus("all"); }}>
+
               <X className="w-3 h-3 mr-1" /> Clear filters
             </Button>
           )}

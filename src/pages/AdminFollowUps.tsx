@@ -27,7 +27,7 @@ type FollowUpOrder = {
   last_name: string | null;
   customer_email: string | null;
   phone1: string | null;
-  current_department: string | null;
+  
   next_follow_up_date: string | null;
   last_contacted_at: string | null;
   preferred_contact_method: string | null;
@@ -58,7 +58,7 @@ const AdminFollowUps = () => {
   const load = async () => {
     const { data } = await supabase
       .from("orders")
-      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, current_department, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id")
+      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id")
       .order("next_follow_up_date", { ascending: true, nullsFirst: false });
     setOrders((data as any) || []);
   };
