@@ -988,7 +988,7 @@ const AdminDashboard = () => {
               </div>
 
               {activePanel === "detail" && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start [&>*]:space-y-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
                   {/* Customer Info */}
                   <div className="border border-border p-4 space-y-3">
