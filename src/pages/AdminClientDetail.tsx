@@ -21,10 +21,12 @@ interface Quote { id: string; amount: number; status: string; sent_at: string; d
 interface Interaction { id: string; interaction_type: string; summary: string; occurred_at: string; }
 
 const interactionIcons: Record<string, any> = {
-  call: PhoneCall, walk_in: UserCheck, email: Mail, sms: MessageSquare, note: StickyNote, other: StickyNote,
+  call: PhoneCall, text: MessageSquare, sms: MessageSquare, email: Mail,
+  voicemail: PhoneCall, in_person: UserCheck, walk_in: UserCheck, note: StickyNote, other: StickyNote,
 };
 const interactionLabels: Record<string, string> = {
-  call: "Call", walk_in: "Walk-in", email: "Email", sms: "SMS", note: "Note", other: "Other",
+  call: "Call", text: "Text", sms: "SMS", email: "Email",
+  voicemail: "Voicemail", in_person: "In-person", walk_in: "Walk-in", note: "Internal note", other: "Other",
 };
 
 const AdminClientDetail = () => {
