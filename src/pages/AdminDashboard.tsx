@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -79,6 +79,7 @@ interface Quote {
 
 const AdminDashboard = () => {
   const { user, isStaff, loading, signOut } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
@@ -179,6 +180,21 @@ const AdminDashboard = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
+
+  // Auto-open order modal when ?open=<id> is present in URL
+  useEffect(() => {
+    const openId = searchParams.get("open");
+    if (!openId || !orders.length) return;
+    const target = orders.find((o) => o.id === openId);
+    if (target) {
+      setDirty(false);
+      setSelectedOrder(target);
+      setActivePanel("detail");
+      searchParams.delete("open");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [orders, searchParams, setSearchParams]);
+
 
   // Fetch messages and quotes when order selected
   useEffect(() => {
