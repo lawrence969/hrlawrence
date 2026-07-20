@@ -254,7 +254,7 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
 
   return (
     <tr className="border-b border-border font-body text-sm align-top">
-      <td className="px-3 py-3 font-medium text-primary whitespace-nowrap">{order.order_number}</td>
+      <td className="px-3 py-3 font-medium text-primary whitespace-nowrap"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
       <td className="px-3 py-3 whitespace-nowrap">{order.first_name} {order.last_name}</td>
       <td className="px-3 py-3 whitespace-nowrap text-xs text-muted-foreground">
         {order.phone1 && <div>{formatPhone(order.phone1)}</div>}
