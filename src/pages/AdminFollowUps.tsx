@@ -43,7 +43,7 @@ const TABS = [
   { key: "overdue", label: "Overdue" },
   { key: "waiting", label: "Waiting Client" },
   { key: "ready", label: "Ready for Pickup" },
-  { key: "no_followup", label: "No Follow-Up" },
+  { key: "on_hold", label: "On Hold" },
   { key: "high_priority", label: "High Priority" },
   { key: "stale", label: "Production Needs Update" },
 ];
