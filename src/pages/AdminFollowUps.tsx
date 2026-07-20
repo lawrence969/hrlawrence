@@ -215,15 +215,15 @@ const AdminFollowUps = () => {
           <table className="min-w-full w-auto">
             <thead className="bg-muted border-b border-border sticky top-0 z-10">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
-                <th className="px-3 py-3">Order</th>
-                <th className="px-3 py-3">Client</th>
-                <th className="px-3 py-3">Item</th>
-                <th className="px-3 py-3">Status</th>
-                <th className="px-3 py-3">Reason</th>
-                <th className="px-3 py-3">Follow-Up Note</th>
-                <th className="px-3 py-3">Next</th>
-                <th className="px-3 py-3">Last</th>
-                <th className="px-3 py-3">Priority</th>
+                <th className="px-3 py-3 w-[120px]">Order</th>
+                <th className="px-3 py-3 w-[180px]">Client</th>
+                <th className="px-3 py-3 w-[120px]">Item</th>
+                <th className="px-3 py-3 w-[120px]">Status</th>
+                <th className="px-3 py-3 w-[160px]">Reason</th>
+                <th className="px-3 py-3 w-[220px]">Follow-Up Note</th>
+                <th className="px-3 py-3 w-[100px]">Next</th>
+                <th className="px-3 py-3 w-[100px]">Last</th>
+                <th className="px-3 py-3 w-[100px]">Priority</th>
                 <th className="px-3 py-3 sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Actions</th>
               </tr>
             </thead>
@@ -254,8 +254,8 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
 
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
-      <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
-      <td className="px-3 py-1.5 whitespace-nowrap">
+      <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap w-[120px]"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
+      <td className="px-3 py-1.5 whitespace-nowrap w-[180px]">
         <div className="font-medium">{order.first_name} {order.last_name}</div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
           {order.phone1 && <span>{formatPhone(order.phone1)}</span>}
@@ -263,13 +263,13 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
           <Badge variant="outline" className="text-[10px]">{contactMethodLabels[order.preferred_contact_method || "any"]}</Badge>
         </div>
       </td>
-      <td className="px-3 py-1.5 max-w-[200px] truncate">{order.item_description || "—"}</td>
-      <td className="px-3 py-1.5"><Badge className={statusColor(order.status)}>{statusLabels[order.status] || order.status}</Badge></td>
-      <td className="px-3 py-1.5 text-xs">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
-      <td className="px-3 py-1.5 text-xs max-w-[240px]"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
-      <td className="px-3 py-1.5 whitespace-nowrap">{fmtDate(order.next_follow_up_date)}</td>
-      <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground">{fmtDate(order.last_contacted_at)}</td>
-      <td className="px-3 py-1.5"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
+      <td className="px-3 py-1.5 w-[120px] truncate">{order.item_description || "—"}</td>
+      <td className="px-3 py-1.5 w-[120px]"><Badge className={statusColor(order.status)}>{statusLabels[order.status] || order.status}</Badge></td>
+      <td className="px-3 py-1.5 text-xs w-[160px]">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
+      <td className="px-3 py-1.5 text-xs w-[220px]"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
+      <td className="px-3 py-1.5 whitespace-nowrap w-[100px]">{fmtDate(order.next_follow_up_date)}</td>
+      <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[100px]">{fmtDate(order.last_contacted_at)}</td>
+      <td className="px-3 py-1.5 w-[100px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
       <td className="px-3 py-1.5 sticky right-0 bg-background shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">
         <div className="flex items-center gap-1">
