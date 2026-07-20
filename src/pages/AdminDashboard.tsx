@@ -910,8 +910,8 @@ const AdminDashboard = () => {
 
         {/* Order Detail Slide-out */}
         {selectedOrder && activePanel && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 z-50 flex justify-end" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
-            <motion.div initial={{ x: 400 }} animate={{ x: 0 }} className="bg-background w-full max-w-md h-full overflow-y-auto border-l border-border p-6" onClick={(e) => e.stopPropagation()}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => { setSelectedOrder(null); setActivePanel(null); }}>
+            <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-background w-full max-w-6xl max-h-[95vh] overflow-y-auto border border-border rounded-lg shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
                 <div className="flex items-center gap-2">
@@ -988,7 +988,8 @@ const AdminDashboard = () => {
               </div>
 
               {activePanel === "detail" && (
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start [&>*]:space-y-3">
+
                   {/* Customer Info */}
                   <div className="border border-border p-4 space-y-3">
                     <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider">Customer Information</p>
