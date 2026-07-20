@@ -345,6 +345,11 @@ const AdminDashboard = () => {
       budget: newOrder.budget ? parseFloat(newOrder.budget) : null,
       deposit: newOrder.deposit ? parseFloat(newOrder.deposit) : null,
       delivery_date: newOrder.deliveryDate || null,
+      preferred_contact_method: newOrder.preferredContact || "any",
+      internal_priority: newOrder.priority || "normal",
+      follow_up_reason: newOrder.followUpReason || "no_follow_up_needed",
+      next_follow_up_date: newOrder.nextFollowUpDate || null,
+      private_follow_up_notes: newOrder.privateNotes || null,
     } as any).select("order_number").single();
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
