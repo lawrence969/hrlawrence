@@ -581,7 +581,7 @@ const AdminDashboard = () => {
           {items.map((order) => {
             const flow = getStatusFlow(order.order_type);
             return (
-            <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setSelectedOrder(order); setActivePanel("detail"); }}>
+            <motion.tr key={order.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer" onClick={() => { setDirty(false); setSelectedOrder(order); setActivePanel("detail"); }}>
               <td className="px-4 py-3 font-body text-sm font-medium text-foreground">{order.order_number}</td>
               <td className="px-4 py-3 font-body text-sm text-foreground">
                 {order.first_name || order.last_name
