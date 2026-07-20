@@ -292,6 +292,11 @@ const AdminDashboard = () => {
       delivery_date: o.delivery_date,
       notes: o.notes,
       deposit: o.deposit,
+      next_follow_up_date: (o as any).next_follow_up_date || null,
+      follow_up_reason: (o as any).follow_up_reason || null,
+      private_follow_up_notes: (o as any).private_follow_up_notes || null,
+      preferred_contact: (o as any).preferred_contact || null,
+      priority: (o as any).priority || null,
     };
     const { error } = await supabase.from("orders").update(updates).eq("id", o.id);
     setSaving(false);
