@@ -212,7 +212,7 @@ const AdminFollowUps = () => {
         <Input placeholder="Search by name, order #, email, or item…" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-md font-body" />
 
         <div className="bg-background border border-border overflow-x-auto">
-          <table className="w-full min-w-[1100px]">
+          <table className="w-full min-w-[900px]">
             <thead className="bg-muted border-b border-border">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
                 <th className="px-3 py-3">Order</th>
@@ -224,7 +224,7 @@ const AdminFollowUps = () => {
                 <th className="px-3 py-3">Next</th>
                 <th className="px-3 py-3">Last</th>
                 <th className="px-3 py-3">Priority</th>
-                <th className="px-3 py-3">Actions</th>
+                <th className="px-3 py-3 sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -267,7 +267,7 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
       <td className="px-3 py-3 whitespace-nowrap">{fmtDate(order.next_follow_up_date)}</td>
       <td className="px-3 py-3 whitespace-nowrap text-muted-foreground">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-3"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
-      <td className="px-3 py-3">
+      <td className="px-3 py-3 sticky right-0 bg-background shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">
         <div className="flex flex-wrap gap-1">
           <Button size="sm" variant="outline" onClick={() => quick("call", "Called")} title="Called"><Phone className="w-3 h-3" /></Button>
           <Button size="sm" variant="outline" onClick={() => quick("text", "Texted")} title="Texted"><MessageSquare className="w-3 h-3" /></Button>
