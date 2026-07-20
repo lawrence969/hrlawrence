@@ -888,6 +888,49 @@ const AdminDashboard = () => {
                   <Label className="font-body text-sm">Notes</Label>
                   <Textarea value={newOrder.notes} onChange={(e) => setNewOrder({ ...newOrder, notes: e.target.value })} className="mt-1" />
                 </div>
+
+                {/* Follow-Up section */}
+                <div className="pt-4 border-t border-border">
+                  <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">Follow-Up</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="font-body text-sm">Preferred Contact</Label>
+                      <Select value={newOrder.preferredContact} onValueChange={(v) => setNewOrder({ ...newOrder, preferredContact: v })}>
+                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {CONTACT_METHODS.map((m) => <SelectItem key={m} value={m}>{contactMethodLabels[m]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="font-body text-sm">Priority</Label>
+                      <Select value={newOrder.priority} onValueChange={(v) => setNewOrder({ ...newOrder, priority: v })}>
+                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {PRIORITIES.map((p) => <SelectItem key={p} value={p}>{priorityLabels[p]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="font-body text-sm">Follow-Up Reason</Label>
+                      <Select value={newOrder.followUpReason} onValueChange={(v) => setNewOrder({ ...newOrder, followUpReason: v })}>
+                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {FOLLOW_UP_REASONS.map((r) => <SelectItem key={r} value={r}>{followUpReasonLabels[r]}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="font-body text-sm">Next Follow-Up Date</Label>
+                      <Input type="date" value={newOrder.nextFollowUpDate} onChange={(e) => setNewOrder({ ...newOrder, nextFollowUpDate: e.target.value })} className="mt-1" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Label className="font-body text-sm">Private Follow-Up Notes</Label>
+                    <Textarea value={newOrder.privateNotes} onChange={(e) => setNewOrder({ ...newOrder, privateNotes: e.target.value })} className="mt-1" placeholder="Internal only — not visible to client" />
+                  </div>
+                </div>
+
                 <Button type="submit" className="w-full bg-primary text-primary-foreground font-body text-sm tracking-widest uppercase">Create Order</Button>
               </form>
             </div>
