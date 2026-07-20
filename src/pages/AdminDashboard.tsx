@@ -724,7 +724,7 @@ const AdminDashboard = () => {
             { label: "Overdue", value: overdue, tab: "overdue", tone: "bg-red-50 border-red-300 text-red-900" },
             { label: "Waiting Client", value: waitingClient, tab: "waiting", tone: "bg-amber-50 border-amber-300 text-amber-900" },
             { label: "Ready For Pickup", value: ready, tab: "ready", tone: "bg-green-50 border-green-300 text-green-900" },
-            { label: "No Follow-Up", value: noFollowUp, tab: "no_followup", tone: "bg-slate-50 border-slate-300 text-slate-800" },
+            { label: "On Hold", value: onHold, tab: "on_hold", tone: "bg-slate-50 border-slate-300 text-slate-800" },
             { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },
           ];
           return (
