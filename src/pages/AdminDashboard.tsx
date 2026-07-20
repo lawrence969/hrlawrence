@@ -144,6 +144,11 @@ const AdminDashboard = () => {
     metal: "", metalType: "", colour: "",
     budget: "", deposit: "",
     deliveryDate: "",
+    preferredContact: "any",
+    priority: "normal",
+    followUpReason: "no_follow_up_needed",
+    nextFollowUpDate: "",
+    privateNotes: "",
   });
 
   const fetchOrders = async () => {
