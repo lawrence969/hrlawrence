@@ -141,6 +141,34 @@ const AdminFollowUps = () => {
     if (nextDate !== undefined) updates.next_follow_up_date = nextDate;
     if (resolved) updates.next_follow_up_date = null;
     await supabase.from("orders").update(updates).eq("id", order.id);
+
+    // Mirror to order timeline (order_notes) so the follow-up log is preserved
+    const today = new Date().toISOString().split("T")[0];
+    const typeLabel = interactionTypeLabels[type] || type;
+    const interactionNote = `${typeLabel}${summary ? `: ${summary}` : ""}`;
+    await supabase.from("order_notes").insert({
+      order_id: order.id,
+      note: interactionNote,
+      note_date: today,
+      created_by: user?.id,
+    });
+    if (nextDate) {
+      await supabase.from("order_notes").insert({
+        order_id: order.id,
+        note: "Follow-up scheduled",
+        note_date: nextDate,
+        created_by: user?.id,
+      });
+    }
+    if (resolved) {
+      await supabase.from("order_notes").insert({
+        order_id: order.id,
+        note: "Follow-up resolved",
+        note_date: today,
+        created_by: user?.id,
+      });
+    }
+
     toast({ title: "Logged", description: `${interactionTypeLabels[type] || type} recorded` });
     load();
   };
