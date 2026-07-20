@@ -275,7 +275,7 @@ const AdminDashboard = () => {
     }
     setDirty(false);
     toast({ title: "Order saved" });
-    load();
+    fetchOrders();
     return true;
   };
 
