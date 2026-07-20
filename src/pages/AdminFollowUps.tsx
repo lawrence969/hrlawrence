@@ -211,7 +211,7 @@ const AdminFollowUps = () => {
 
         <Input placeholder="Search by name, order #, email, or item…" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-md font-body" />
 
-        <div className="bg-background border border-border overflow-x-auto">
+        <div className="bg-background border border-border overflow-auto max-h-[calc(100vh-260px)]">
           <table className="w-full min-w-[900px]">
             <thead className="bg-muted border-b border-border">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
