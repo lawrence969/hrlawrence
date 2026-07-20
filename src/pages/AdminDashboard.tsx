@@ -481,7 +481,7 @@ const AdminDashboard = () => {
     return matchesSearch && matchesType && matchesDept && matchesStatus;
   });
 
-  const completeStatuses = new Set(["complete", "picked_up", "delivered"]);
+  const completeStatuses = COMPLETE_STATUSES;
   const activeOrders = baseFiltered.filter((o) => !completeStatuses.has(o.status));
   const completeOrders = baseFiltered.filter((o) => completeStatuses.has(o.status));
   const filteredOrders = orderView === "active" ? activeOrders : completeOrders;
