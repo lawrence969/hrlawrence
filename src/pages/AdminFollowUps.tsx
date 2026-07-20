@@ -224,7 +224,7 @@ const AdminFollowUps = () => {
                 <th className="px-3 py-3">Next</th>
                 <th className="px-3 py-3">Last</th>
                 <th className="px-3 py-3">Priority</th>
-                <th className="px-3 py-3">Actions</th>
+                <th className="px-3 py-3 sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Actions</th>
               </tr>
             </thead>
             <tbody>
