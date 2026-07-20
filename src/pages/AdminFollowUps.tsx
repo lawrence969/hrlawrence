@@ -217,10 +217,10 @@ const AdminFollowUps = () => {
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
                 <th className="px-3 py-3">Order</th>
                 <th className="px-3 py-3">Client</th>
-                <th className="px-3 py-3">Contact</th>
                 <th className="px-3 py-3">Item</th>
                 <th className="px-3 py-3">Status</th>
                 <th className="px-3 py-3">Reason</th>
+                <th className="px-3 py-3">Follow-Up Note</th>
                 <th className="px-3 py-3">Next</th>
                 <th className="px-3 py-3">Last</th>
                 <th className="px-3 py-3">Priority</th>
