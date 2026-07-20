@@ -271,13 +271,13 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
       <td className="px-3 py-1.5"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
       <td className="px-3 py-1.5 sticky right-0 bg-background shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">
-        <div className="flex flex-wrap gap-1">
-          <Button size="sm" variant="outline" onClick={() => quick("call", "Called")} title="Called"><Phone className="w-3 h-3" /></Button>
-          <Button size="sm" variant="outline" onClick={() => quick("text", "Texted")} title="Texted"><MessageSquare className="w-3 h-3" /></Button>
-          <Button size="sm" variant="outline" onClick={() => quick("email", "Emailed")} title="Emailed"><Mail className="w-3 h-3" /></Button>
-          <Button size="sm" variant="outline" onClick={() => quick("voicemail", "Left voicemail")} title="Voicemail"><Voicemail className="w-3 h-3" /></Button>
+        <div className="flex items-center gap-1">
+          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("call", "Called")} title="Called"><Phone className="w-3 h-3" /></Button>
+          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("text", "Texted")} title="Texted"><MessageSquare className="w-3 h-3" /></Button>
+          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("email", "Emailed")} title="Emailed"><Mail className="w-3 h-3" /></Button>
+          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("voicemail", "Left voicemail")} title="Voicemail"><Voicemail className="w-3 h-3" /></Button>
           <Popover>
-            <PopoverTrigger asChild><Button size="sm" variant="outline" title="Log with note"><StickyNote className="w-3 h-3" /></Button></PopoverTrigger>
+            <PopoverTrigger asChild><Button size="icon" className="h-7 w-7" variant="outline" title="Log with note"><StickyNote className="w-3 h-3" /></Button></PopoverTrigger>
             <PopoverContent className="w-80 p-3">
               <div className="space-y-2">
                 <Select value={type} onValueChange={setType}>
