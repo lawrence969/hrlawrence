@@ -96,7 +96,7 @@ export const getStatusFlow = (orderType: string): OrderStatus[] => {
   return customStatusFlow;
 };
 
-export const COMPLETE_STATUSES = new Set(["picked_up", "no_follow_up_needed"]);
+export const COMPLETE_STATUSES = new Set(["work_complete", "picked_up", "no_follow_up_needed"]);
 
 // Priorities
 export const PRIORITIES = ["low", "normal", "high", "urgent"] as const;
