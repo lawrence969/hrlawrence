@@ -255,9 +255,9 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
       <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
-      <td className="px-3 py-1.5 whitespace-nowrap">{order.first_name} {order.last_name}</td>
-      <td className="px-3 py-1.5 whitespace-nowrap text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
+      <td className="px-3 py-1.5 whitespace-nowrap">
+        <div className="font-medium">{order.first_name} {order.last_name}</div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
           {order.phone1 && <span>{formatPhone(order.phone1)}</span>}
           {order.customer_email && <span className="truncate max-w-[160px]">{order.customer_email}</span>}
           <Badge variant="outline" className="text-[10px]">{contactMethodLabels[order.preferred_contact_method || "any"]}</Badge>
@@ -266,6 +266,7 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
       <td className="px-3 py-1.5 max-w-[200px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5"><Badge className={statusColor(order.status)}>{statusLabels[order.status] || order.status}</Badge></td>
       <td className="px-3 py-1.5 text-xs">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
+      <td className="px-3 py-1.5 text-xs max-w-[240px]"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
       <td className="px-3 py-1.5 whitespace-nowrap">{fmtDate(order.next_follow_up_date)}</td>
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
