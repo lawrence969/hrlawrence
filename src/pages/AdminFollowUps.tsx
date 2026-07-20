@@ -83,8 +83,8 @@ const AdminFollowUps = () => {
       case "ready":
         list = active.filter((o) => o.status === "ready_for_pickup");
         break;
-      case "no_followup":
-        list = active.filter((o) => !o.next_follow_up_date && o.follow_up_reason !== "no_follow_up_needed");
+      case "on_hold":
+        list = active.filter((o) => o.status === "on_hold");
         break;
       case "high_priority":
         list = active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent");
