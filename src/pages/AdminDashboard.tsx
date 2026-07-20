@@ -716,7 +716,7 @@ const AdminDashboard = () => {
           const overdue = withDate.filter((o) => new Date((o as any).next_follow_up_date) < today).length;
           const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
           const ready = active.filter((o) => o.status === "ready_for_pickup").length;
-          const noFollowUp = active.filter((o) => !(o as any).next_follow_up_date && (o as any).follow_up_reason !== "no_follow_up_needed").length;
+          const onHold = active.filter((o) => o.status === "on_hold").length;
           const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
           const stale = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).production_updated_at || new Date((o as any).production_updated_at) < sevenDaysAgo)).length;
           const cards = [
