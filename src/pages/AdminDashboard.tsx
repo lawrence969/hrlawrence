@@ -1305,6 +1305,46 @@ const AdminDashboard = () => {
                     />
                   </div>
 
+                  {/* Follow-Up */}
+                  <div className="border border-border p-4 space-y-3">
+                    <p className="font-body text-xs text-muted-foreground font-medium uppercase tracking-wider">Follow-Up</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Next Follow-Up Date</p>
+                        <Input
+                          type="date"
+                          className="font-body text-sm h-8"
+                          value={(selectedOrder as any).next_follow_up_date || ""}
+                          onChange={(e) => patchOrder({ next_follow_up_date: e.target.value || null } as any)}
+                        />
+                      </div>
+                      <div>
+                        <p className="font-body text-xs text-muted-foreground mb-0.5">Reason</p>
+                        <Select
+                          value={(selectedOrder as any).follow_up_reason || ""}
+                          onValueChange={(val) => patchOrder({ follow_up_reason: val || null } as any)}
+                        >
+                          <SelectTrigger className="font-body text-sm h-8"><SelectValue placeholder="—" /></SelectTrigger>
+                          <SelectContent>
+                            {FOLLOW_UP_REASONS.map((r) => (
+                              <SelectItem key={r} value={r} className="font-body text-sm">{followUpReasonLabels[r]}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-body text-xs text-muted-foreground mb-0.5">Follow-Up Note</p>
+                      <Textarea
+                        className="font-body text-sm min-h-[60px]"
+                        value={(selectedOrder as any).private_follow_up_notes || ""}
+                        onChange={(e) => patchOrder({ private_follow_up_notes: e.target.value } as any)}
+                        placeholder="What is this follow-up about?"
+                      />
+                    </div>
+                  </div>
+
+
 
 
 
