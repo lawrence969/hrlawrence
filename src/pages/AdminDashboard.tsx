@@ -847,9 +847,15 @@ const AdminDashboard = () => {
                     <Input type="number" step="0.01" value={newOrder.deposit} onChange={(e) => setNewOrder({ ...newOrder, deposit: e.target.value })} className="mt-1" placeholder="$" />
                   </div>
                 </div>
-                <div>
-                  <Label className="font-body text-sm">Delivery Date</Label>
-                  <Input type="date" value={newOrder.deliveryDate} onChange={(e) => setNewOrder({ ...newOrder, deliveryDate: e.target.value })} className="mt-1" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">Delivery Date</Label>
+                    <Input type="date" value={newOrder.deliveryDate} onChange={(e) => setNewOrder({ ...newOrder, deliveryDate: e.target.value })} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">Next Follow-Up Date</Label>
+                    <Input type="date" value={newOrder.nextFollowUpDate} onChange={(e) => setNewOrder({ ...newOrder, nextFollowUpDate: e.target.value })} className="mt-1" />
+                  </div>
                 </div>
                 <div>
                   <Label className="font-body text-sm">Item Description</Label>
@@ -882,7 +888,7 @@ const AdminDashboard = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
+                    <div className="col-span-2">
                       <Label className="font-body text-sm">Follow-Up Reason</Label>
                       <Select value={newOrder.followUpReason} onValueChange={(v) => setNewOrder({ ...newOrder, followUpReason: v })}>
                         <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
@@ -890,10 +896,6 @@ const AdminDashboard = () => {
                           {FOLLOW_UP_REASONS.map((r) => <SelectItem key={r} value={r}>{followUpReasonLabels[r]}</SelectItem>)}
                         </SelectContent>
                       </Select>
-                    </div>
-                    <div>
-                      <Label className="font-body text-sm">Next Follow-Up Date</Label>
-                      <Input type="date" value={newOrder.nextFollowUpDate} onChange={(e) => setNewOrder({ ...newOrder, nextFollowUpDate: e.target.value })} className="mt-1" />
                     </div>
                   </div>
                   <div className="mt-3">
