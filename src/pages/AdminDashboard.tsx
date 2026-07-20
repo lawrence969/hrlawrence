@@ -316,6 +316,11 @@ const AdminDashboard = () => {
   };
 
   const confirmCreateOrder = async () => {
+    // Client-side validation
+    if (newOrder.customerEmail && !isValidEmail(newOrder.customerEmail)) {
+      toast({ title: "Invalid email", description: "Please enter a valid email address.", variant: "destructive" });
+      return;
+    }
     setShowConfirmCreate(false);
     const { data, error } = await supabase.from("orders").insert({
       customer_email: newOrder.customerEmail,
