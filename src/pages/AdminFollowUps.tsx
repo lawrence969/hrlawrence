@@ -215,15 +215,15 @@ const AdminFollowUps = () => {
           <table className="min-w-full w-auto">
             <thead className="bg-muted border-b border-border sticky top-0 z-10">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
-                <th className="px-3 py-3">Order</th>
-                <th className="px-3 py-3">Client</th>
-                <th className="px-3 py-3">Item</th>
-                <th className="px-3 py-3">Status</th>
-                <th className="px-3 py-3">Reason</th>
-                <th className="px-3 py-3">Follow-Up Note</th>
-                <th className="px-3 py-3">Next</th>
-                <th className="px-3 py-3">Last</th>
-                <th className="px-3 py-3">Priority</th>
+                <th className="px-3 py-3 w-[120px]">Order</th>
+                <th className="px-3 py-3 w-[180px]">Client</th>
+                <th className="px-3 py-3 w-[120px]">Item</th>
+                <th className="px-3 py-3 w-[120px]">Status</th>
+                <th className="px-3 py-3 w-[160px]">Reason</th>
+                <th className="px-3 py-3 w-[220px]">Follow-Up Note</th>
+                <th className="px-3 py-3 w-[100px]">Next</th>
+                <th className="px-3 py-3 w-[100px]">Last</th>
+                <th className="px-3 py-3 w-[100px]">Priority</th>
                 <th className="px-3 py-3 sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Actions</th>
               </tr>
             </thead>
