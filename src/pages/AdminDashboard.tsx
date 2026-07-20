@@ -238,7 +238,7 @@ const AdminDashboard = () => {
 
   const advanceOrder = async (order: Order) => {
     const flow = getStatusFlow(order.order_type);
-    const idx = flow.indexOf(order.status);
+    const idx = (flow as readonly string[]).indexOf(order.status);
     if (idx < flow.length - 1) {
       const { error } = await supabase.from("orders").update({ status: flow[idx + 1] }).eq("id", order.id);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
