@@ -591,7 +591,6 @@ export type Database = {
           colour: string | null
           created_at: string
           created_by: string | null
-          current_department: string
           customer_email: string
           customer_profile_id: string | null
           delivery_date: string | null
@@ -631,7 +630,6 @@ export type Database = {
           colour?: string | null
           created_at?: string
           created_by?: string | null
-          current_department?: string
           customer_email: string
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -671,7 +669,6 @@ export type Database = {
           colour?: string | null
           created_at?: string
           created_by?: string | null
-          current_department?: string
           customer_email?: string
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -874,7 +871,6 @@ export type Database = {
           colour: string | null
           created_at: string | null
           created_by: string | null
-          current_department: string | null
           customer_email: string | null
           customer_profile_id: string | null
           delivery_date: string | null
@@ -914,7 +910,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -954,7 +949,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -1005,7 +999,6 @@ export type Database = {
           colour: string | null
           created_at: string | null
           created_by: string | null
-          current_department: string | null
           customer_email: string | null
           customer_profile_id: string | null
           delivery_date: string | null
@@ -1045,7 +1038,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -1085,7 +1077,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -1136,7 +1127,6 @@ export type Database = {
           colour: string | null
           created_at: string | null
           created_by: string | null
-          current_department: string | null
           customer_email: string | null
           customer_profile_id: string | null
           delivery_date: string | null
@@ -1176,7 +1166,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -1216,7 +1205,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -1267,7 +1255,6 @@ export type Database = {
           colour: string | null
           created_at: string | null
           created_by: string | null
-          current_department: string | null
           customer_email: string | null
           customer_profile_id: string | null
           delivery_date: string | null
@@ -1307,7 +1294,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
@@ -1347,7 +1333,6 @@ export type Database = {
           colour?: string | null
           created_at?: string | null
           created_by?: string | null
-          current_department?: string | null
           customer_email?: string | null
           customer_profile_id?: string | null
           delivery_date?: string | null
