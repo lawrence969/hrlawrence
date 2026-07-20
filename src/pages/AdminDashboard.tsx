@@ -716,7 +716,7 @@ const AdminDashboard = () => {
           const overdue = withDate.filter((o) => new Date((o as any).next_follow_up_date) < today).length;
           const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
           const ready = active.filter((o) => o.status === "ready_for_pickup").length;
-          const noFollowUp = active.filter((o) => !(o as any).next_follow_up_date && (o as any).follow_up_reason !== "no_follow_up_needed").length;
+          const onHold = active.filter((o) => o.status === "on_hold").length;
           const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
           const stale = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).production_updated_at || new Date((o as any).production_updated_at) < sevenDaysAgo)).length;
           const cards = [
@@ -724,7 +724,7 @@ const AdminDashboard = () => {
             { label: "Overdue", value: overdue, tab: "overdue", tone: "bg-red-50 border-red-300 text-red-900" },
             { label: "Waiting Client", value: waitingClient, tab: "waiting", tone: "bg-amber-50 border-amber-300 text-amber-900" },
             { label: "Ready For Pickup", value: ready, tab: "ready", tone: "bg-green-50 border-green-300 text-green-900" },
-            { label: "No Follow-Up", value: noFollowUp, tab: "no_followup", tone: "bg-slate-50 border-slate-300 text-slate-800" },
+            { label: "On Hold", value: onHold, tab: "on_hold", tone: "bg-slate-50 border-slate-300 text-slate-800" },
             { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },
           ];
           return (

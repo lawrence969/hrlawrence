@@ -43,7 +43,7 @@ const TABS = [
   { key: "overdue", label: "Overdue" },
   { key: "waiting", label: "Waiting Client" },
   { key: "ready", label: "Ready for Pickup" },
-  { key: "no_followup", label: "No Follow-Up" },
+  { key: "on_hold", label: "On Hold" },
   { key: "high_priority", label: "High Priority" },
   { key: "stale", label: "Production Needs Update" },
 ];
@@ -83,8 +83,8 @@ const AdminFollowUps = () => {
       case "ready":
         list = active.filter((o) => o.status === "ready_for_pickup");
         break;
-      case "no_followup":
-        list = active.filter((o) => !o.next_follow_up_date && o.follow_up_reason !== "no_follow_up_needed");
+      case "on_hold":
+        list = active.filter((o) => o.status === "on_hold");
         break;
       case "high_priority":
         list = active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent");
@@ -117,7 +117,7 @@ const AdminFollowUps = () => {
       overdue: active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date) < today).length,
       waiting: active.filter((o) => o.status === "waiting_for_client").length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
-      no_followup: active.filter((o) => !o.next_follow_up_date && o.follow_up_reason !== "no_follow_up_needed").length,
+      on_hold: active.filter((o) => o.status === "on_hold").length,
       high_priority: active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent").length,
       stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.last_contacted_at || new Date(o.last_contacted_at) < sevenDaysAgo)).length,
     } as Record<string, number>;
