@@ -181,6 +181,21 @@ const AdminDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, [user, isStaff]);
 
+  // Auto-open order modal when ?open=<id> is present in URL
+  useEffect(() => {
+    const openId = searchParams.get("open");
+    if (!openId || !orders.length) return;
+    const target = orders.find((o) => o.id === openId);
+    if (target) {
+      setDirty(false);
+      setSelectedOrder(target);
+      setActivePanel("detail");
+      searchParams.delete("open");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [orders, searchParams, setSearchParams]);
+
+
   // Fetch messages and quotes when order selected
   useEffect(() => {
     if (!selectedOrder) return;
