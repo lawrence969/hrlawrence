@@ -904,10 +904,6 @@ const AdminDashboard = () => {
                       </Select>
                     </div>
                   </div>
-                  <div className="mt-3">
-                    <Label className="font-body text-sm">Private Follow-Up Notes</Label>
-                    <Textarea value={newOrder.privateNotes} onChange={(e) => setNewOrder({ ...newOrder, privateNotes: e.target.value })} className="mt-1" placeholder="Internal only — not visible to client" />
-                  </div>
                 </div>
 
                 <Button type="submit" className="w-full bg-primary text-primary-foreground font-body text-sm tracking-widest uppercase">Create Order</Button>
