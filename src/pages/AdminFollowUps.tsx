@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 import {
   priorityLabels, priorityColor,
-  FOLLOW_UP_REASONS, followUpReasonLabels, CONTACT_METHODS, contactMethodLabels,
+  FOLLOW_UP_REASONS, followUpReasonLabels,
   INTERACTION_TYPES, interactionTypeLabels, COMPLETE_STATUSES, formatPhone,
 } from "@/lib/order-status";
 
@@ -326,7 +326,6 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
           {order.phone1 && <span>{formatPhone(order.phone1)}</span>}
           {order.customer_email && <span className="truncate max-w-[160px]">{order.customer_email}</span>}
-          <Badge variant="outline" className="text-[10px]">{contactMethodLabels[order.preferred_contact_method || "any"]}</Badge>
         </div>
       </td>
       <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
