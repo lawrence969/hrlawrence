@@ -2,6 +2,7 @@
 
 export const CANONICAL_STATUSES = [
   "intake",
+  "follow_up",
   "in_design",
   "waiting_for_client",
   "in_production",
