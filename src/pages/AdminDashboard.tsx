@@ -799,7 +799,7 @@ const AdminDashboard = () => {
             { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },
           ];
           return (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
               {cards.map((c) => (
                 <Link key={c.label} to={`/admin/follow-ups?tab=${c.tab}`} className={`border p-4 hover:shadow-sm transition-shadow ${c.tone}`}>
                   <p className="font-body text-xs uppercase tracking-widest opacity-80">{c.label}</p>
