@@ -282,10 +282,6 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   };
 
   const openDone = () => {
-    if (!note.trim()) {
-      toast({ title: "Add a note first", description: "Enter what was done before marking Done.", variant: "destructive" });
-      return;
-    }
     setNextDate("");
     setNextNote("");
     setDoneOpen(true);
@@ -297,14 +293,22 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
       return;
     }
     setCompleting(true);
-    // Log the completed note and set the next follow-up date in one step
-    await onLog(order, "note", `[${noteDate}] ${note.trim()} — DONE`, nextDate, false);
-    // Log the next planned follow-up as a separate interaction
+    const currentNote = order.private_follow_up_notes?.trim() || "(no note)";
+    const currentDate = order.next_follow_up_date || new Date().toISOString().split("T")[0];
+    // Mark current follow-up as done
+    await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, nextDate, false);
+    // Clear the old private follow-up note and set the new one
+    await supabase.from("orders").update({
+      private_follow_up_notes: nextNote.trim(),
+      next_follow_up_date: nextDate,
+    }).eq("id", order.id);
+    // Log the next planned follow-up
     await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
-    setNote("");
     setDoneOpen(false);
     setCompleting(false);
+    onRefresh();
   };
+
 
   const saveNextDate = async () => {
     const current = order.next_follow_up_date || "";
