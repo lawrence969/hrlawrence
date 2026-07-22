@@ -15,7 +15,7 @@ import { LogOut, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 import {
-  statusLabels, statusColor, priorityLabels, priorityColor,
+  priorityLabels, priorityColor,
   FOLLOW_UP_REASONS, followUpReasonLabels, CONTACT_METHODS, contactMethodLabels,
   INTERACTION_TYPES, interactionTypeLabels, COMPLETE_STATUSES, formatPhone,
 } from "@/lib/order-status";
