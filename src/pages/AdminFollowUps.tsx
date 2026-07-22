@@ -371,13 +371,10 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
           <div className="flex items-center gap-1.5">
             <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
             <Button size="sm" className="h-7 text-xs" onClick={saveNote} disabled={saving || !note.trim()}>Save</Button>
-            <label className="flex items-center gap-1 text-xs cursor-pointer ml-auto">
-              <Checkbox checked={doneOpen} onCheckedChange={(c) => { if (c) openDone(); }} />
-              Done
-            </label>
           </div>
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note…" className="min-h-[56px] text-sm font-body" />
         </div>
+
 
         <Dialog open={doneOpen} onOpenChange={setDoneOpen}>
           <DialogContent>
