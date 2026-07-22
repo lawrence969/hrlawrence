@@ -239,7 +239,7 @@ const AdminFollowUps = () => {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={9} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</user_message: remove status column from the follow ups view</td></tr>
+                <tr><td colSpan={9} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
               ) : filtered.map((o) => (
                 <FollowUpRow key={o.id} order={o} onLog={logInteraction} />
               ))}
@@ -307,7 +307,6 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
         </div>
       </td>
       <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
-      <td className="px-3 py-1.5 w-[120px]"><Badge className={statusColor(order.status)}>{statusLabels[order.status] || order.status}</Badge></td>
       <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[420px] leading-snug"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
       <td className="px-3 py-1.5 whitespace-nowrap w-[80px]">{fmtDate(order.next_follow_up_date)}</td>
