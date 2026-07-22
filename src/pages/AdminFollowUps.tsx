@@ -247,7 +247,6 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
   const [saving, setSaving] = useState(false);
 
   const fmtDate = (s: string | null) => s ? new Date(s.length === 10 ? s + "T00:00:00" : s).toLocaleDateString() : "—";
-  const parseLocalDate = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
 
   const saveNote = async () => {
     if (!note.trim()) return;
