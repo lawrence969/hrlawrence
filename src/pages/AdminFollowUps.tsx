@@ -115,8 +115,20 @@ const AdminFollowUps = () => {
   const counts = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
+    const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
     return {
       due_today: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
+      overdue: active.filter((o) => {
+        if (!o.next_follow_up_date) return false;
+        const d = parseLocal(o.next_follow_up_date).setHours(0,0,0,0);
+        if (d >= today.getTime()) return false;
+        const last = o.last_contacted_at ? new Date(o.last_contacted_at).getTime() : 0;
+        return last < d;
+      }).length,
+      upcoming: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length,
+      ready: active.filter((o) => o.status === "ready_for_pickup").length,
+      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo)).length,
+    } as Record<string, number>;
       overdue: active.filter((o) => {
         if (!o.next_follow_up_date) return false;
         const d = parseLocal(o.next_follow_up_date).setHours(0,0,0,0);
