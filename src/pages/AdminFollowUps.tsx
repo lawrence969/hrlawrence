@@ -65,6 +65,7 @@ const AdminFollowUps = () => {
 
   useEffect(() => { if (isStaff) load(); }, [isStaff]);
 
+  const parseLocal = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
   const filtered = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
@@ -72,10 +73,10 @@ const AdminFollowUps = () => {
     let list: FollowUpOrder[] = [];
     switch (activeTab) {
       case "due_today":
-        list = active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime());
+        list = active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime());
         break;
       case "overdue":
-        list = active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date) < today);
+        list = active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) < today.getTime());
         break;
       case "waiting":
         list = active.filter((o) => o.status === "waiting_for_client");
