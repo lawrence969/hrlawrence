@@ -297,6 +297,27 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
     setCompleting(false);
   };
 
+  const saveNextDate = async () => {
+    const current = order.next_follow_up_date || "";
+    if (editingNext === current) return;
+    setSavingNext(true);
+    const { error } = await supabase.from("orders").update({ next_follow_up_date: editingNext || null }).eq("id", order.id);
+    if (error) {
+      toast({ title: "Error saving follow-up date", description: error.message, variant: "destructive" });
+      setEditingNext(current);
+    } else {
+      const today = new Date().toISOString().split("T")[0];
+      await supabase.from("order_notes").insert({
+        order_id: order.id,
+        note: editingNext ? `Follow-up date changed to ${editingNext}` : "Follow-up date cleared",
+        note_date: today,
+      });
+      toast({ title: "Follow-up date updated" });
+      onRefresh();
+    }
+    setSavingNext(false);
+  };
+
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
       <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap w-[110px]"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
