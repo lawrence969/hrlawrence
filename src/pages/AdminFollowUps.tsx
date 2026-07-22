@@ -89,9 +89,6 @@ const AdminFollowUps = () => {
       case "ready":
         list = active.filter((o) => o.status === "ready_for_pickup");
         break;
-      case "on_hold":
-        list = active.filter((o) => o.status === "on_hold");
-        break;
       case "high_priority":
         list = active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent");
         break;
@@ -129,7 +126,6 @@ const AdminFollowUps = () => {
       }).length,
       upcoming: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
-      on_hold: active.filter((o) => o.status === "on_hold").length,
       high_priority: active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent").length,
       stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.last_contacted_at || new Date(o.last_contacted_at) < sevenDaysAgo)).length,
     } as Record<string, number>;
