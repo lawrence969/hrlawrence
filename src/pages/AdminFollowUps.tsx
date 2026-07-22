@@ -345,7 +345,7 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[80px]">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5 w-[80px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
-      <td className="px-3 py-1.5 w-[300px]">
+      <td className="px-3 py-1.5 w-[250px]">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5">
             <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
