@@ -212,24 +212,24 @@ const AdminFollowUps = () => {
         <Input placeholder="Search by name, order #, email, or item…" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-md font-body" />
 
         <div className="bg-background border border-border overflow-auto max-h-[calc(100vh-260px)]">
-          <table className="min-w-full w-auto">
+          <table className="w-[1620px] table-fixed">
             <thead className="bg-muted border-b border-border sticky top-0 z-10">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
-                <th className="px-3 py-3 w-[120px]">Order</th>
+                <th className="px-3 py-3 w-[110px]">Order</th>
                 <th className="px-3 py-3 w-[180px]">Client</th>
-                <th className="px-3 py-3 w-[80px]">Item</th>
+                <th className="px-3 py-3 w-[70px]">Item</th>
                 <th className="px-3 py-3 w-[120px]">Status</th>
-                <th className="px-3 py-3 w-[160px]">Reason</th>
-                <th className="px-3 py-3 w-[280px]">Follow-Up Note</th>
-                <th className="px-3 py-3 w-[100px]">Next</th>
-                <th className="px-3 py-3 w-[100px]">Last</th>
-                <th className="px-3 py-3 w-[100px]">Priority</th>
-                <th className="px-3 py-3 w-[280px] sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Add Note</th>
+                <th className="px-3 py-3 w-[220px]">Reason</th>
+                <th className="px-3 py-3 w-[420px]">Follow-Up Note</th>
+                <th className="px-3 py-3 w-[80px]">Next</th>
+                <th className="px-3 py-3 w-[80px]">Last</th>
+                <th className="px-3 py-3 w-[80px]">Priority</th>
+                <th className="px-3 py-3 w-[260px]">Add Note</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={11} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
+                <tr><td colSpan={10} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
               ) : filtered.map((o) => (
                 <FollowUpRow key={o.id} order={o} onLog={logInteraction} />
               ))}
@@ -258,7 +258,7 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
 
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
-      <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap w-[120px]"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
+      <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap w-[110px]"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
       <td className="px-3 py-1.5 whitespace-nowrap w-[180px]">
         <div className="font-medium">{order.first_name} {order.last_name}</div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
@@ -267,21 +267,21 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
           <Badge variant="outline" className="text-[10px]">{contactMethodLabels[order.preferred_contact_method || "any"]}</Badge>
         </div>
       </td>
-      <td className="px-3 py-1.5 w-[80px] truncate">{order.item_description || "—"}</td>
+      <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5 w-[120px]"><Badge className={statusColor(order.status)}>{statusLabels[order.status] || order.status}</Badge></td>
-      <td className="px-3 py-1.5 text-xs w-[160px]">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
-      <td className="px-3 py-1.5 text-xs w-[280px]"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
-      <td className="px-3 py-1.5 whitespace-nowrap w-[100px]">{fmtDate(order.next_follow_up_date)}</td>
-      <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[100px]">{fmtDate(order.last_contacted_at)}</td>
-      <td className="px-3 py-1.5 w-[100px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
+      <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
+      <td className="px-3 py-1.5 text-sm w-[420px] leading-snug"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
+      <td className="px-3 py-1.5 whitespace-nowrap w-[80px]">{fmtDate(order.next_follow_up_date)}</td>
+      <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[80px]">{fmtDate(order.last_contacted_at)}</td>
+      <td className="px-3 py-1.5 w-[80px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
-      <td className="px-3 py-1.5 w-[280px] sticky right-0 bg-background shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">
+      <td className="px-3 py-1.5 w-[260px]">
         <div className="flex flex-col gap-1.5">
           <div className="flex gap-1.5">
             <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
             <Button size="sm" className="h-7 text-xs" onClick={saveNote} disabled={saving || !note.trim()}>Save</Button>
           </div>
-          <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note…" className="min-h-[50px] text-xs font-body" />
+          <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note…" className="min-h-[56px] text-sm font-body" />
         </div>
       </td>
     </tr>
