@@ -223,13 +223,12 @@ const AdminFollowUps = () => {
         <Input placeholder="Search by name, order #, email, or item…" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-md font-body" />
 
         <div className="bg-background border border-border overflow-auto max-h-[calc(100vh-260px)]">
-          <table className="w-[1660px] table-fixed">
+          <table className="w-[1540px] table-fixed">
             <thead className="bg-muted border-b border-border sticky top-0 z-10">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
                 <th className="px-3 py-3 w-[110px]">Order</th>
                 <th className="px-3 py-3 w-[180px]">Client</th>
                 <th className="px-3 py-3 w-[70px]">Item</th>
-                <th className="px-3 py-3 w-[120px]">Status</th>
                 <th className="px-3 py-3 w-[220px]">Reason</th>
                 <th className="px-3 py-3 w-[420px]">Follow-Up Note</th>
                 <th className="px-3 py-3 w-[80px]">Next</th>
@@ -240,7 +239,7 @@ const AdminFollowUps = () => {
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={10} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
+                <tr><td colSpan={9} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</user_message: remove status column from the follow ups view</td></tr>
               ) : filtered.map((o) => (
                 <FollowUpRow key={o.id} order={o} onLog={logInteraction} />
               ))}
