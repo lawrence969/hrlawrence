@@ -39,14 +39,15 @@ type FollowUpOrder = {
   blocked_reason: string | null;
   private_follow_up_notes: string | null;
   customer_profile_id: string | null;
+  production_updated_at?: string | null;
 };
 
 const TABS = [
-  { key: "due_today", label: "Due Today" },
-  { key: "overdue", label: "Overdue" },
-  { key: "upcoming", label: "Upcoming" },
-  { key: "ready", label: "Ready for Pickup" },
-  { key: "high_priority", label: "High Priority" },
+  { key: "due_today", label: "Due Today", tone: "bg-blue-50 border-blue-300 text-blue-900" },
+  { key: "overdue", label: "Overdue", tone: "bg-red-50 border-red-300 text-red-900" },
+  { key: "upcoming", label: "Upcoming", tone: "bg-amber-50 border-amber-300 text-amber-900" },
+  { key: "ready", label: "Ready for Pickup", tone: "bg-green-50 border-green-300 text-green-900" },
+  { key: "stale", label: "Stale 7+ Days", tone: "bg-purple-50 border-purple-300 text-purple-900" },
 ];
 
 const AdminFollowUps = () => {
@@ -59,7 +60,7 @@ const AdminFollowUps = () => {
   const load = async () => {
     const { data } = await supabase
       .from("orders")
-      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id")
+      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id, production_updated_at")
       .order("next_follow_up_date", { ascending: true, nullsFirst: false });
     setOrders((data as any) || []);
   };
@@ -90,9 +91,11 @@ const AdminFollowUps = () => {
       case "ready":
         list = active.filter((o) => o.status === "ready_for_pickup");
         break;
-      case "high_priority":
-        list = active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent");
+      case "stale": {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
+        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo));
         break;
+      }
       default:
         list = active;
     }
@@ -112,6 +115,7 @@ const AdminFollowUps = () => {
   const counts = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
+    const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
     return {
       due_today: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
       overdue: active.filter((o) => {
@@ -123,7 +127,7 @@ const AdminFollowUps = () => {
       }).length,
       upcoming: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
-      high_priority: active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent").length,
+      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo)).length,
     } as Record<string, number>;
   }, [orders]);
 
@@ -204,11 +208,12 @@ const AdminFollowUps = () => {
           <Button variant="outline" onClick={load}><RefreshCw className="w-4 h-4 mr-2" />Refresh</Button>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
           {TABS.map((t) => (
             <button key={t.key} onClick={() => setParams({ tab: t.key })}
-              className={`px-3 py-2 border font-body text-xs uppercase tracking-widest transition-colors ${activeTab === t.key ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:border-primary"}`}>
-              {t.label} <span className="ml-1 opacity-70">({counts[t.key] ?? 0})</span>
+              className={`border p-4 text-left hover:shadow-sm transition-shadow ${t.tone} ${activeTab === t.key ? "ring-2 ring-offset-1 ring-current" : ""}`}>
+              <p className="font-body text-xs uppercase tracking-widest opacity-80">{t.label}</p>
+              <p className="font-display text-2xl mt-1">{counts[t.key] ?? 0}</p>
             </button>
           ))}
         </div>
