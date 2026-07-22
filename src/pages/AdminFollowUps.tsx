@@ -311,7 +311,7 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
         order_id: order.id,
         note: editingNext ? `Follow-up date changed to ${editingNext}` : "Follow-up date cleared",
         note_date: today,
-      });
+      } as any);
       toast({ title: "Follow-up date updated" });
       onRefresh();
     }
