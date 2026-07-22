@@ -311,7 +311,16 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
       <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[420px] leading-snug"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
-      <td className="px-3 py-1.5 whitespace-nowrap w-[80px]">{fmtDate(order.next_follow_up_date)}</td>
+      <td className="px-3 py-1.5 whitespace-nowrap w-[130px]">
+        <Input
+          type="date"
+          value={editingNext}
+          onChange={(e) => setEditingNext(e.target.value)}
+          onBlur={saveNextDate}
+          disabled={savingNext}
+          className="h-7 text-xs"
+        />
+      </td>
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[80px]">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5 w-[80px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
