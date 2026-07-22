@@ -781,7 +781,12 @@ const AdminDashboard = () => {
           const withDate = active.filter((o) => (o as any).next_follow_up_date);
           const parseLocalD = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
           const dueToday = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length;
-          const overdue = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) < today.getTime()).length;
+          const overdue = withDate.filter((o) => {
+            const d = parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0);
+            if (d >= today.getTime()) return false;
+            const last = (o as any).last_contacted_at ? new Date((o as any).last_contacted_at).getTime() : 0;
+            return last < d; // not contacted on/after the due date
+          }).length;
           const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
           const ready = active.filter((o) => o.status === "ready_for_pickup").length;
           const onHold = active.filter((o) => o.status === "on_hold").length;
