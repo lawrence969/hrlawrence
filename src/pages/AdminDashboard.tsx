@@ -1063,7 +1063,7 @@ const AdminDashboard = () => {
         {/* Order Detail Slide-out */}
         {selectedOrder && activePanel && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={requestCloseOrder}>
-            <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-background w-full max-w-6xl max-h-[95vh] overflow-y-auto border border-border rounded-lg shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="bg-background w-full max-w-[1600px] max-h-[95vh] overflow-y-auto border border-border rounded-lg shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <h2 className="font-display text-lg text-foreground">{selectedOrder.order_number}</h2>
