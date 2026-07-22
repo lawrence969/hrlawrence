@@ -76,7 +76,13 @@ const AdminFollowUps = () => {
         list = active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime());
         break;
       case "overdue":
-        list = active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) < today.getTime());
+        list = active.filter((o) => {
+          if (!o.next_follow_up_date) return false;
+          const d = parseLocal(o.next_follow_up_date).setHours(0,0,0,0);
+          if (d >= today.getTime()) return false;
+          const last = o.last_contacted_at ? new Date(o.last_contacted_at).getTime() : 0;
+          return last < d;
+        });
         break;
       case "waiting":
         list = active.filter((o) => o.status === "waiting_for_client");
