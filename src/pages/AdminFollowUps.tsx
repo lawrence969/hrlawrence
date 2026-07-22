@@ -208,11 +208,12 @@ const AdminFollowUps = () => {
           <Button variant="outline" onClick={load}><RefreshCw className="w-4 h-4 mr-2" />Refresh</Button>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
           {TABS.map((t) => (
             <button key={t.key} onClick={() => setParams({ tab: t.key })}
-              className={`px-3 py-2 border font-body text-xs uppercase tracking-widest transition-colors ${activeTab === t.key ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border hover:border-primary"}`}>
-              {t.label} <span className="ml-1 opacity-70">({counts[t.key] ?? 0})</span>
+              className={`border p-4 text-left hover:shadow-sm transition-shadow ${t.tone} ${activeTab === t.key ? "ring-2 ring-offset-1 ring-current" : ""}`}>
+              <p className="font-body text-xs uppercase tracking-widest opacity-80">{t.label}</p>
+              <p className="font-display text-2xl mt-1">{counts[t.key] ?? 0}</p>
             </button>
           ))}
         </div>
