@@ -268,6 +268,7 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   const [doneOpen, setDoneOpen] = useState(false);
   const [nextDate, setNextDate] = useState("");
   const [nextNote, setNextNote] = useState("");
+  const [pickedUp, setPickedUp] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [editingNext, setEditingNext] = useState(order.next_follow_up_date || "");
   const [savingNext, setSavingNext] = useState(false);
