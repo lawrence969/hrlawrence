@@ -210,7 +210,7 @@ const AdminFollowUps = () => {
         </div>
       </nav>
 
-      <div className="pt-20 p-6 lg:p-10 max-w-7xl mx-auto">
+      <div className="pt-20 p-6 lg:p-10 max-w-[1800px] mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-display text-foreground">Follow-Ups</h1>
