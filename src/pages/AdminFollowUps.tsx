@@ -334,14 +334,15 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
       <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap w-[110px]"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
-      <td className="px-3 py-1.5 whitespace-nowrap w-[180px]">
-        <div className="font-medium">{order.first_name} {order.last_name}</div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-          {order.phone1 && <span>{formatPhone(order.phone1)}</span>}
-          {order.customer_email && <span className="truncate max-w-[160px]">{order.customer_email}</span>}
+      <td className="px-3 py-1.5 w-[220px] align-top">
+        <div className="font-medium leading-tight break-words">{order.first_name} {order.last_name}</div>
+        <div className="text-xs text-muted-foreground mt-0.5 space-y-0.5">
+          {order.phone1 && <div className="truncate">{formatPhone(order.phone1)}</div>}
+          {order.customer_email && <div className="truncate">{order.customer_email}</div>}
         </div>
       </td>
-      <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
+      <td className="px-3 py-1.5 w-[110px]"><div className="truncate">{order.item_description || "—"}</div></td>
+
       <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[420px] leading-snug">
         <div className="flex items-start gap-2">
