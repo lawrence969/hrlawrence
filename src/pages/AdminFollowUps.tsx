@@ -217,10 +217,10 @@ const AdminFollowUps = () => {
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
                 <th className="px-3 py-3 w-[120px]">Order</th>
                 <th className="px-3 py-3 w-[180px]">Client</th>
-                <th className="px-3 py-3 w-[120px]">Item</th>
+                <th className="px-3 py-3 w-[80px]">Item</th>
                 <th className="px-3 py-3 w-[120px]">Status</th>
                 <th className="px-3 py-3 w-[160px]">Reason</th>
-                <th className="px-3 py-3 w-[220px]">Follow-Up Note</th>
+                <th className="px-3 py-3 w-[280px]">Follow-Up Note</th>
                 <th className="px-3 py-3 w-[100px]">Next</th>
                 <th className="px-3 py-3 w-[100px]">Last</th>
                 <th className="px-3 py-3 w-[100px]">Priority</th>
@@ -263,10 +263,10 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
           <Badge variant="outline" className="text-[10px]">{contactMethodLabels[order.preferred_contact_method || "any"]}</Badge>
         </div>
       </td>
-      <td className="px-3 py-1.5 w-[120px] truncate">{order.item_description || "—"}</td>
+      <td className="px-3 py-1.5 w-[80px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5 w-[120px]"><Badge className={statusColor(order.status)}>{statusLabels[order.status] || order.status}</Badge></td>
       <td className="px-3 py-1.5 text-xs w-[160px]">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
-      <td className="px-3 py-1.5 text-xs w-[220px]"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
+      <td className="px-3 py-1.5 text-xs w-[280px]"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
       <td className="px-3 py-1.5 whitespace-nowrap w-[100px]">{fmtDate(order.next_follow_up_date)}</td>
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[100px]">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5 w-[100px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
