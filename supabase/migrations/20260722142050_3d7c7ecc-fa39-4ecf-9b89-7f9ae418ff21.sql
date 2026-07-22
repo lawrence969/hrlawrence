@@ -1,0 +1,2 @@
+ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_status_check;
+ALTER TABLE public.orders ADD CONSTRAINT orders_status_check CHECK (status = ANY (ARRAY['intake','in_design','waiting_for_client','in_production','on_hold','work_complete','ready_for_pickup','picked_up','no_follow_up_needed','follow_up']));
