@@ -68,6 +68,10 @@ const AdminFollowUps = () => {
   useEffect(() => { if (isStaff) load(); }, [isStaff]);
 
   const parseLocal = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
+  const dateKey = (o: FollowUpOrder) => {
+    if (activeTab === "stale") return o.production_updated_at || o.next_follow_up_date;
+    return o.next_follow_up_date;
+  };
   const filtered = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
@@ -109,7 +113,14 @@ const AdminFollowUps = () => {
         (o.item_description || "").toLowerCase().includes(q)
       );
     }
-    return list;
+    return list.sort((a, b) => {
+      const da = dateKey(a);
+      const db = dateKey(b);
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return parseLocal(da).getTime() - parseLocal(db).getTime();
+    });
   }, [orders, activeTab, search]);
 
   const counts = useMemo(() => {
