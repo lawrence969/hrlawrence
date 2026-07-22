@@ -231,17 +231,17 @@ const AdminFollowUps = () => {
                 <th className="px-3 py-3 w-[70px]">Item</th>
                 <th className="px-3 py-3 w-[220px]">Reason</th>
                 <th className="px-3 py-3 w-[420px]">Follow-Up Note</th>
-                <th className="px-3 py-3 w-[80px]">Next</th>
+                <th className="px-3 py-3 w-[130px]">Next</th>
                 <th className="px-3 py-3 w-[80px]">Last</th>
                 <th className="px-3 py-3 w-[80px]">Priority</th>
-                <th className="px-3 py-3 w-[300px]">Add Note</th>
+                <th className="px-3 py-3 w-[250px]">Add Note</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr><td colSpan={9} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
               ) : filtered.map((o) => (
-                <FollowUpRow key={o.id} order={o} onLog={logInteraction} />
+                <FollowUpRow key={o.id} order={o} onLog={logInteraction} onRefresh={load} />
               ))}
             </tbody>
           </table>
@@ -251,7 +251,7 @@ const AdminFollowUps = () => {
   );
 };
 
-const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: FollowUpOrder, type: string, summary: string, nextDate?: string | null, resolved?: boolean) => void }) => {
+const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog: (o: FollowUpOrder, type: string, summary: string, nextDate?: string | null, resolved?: boolean) => void; onRefresh: () => void }) => {
   const [note, setNote] = useState("");
   const [noteDate, setNoteDate] = useState(new Date().toISOString().split("T")[0]);
   const [saving, setSaving] = useState(false);
@@ -259,6 +259,8 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
   const [nextDate, setNextDate] = useState("");
   const [nextNote, setNextNote] = useState("");
   const [completing, setCompleting] = useState(false);
+  const [editingNext, setEditingNext] = useState(order.next_follow_up_date || "");
+  const [savingNext, setSavingNext] = useState(false);
 
   const fmtDate = (s: string | null) => s ? new Date(s.length === 10 ? s + "T00:00:00" : s).toLocaleDateString() : "—";
 
@@ -295,6 +297,27 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
     setCompleting(false);
   };
 
+  const saveNextDate = async () => {
+    const current = order.next_follow_up_date || "";
+    if (editingNext === current) return;
+    setSavingNext(true);
+    const { error } = await supabase.from("orders").update({ next_follow_up_date: editingNext || null }).eq("id", order.id);
+    if (error) {
+      toast({ title: "Error saving follow-up date", description: error.message, variant: "destructive" });
+      setEditingNext(current);
+    } else {
+      const today = new Date().toISOString().split("T")[0];
+      await supabase.from("order_notes").insert({
+        order_id: order.id,
+        note: editingNext ? `Follow-up date changed to ${editingNext}` : "Follow-up date cleared",
+        note_date: today,
+      } as any);
+      toast({ title: "Follow-up date updated" });
+      onRefresh();
+    }
+    setSavingNext(false);
+  };
+
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
       <td className="px-3 py-1.5 font-medium text-primary whitespace-nowrap w-[110px]"><Link to={`/admin?open=${order.id}`} className="hover:underline">{order.order_number}</Link></td>
@@ -309,11 +332,20 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
       <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[420px] leading-snug"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
-      <td className="px-3 py-1.5 whitespace-nowrap w-[80px]">{fmtDate(order.next_follow_up_date)}</td>
+      <td className="px-3 py-1.5 whitespace-nowrap w-[130px]">
+        <Input
+          type="date"
+          value={editingNext}
+          onChange={(e) => setEditingNext(e.target.value)}
+          onBlur={saveNextDate}
+          disabled={savingNext}
+          className="h-7 text-xs"
+        />
+      </td>
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[80px]">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5 w-[80px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
-      <td className="px-3 py-1.5 w-[300px]">
+      <td className="px-3 py-1.5 w-[250px]">
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5">
             <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
