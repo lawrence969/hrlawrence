@@ -268,6 +268,7 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   const [doneOpen, setDoneOpen] = useState(false);
   const [nextDate, setNextDate] = useState("");
   const [nextNote, setNextNote] = useState("");
+  const [pickedUp, setPickedUp] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [editingNext, setEditingNext] = useState(order.next_follow_up_date || "");
   const [savingNext, setSavingNext] = useState(false);
@@ -285,26 +286,43 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   const openDone = () => {
     setNextDate("");
     setNextNote("");
+    setPickedUp(false);
     setDoneOpen(true);
   };
 
   const submitDone = async () => {
-    if (!nextDate || !nextNote.trim()) {
-      toast({ title: "Required", description: "Enter next follow-up date and note.", variant: "destructive" });
+    if (!pickedUp && (!nextDate || !nextNote.trim())) {
+      toast({ title: "Required", description: "Enter next follow-up date and note, or mark as picked up.", variant: "destructive" });
       return;
     }
     setCompleting(true);
+    const today = new Date().toISOString().split("T")[0];
     const currentNote = order.private_follow_up_notes?.trim() || "(no note)";
-    const currentDate = order.next_follow_up_date || new Date().toISOString().split("T")[0];
-    // Mark current follow-up as done
-    await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, nextDate, false);
-    // Clear the old private follow-up note and set the new one
-    await supabase.from("orders").update({
-      private_follow_up_notes: nextNote.trim(),
-      next_follow_up_date: nextDate,
-    }).eq("id", order.id);
-    // Log the next planned follow-up
-    await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
+    const currentDate = order.next_follow_up_date || today;
+
+    if (pickedUp) {
+      // Mark current follow-up done
+      await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, null, true);
+      // Close out order
+      await supabase.from("orders").update({
+        status: "picked_up",
+        private_follow_up_notes: null,
+        next_follow_up_date: null,
+      }).eq("id", order.id);
+      await supabase.from("order_notes").insert({
+        order_id: order.id,
+        note: "Client picked up item — order closed",
+        note_date: today,
+      } as any);
+      toast({ title: "Marked as picked up" });
+    } else {
+      await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, nextDate, false);
+      await supabase.from("orders").update({
+        private_follow_up_notes: nextNote.trim(),
+        next_follow_up_date: nextDate,
+      }).eq("id", order.id);
+      await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
+    }
     setDoneOpen(false);
     setCompleting(false);
     onRefresh();
@@ -388,18 +406,28 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
             </DialogHeader>
             <div className="space-y-3">
               <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{order.private_follow_up_notes || "(no current follow-up note)"}</div>
-              <div>
-                <Label className="text-xs">Next follow-up date *</Label>
-                <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
-              </div>
-              <div>
-                <Label className="text-xs">Next follow-up note *</Label>
-                <Textarea value={nextNote} onChange={(e) => setNextNote(e.target.value)} placeholder="What needs to happen next?" className="mt-1 min-h-[80px]" />
-              </div>
+              <label className="flex items-center gap-2 text-sm p-2 bg-green-50 border border-green-300 rounded cursor-pointer">
+                <Checkbox checked={pickedUp} onCheckedChange={(c) => setPickedUp(!!c)} />
+                <span className="font-medium">Client picked up item — close this order</span>
+              </label>
+              {!pickedUp && (
+                <>
+                  <div>
+                    <Label className="text-xs">Next follow-up date *</Label>
+                    <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Next follow-up note *</Label>
+                    <Textarea value={nextNote} onChange={(e) => setNextNote(e.target.value)} placeholder="What needs to happen next?" className="mt-1 min-h-[80px]" />
+                  </div>
+                </>
+              )}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setDoneOpen(false)} disabled={completing}>Cancel</Button>
-              <Button onClick={submitDone} disabled={completing || !nextDate || !nextNote.trim()}>Save & Schedule Next</Button>
+              <Button onClick={submitDone} disabled={completing || (!pickedUp && (!nextDate || !nextNote.trim()))}>
+                {pickedUp ? "Mark Picked Up" : "Save & Schedule Next"}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
