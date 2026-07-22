@@ -47,7 +47,6 @@ const TABS = [
   { key: "upcoming", label: "Upcoming" },
   { key: "ready", label: "Ready for Pickup" },
   { key: "high_priority", label: "High Priority" },
-  { key: "stale", label: "Production Needs Update" },
 ];
 
 const AdminFollowUps = () => {
@@ -70,7 +69,6 @@ const AdminFollowUps = () => {
   const parseLocal = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
   const filtered = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
-    const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
     let list: FollowUpOrder[] = [];
     switch (activeTab) {
@@ -95,9 +93,6 @@ const AdminFollowUps = () => {
       case "high_priority":
         list = active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent");
         break;
-      case "stale":
-        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.last_contacted_at || new Date(o.last_contacted_at) < sevenDaysAgo));
-        break;
       default:
         list = active;
     }
@@ -116,7 +111,6 @@ const AdminFollowUps = () => {
 
   const counts = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
-    const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
     return {
       due_today: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
@@ -130,7 +124,6 @@ const AdminFollowUps = () => {
       upcoming: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
       high_priority: active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent").length,
-      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.last_contacted_at || new Date(o.last_contacted_at) < sevenDaysAgo)).length,
     } as Record<string, number>;
   }, [orders]);
 
