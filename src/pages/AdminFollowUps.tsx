@@ -65,6 +65,7 @@ const AdminFollowUps = () => {
 
   useEffect(() => { if (isStaff) load(); }, [isStaff]);
 
+  const parseLocal = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
   const filtered = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
@@ -72,10 +73,10 @@ const AdminFollowUps = () => {
     let list: FollowUpOrder[] = [];
     switch (activeTab) {
       case "due_today":
-        list = active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime());
+        list = active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime());
         break;
       case "overdue":
-        list = active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date) < today);
+        list = active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) < today.getTime());
         break;
       case "waiting":
         list = active.filter((o) => o.status === "waiting_for_client");
@@ -113,8 +114,8 @@ const AdminFollowUps = () => {
     const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
     return {
-      due_today: active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
-      overdue: active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date) < today).length,
+      due_today: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
+      overdue: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) < today.getTime()).length,
       waiting: active.filter((o) => o.status === "waiting_for_client").length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
       on_hold: active.filter((o) => o.status === "on_hold").length,
@@ -246,7 +247,7 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
   const [noteDate, setNoteDate] = useState(new Date().toISOString().split("T")[0]);
   const [saving, setSaving] = useState(false);
 
-  const fmtDate = (s: string | null) => s ? new Date(s).toLocaleDateString() : "—";
+  const fmtDate = (s: string | null) => s ? new Date(s.length === 10 ? s + "T00:00:00" : s).toLocaleDateString() : "—";
 
   const saveNote = async () => {
     if (!note.trim()) return;

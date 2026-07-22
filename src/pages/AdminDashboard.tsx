@@ -779,8 +779,9 @@ const AdminDashboard = () => {
           const today = new Date(); today.setHours(0,0,0,0);
           const active = orders.filter((o) => !completeStatuses.has(o.status));
           const withDate = active.filter((o) => (o as any).next_follow_up_date);
-          const dueToday = withDate.filter((o) => new Date((o as any).next_follow_up_date) <= today).length;
-          const overdue = withDate.filter((o) => new Date((o as any).next_follow_up_date) < today).length;
+          const parseLocalD = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
+          const dueToday = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length;
+          const overdue = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) < today.getTime()).length;
           const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
           const ready = active.filter((o) => o.status === "ready_for_pickup").length;
           const onHold = active.filter((o) => o.status === "on_hold").length;
