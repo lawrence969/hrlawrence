@@ -91,9 +91,11 @@ const AdminFollowUps = () => {
       case "ready":
         list = active.filter((o) => o.status === "ready_for_pickup");
         break;
-      case "high_priority":
-        list = active.filter((o) => o.internal_priority === "high" || o.internal_priority === "urgent");
+      case "stale": {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
+        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo));
         break;
+      }
       default:
         list = active;
     }
