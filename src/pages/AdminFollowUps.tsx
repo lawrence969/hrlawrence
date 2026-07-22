@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LogOut, Phone, MessageSquare, Mail, Voicemail, StickyNote, RefreshCw } from "lucide-react";
+import { LogOut, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 import {
