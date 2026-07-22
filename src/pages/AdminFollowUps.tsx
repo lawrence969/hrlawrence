@@ -39,14 +39,15 @@ type FollowUpOrder = {
   blocked_reason: string | null;
   private_follow_up_notes: string | null;
   customer_profile_id: string | null;
+  production_updated_at?: string | null;
 };
 
 const TABS = [
-  { key: "due_today", label: "Due Today" },
-  { key: "overdue", label: "Overdue" },
-  { key: "upcoming", label: "Upcoming" },
-  { key: "ready", label: "Ready for Pickup" },
-  { key: "high_priority", label: "High Priority" },
+  { key: "due_today", label: "Due Today", tone: "bg-blue-50 border-blue-300 text-blue-900" },
+  { key: "overdue", label: "Overdue", tone: "bg-red-50 border-red-300 text-red-900" },
+  { key: "upcoming", label: "Upcoming", tone: "bg-amber-50 border-amber-300 text-amber-900" },
+  { key: "ready", label: "Ready for Pickup", tone: "bg-green-50 border-green-300 text-green-900" },
+  { key: "stale", label: "Stale 7+ Days", tone: "bg-purple-50 border-purple-300 text-purple-900" },
 ];
 
 const AdminFollowUps = () => {
