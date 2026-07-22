@@ -151,7 +151,7 @@ const AdminFollowUps = () => {
       profile_id: order.customer_profile_id,
       interaction_type: type,
       summary,
-      order_id: order.id,
+      related_order_id: order.id,
       resolved_follow_up: !!resolved,
       created_by: user?.id,
     } as any);
