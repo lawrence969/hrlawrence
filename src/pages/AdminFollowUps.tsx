@@ -114,8 +114,8 @@ const AdminFollowUps = () => {
     const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
     const active = orders.filter((o) => !COMPLETE_STATUSES.has(o.status));
     return {
-      due_today: active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
-      overdue: active.filter((o) => o.next_follow_up_date && new Date(o.next_follow_up_date) < today).length,
+      due_today: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length,
+      overdue: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) < today.getTime()).length,
       waiting: active.filter((o) => o.status === "waiting_for_client").length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
       on_hold: active.filter((o) => o.status === "on_hold").length,
