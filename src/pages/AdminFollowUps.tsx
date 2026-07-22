@@ -406,18 +406,28 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
             </DialogHeader>
             <div className="space-y-3">
               <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{order.private_follow_up_notes || "(no current follow-up note)"}</div>
-              <div>
-                <Label className="text-xs">Next follow-up date *</Label>
-                <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
-              </div>
-              <div>
-                <Label className="text-xs">Next follow-up note *</Label>
-                <Textarea value={nextNote} onChange={(e) => setNextNote(e.target.value)} placeholder="What needs to happen next?" className="mt-1 min-h-[80px]" />
-              </div>
+              <label className="flex items-center gap-2 text-sm p-2 bg-green-50 border border-green-300 rounded cursor-pointer">
+                <Checkbox checked={pickedUp} onCheckedChange={(c) => setPickedUp(!!c)} />
+                <span className="font-medium">Client picked up item — close this order</span>
+              </label>
+              {!pickedUp && (
+                <>
+                  <div>
+                    <Label className="text-xs">Next follow-up date *</Label>
+                    <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Next follow-up note *</Label>
+                    <Textarea value={nextNote} onChange={(e) => setNextNote(e.target.value)} placeholder="What needs to happen next?" className="mt-1 min-h-[80px]" />
+                  </div>
+                </>
+              )}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setDoneOpen(false)} disabled={completing}>Cancel</Button>
-              <Button onClick={submitDone} disabled={completing || !nextDate || !nextNote.trim()}>Save & Schedule Next</Button>
+              <Button onClick={submitDone} disabled={completing || (!pickedUp && (!nextDate || !nextNote.trim()))}>
+                {pickedUp ? "Mark Picked Up" : "Save & Schedule Next"}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
