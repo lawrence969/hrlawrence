@@ -787,7 +787,7 @@ const AdminDashboard = () => {
             const last = (o as any).last_contacted_at ? new Date((o as any).last_contacted_at).getTime() : 0;
             return last < d; // not contacted on/after the due date
           }).length;
-          const waitingClient = active.filter((o) => o.status === "waiting_for_client").length;
+          const upcoming = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length;
           const ready = active.filter((o) => o.status === "ready_for_pickup").length;
           const onHold = active.filter((o) => o.status === "on_hold").length;
           const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
@@ -795,7 +795,7 @@ const AdminDashboard = () => {
           const cards = [
             { label: "Due Today", value: dueToday, tab: "due_today", tone: "bg-blue-50 border-blue-300 text-blue-900" },
             { label: "Overdue", value: overdue, tab: "overdue", tone: "bg-red-50 border-red-300 text-red-900" },
-            { label: "Waiting Client", value: waitingClient, tab: "waiting", tone: "bg-amber-50 border-amber-300 text-amber-900" },
+            { label: "Upcoming", value: upcoming, tab: "upcoming", tone: "bg-amber-50 border-amber-300 text-amber-900" },
             { label: "Ready For Pickup", value: ready, tab: "ready", tone: "bg-green-50 border-green-300 text-green-900" },
             { label: "On Hold", value: onHold, tab: "on_hold", tone: "bg-slate-50 border-slate-300 text-slate-800" },
             { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },

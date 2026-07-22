@@ -41,7 +41,7 @@ type FollowUpOrder = {
 const TABS = [
   { key: "due_today", label: "Due Today" },
   { key: "overdue", label: "Overdue" },
-  { key: "waiting", label: "Waiting Client" },
+  { key: "upcoming", label: "Upcoming" },
   { key: "ready", label: "Ready for Pickup" },
   { key: "on_hold", label: "On Hold" },
   { key: "high_priority", label: "High Priority" },
