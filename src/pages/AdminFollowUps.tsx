@@ -313,7 +313,6 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
         order_id: order.id,
         note: "Client picked up item — order closed",
         note_date: today,
-        created_by: user?.id,
       } as any);
       toast({ title: "Marked as picked up" });
     } else {
