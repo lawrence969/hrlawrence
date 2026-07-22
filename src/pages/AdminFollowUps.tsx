@@ -231,10 +231,10 @@ const AdminFollowUps = () => {
                 <th className="px-3 py-3 w-[70px]">Item</th>
                 <th className="px-3 py-3 w-[220px]">Reason</th>
                 <th className="px-3 py-3 w-[420px]">Follow-Up Note</th>
-                <th className="px-3 py-3 w-[80px]">Next</th>
+                <th className="px-3 py-3 w-[130px]">Next</th>
                 <th className="px-3 py-3 w-[80px]">Last</th>
                 <th className="px-3 py-3 w-[80px]">Priority</th>
-                <th className="px-3 py-3 w-[300px]">Add Note</th>
+                <th className="px-3 py-3 w-[250px]">Add Note</th>
               </tr>
             </thead>
             <tbody>
