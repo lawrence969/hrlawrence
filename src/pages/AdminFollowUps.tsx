@@ -251,7 +251,7 @@ const AdminFollowUps = () => {
   );
 };
 
-const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: FollowUpOrder, type: string, summary: string, nextDate?: string | null, resolved?: boolean) => void }) => {
+const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog: (o: FollowUpOrder, type: string, summary: string, nextDate?: string | null, resolved?: boolean) => void; onRefresh: () => void }) => {
   const [note, setNote] = useState("");
   const [noteDate, setNoteDate] = useState(new Date().toISOString().split("T")[0]);
   const [saving, setSaving] = useState(false);
@@ -259,6 +259,8 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
   const [nextDate, setNextDate] = useState("");
   const [nextNote, setNextNote] = useState("");
   const [completing, setCompleting] = useState(false);
+  const [editingNext, setEditingNext] = useState(order.next_follow_up_date || "");
+  const [savingNext, setSavingNext] = useState(false);
 
   const fmtDate = (s: string | null) => s ? new Date(s.length === 10 ? s + "T00:00:00" : s).toLocaleDateString() : "—";
 
