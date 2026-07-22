@@ -8,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { LogOut, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
@@ -220,7 +223,7 @@ const AdminFollowUps = () => {
         <Input placeholder="Search by name, order #, email, or item…" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-md font-body" />
 
         <div className="bg-background border border-border overflow-auto max-h-[calc(100vh-260px)]">
-          <table className="w-[1620px] table-fixed">
+          <table className="w-[1660px] table-fixed">
             <thead className="bg-muted border-b border-border sticky top-0 z-10">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
                 <th className="px-3 py-3 w-[110px]">Order</th>
@@ -232,7 +235,7 @@ const AdminFollowUps = () => {
                 <th className="px-3 py-3 w-[80px]">Next</th>
                 <th className="px-3 py-3 w-[80px]">Last</th>
                 <th className="px-3 py-3 w-[80px]">Priority</th>
-                <th className="px-3 py-3 w-[260px]">Add Note</th>
+                <th className="px-3 py-3 w-[300px]">Add Note</th>
               </tr>
             </thead>
             <tbody>
@@ -253,6 +256,10 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
   const [note, setNote] = useState("");
   const [noteDate, setNoteDate] = useState(new Date().toISOString().split("T")[0]);
   const [saving, setSaving] = useState(false);
+  const [doneOpen, setDoneOpen] = useState(false);
+  const [nextDate, setNextDate] = useState("");
+  const [nextNote, setNextNote] = useState("");
+  const [completing, setCompleting] = useState(false);
 
   const fmtDate = (s: string | null) => s ? new Date(s.length === 10 ? s + "T00:00:00" : s).toLocaleDateString() : "—";
 
@@ -262,6 +269,31 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
     await onLog(order, "note", `[${noteDate}] ${note.trim()}`, undefined, false);
     setNote("");
     setSaving(false);
+  };
+
+  const openDone = () => {
+    if (!note.trim()) {
+      toast({ title: "Add a note first", description: "Enter what was done before marking Done.", variant: "destructive" });
+      return;
+    }
+    setNextDate("");
+    setNextNote("");
+    setDoneOpen(true);
+  };
+
+  const submitDone = async () => {
+    if (!nextDate || !nextNote.trim()) {
+      toast({ title: "Required", description: "Enter next follow-up date and note.", variant: "destructive" });
+      return;
+    }
+    setCompleting(true);
+    // Log the completed note and set the next follow-up date in one step
+    await onLog(order, "note", `[${noteDate}] ${note.trim()} — DONE`, nextDate, false);
+    // Log the next planned follow-up as a separate interaction
+    await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
+    setNote("");
+    setDoneOpen(false);
+    setCompleting(false);
   };
 
   return (
@@ -283,14 +315,44 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[80px]">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5 w-[80px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
-      <td className="px-3 py-1.5 w-[260px]">
+      <td className="px-3 py-1.5 w-[300px]">
         <div className="flex flex-col gap-1.5">
-          <div className="flex gap-1.5">
+          <div className="flex items-center gap-1.5">
             <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
             <Button size="sm" className="h-7 text-xs" onClick={saveNote} disabled={saving || !note.trim()}>Save</Button>
+            <label className="flex items-center gap-1 text-xs cursor-pointer ml-auto">
+              <Checkbox checked={doneOpen} onCheckedChange={(c) => { if (c) openDone(); }} />
+              Done
+            </label>
           </div>
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note…" className="min-h-[56px] text-sm font-body" />
         </div>
+
+        <Dialog open={doneOpen} onOpenChange={setDoneOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Complete follow-up — {order.order_number}</DialogTitle>
+              <DialogDescription>
+                Your note will be added to the timeline. Set the next follow-up action to continue.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{note}</div>
+              <div>
+                <Label className="text-xs">Next follow-up date *</Label>
+                <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
+              </div>
+              <div>
+                <Label className="text-xs">Next follow-up note *</Label>
+                <Textarea value={nextNote} onChange={(e) => setNextNote(e.target.value)} placeholder="What needs to happen next?" className="mt-1 min-h-[80px]" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDoneOpen(false)} disabled={completing}>Cancel</Button>
+              <Button onClick={submitDone} disabled={completing || !nextDate || !nextNote.trim()}>Save & Schedule Next</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </td>
     </tr>
   );
