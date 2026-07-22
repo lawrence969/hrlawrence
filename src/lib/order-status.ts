@@ -17,6 +17,7 @@ export type OrderStatus = typeof CANONICAL_STATUSES[number];
 
 export const statusLabels: Record<string, string> = {
   intake: "Intake",
+  follow_up: "Follow Up",
   in_design: "In Design",
   waiting_for_client: "Waiting For Client",
   in_production: "In Production",
@@ -29,6 +30,7 @@ export const statusLabels: Record<string, string> = {
 
 export const statusDescriptions: Record<string, string> = {
   intake: "Order just received. Details being captured.",
+  follow_up: "Active follow-up required with the client.",
   in_design: "Design work is underway (custom pieces).",
   waiting_for_client: "Waiting for the client's decision, approval, or response.",
   in_production: "In production — casting, setting, or bench work.",
@@ -42,6 +44,8 @@ export const statusDescriptions: Record<string, string> = {
 export const statusColor = (status: string) => {
   switch (status) {
     case "intake": return "bg-secondary text-secondary-foreground";
+    case "follow_up":
+      return "bg-violet-100 text-violet-800";
     case "in_design":
     case "in_production":
     case "work_complete":
@@ -82,13 +86,13 @@ export const normalizeStatus = (s: string): string => {
 
 // Status flows per order type
 export const repairStatusFlow: OrderStatus[] = [
-  "intake", "in_production", "waiting_for_client", "work_complete", "ready_for_pickup", "picked_up",
+  "intake", "follow_up", "in_production", "waiting_for_client", "work_complete", "ready_for_pickup", "picked_up",
 ];
 export const customStatusFlow: OrderStatus[] = [
-  "intake", "in_design", "waiting_for_client", "in_production", "work_complete", "ready_for_pickup", "picked_up",
+  "intake", "follow_up", "in_design", "waiting_for_client", "in_production", "work_complete", "ready_for_pickup", "picked_up",
 ];
 export const showroomStatusFlow: OrderStatus[] = [
-  "intake", "work_complete", "picked_up",
+  "intake", "follow_up", "work_complete", "picked_up",
 ];
 
 export const getStatusFlow = (orderType: string): OrderStatus[] => {
