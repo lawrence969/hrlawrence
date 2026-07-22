@@ -212,24 +212,24 @@ const AdminFollowUps = () => {
         <Input placeholder="Search by name, order #, email, or item…" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4 max-w-md font-body" />
 
         <div className="bg-background border border-border overflow-auto max-h-[calc(100vh-260px)]">
-          <table className="min-w-full w-auto">
+          <table className="min-w-[1700px] w-max table-fixed">
             <thead className="bg-muted border-b border-border sticky top-0 z-10">
               <tr className="text-left text-xs uppercase tracking-widest font-body text-muted-foreground">
-                <th className="px-3 py-3 w-[120px]">Order</th>
+                <th className="px-3 py-3 w-[110px]">Order</th>
                 <th className="px-3 py-3 w-[180px]">Client</th>
-                <th className="px-3 py-3 w-[80px]">Item</th>
+                <th className="px-3 py-3 w-[70px]">Item</th>
                 <th className="px-3 py-3 w-[120px]">Status</th>
-                <th className="px-3 py-3 w-[160px]">Reason</th>
-                <th className="px-3 py-3 w-[280px]">Follow-Up Note</th>
-                <th className="px-3 py-3 w-[100px]">Next</th>
-                <th className="px-3 py-3 w-[100px]">Last</th>
-                <th className="px-3 py-3 w-[100px]">Priority</th>
-                <th className="px-3 py-3 w-[280px] sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Add Note</th>
+                <th className="px-3 py-3 w-[220px]">Reason</th>
+                <th className="px-3 py-3 w-[420px]">Follow-Up Note</th>
+                <th className="px-3 py-3 w-[80px]">Next</th>
+                <th className="px-3 py-3 w-[80px]">Last</th>
+                <th className="px-3 py-3 w-[80px]">Priority</th>
+                <th className="px-3 py-3 w-[320px] sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Add Note</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={11} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
+                <tr><td colSpan={10} className="px-4 py-12 text-center font-body text-sm text-muted-foreground">Nothing here — you're caught up.</td></tr>
               ) : filtered.map((o) => (
                 <FollowUpRow key={o.id} order={o} onLog={logInteraction} />
               ))}
