@@ -385,7 +385,7 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
-              <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{note}</div>
+              <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{order.private_follow_up_notes || "(no current follow-up note)"}</div>
               <div>
                 <Label className="text-xs">Next follow-up date *</Label>
                 <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
