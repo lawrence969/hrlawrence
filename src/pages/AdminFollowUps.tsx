@@ -282,10 +282,6 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   };
 
   const openDone = () => {
-    if (!note.trim()) {
-      toast({ title: "Add a note first", description: "Enter what was done before marking Done.", variant: "destructive" });
-      return;
-    }
     setNextDate("");
     setNextNote("");
     setDoneOpen(true);
@@ -297,14 +293,22 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
       return;
     }
     setCompleting(true);
-    // Log the completed note and set the next follow-up date in one step
-    await onLog(order, "note", `[${noteDate}] ${note.trim()} — DONE`, nextDate, false);
-    // Log the next planned follow-up as a separate interaction
+    const currentNote = order.private_follow_up_notes?.trim() || "(no note)";
+    const currentDate = order.next_follow_up_date || new Date().toISOString().split("T")[0];
+    // Mark current follow-up as done
+    await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, nextDate, false);
+    // Clear the old private follow-up note and set the new one
+    await supabase.from("orders").update({
+      private_follow_up_notes: nextNote.trim(),
+      next_follow_up_date: nextDate,
+    }).eq("id", order.id);
+    // Log the next planned follow-up
     await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
-    setNote("");
     setDoneOpen(false);
     setCompleting(false);
+    onRefresh();
   };
+
 
   const saveNextDate = async () => {
     const current = order.next_follow_up_date || "";
@@ -339,7 +343,16 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
       </td>
       <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
-      <td className="px-3 py-1.5 text-sm w-[420px] leading-snug"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
+      <td className="px-3 py-1.5 text-sm w-[420px] leading-snug">
+        <div className="flex items-start gap-2">
+          <div className="flex-1 whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div>
+          <label className="flex items-center gap-1 text-xs cursor-pointer shrink-0 mt-0.5">
+            <Checkbox checked={doneOpen} onCheckedChange={(c) => { if (c) openDone(); }} />
+            Done
+          </label>
+        </div>
+      </td>
+
       <td className="px-3 py-1.5 whitespace-nowrap w-[130px]">
         <Input
           type="date"
@@ -358,13 +371,10 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
           <div className="flex items-center gap-1.5">
             <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
             <Button size="sm" className="h-7 text-xs" onClick={saveNote} disabled={saving || !note.trim()}>Save</Button>
-            <label className="flex items-center gap-1 text-xs cursor-pointer ml-auto">
-              <Checkbox checked={doneOpen} onCheckedChange={(c) => { if (c) openDone(); }} />
-              Done
-            </label>
           </div>
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note…" className="min-h-[56px] text-sm font-body" />
         </div>
+
 
         <Dialog open={doneOpen} onOpenChange={setDoneOpen}>
           <DialogContent>
@@ -375,7 +385,7 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
-              <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{note}</div>
+              <div className="text-xs text-muted-foreground bg-muted p-2 rounded whitespace-pre-wrap">{order.private_follow_up_notes || "(no current follow-up note)"}</div>
               <div>
                 <Label className="text-xs">Next follow-up date *</Label>
                 <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="mt-1" />
