@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LogOut, Phone, MessageSquare, Mail, Voicemail, StickyNote, RefreshCw } from "lucide-react";
+import { LogOut, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import logoNavy from "@/assets/logo-navy.jpg";
 import {
@@ -224,7 +224,7 @@ const AdminFollowUps = () => {
                 <th className="px-3 py-3 w-[100px]">Next</th>
                 <th className="px-3 py-3 w-[100px]">Last</th>
                 <th className="px-3 py-3 w-[100px]">Priority</th>
-                <th className="px-3 py-3 sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Actions</th>
+                <th className="px-3 py-3 w-[280px] sticky right-0 bg-muted shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">Add Note</th>
               </tr>
             </thead>
             <tbody>
@@ -243,14 +243,18 @@ const AdminFollowUps = () => {
 
 const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: FollowUpOrder, type: string, summary: string, nextDate?: string | null, resolved?: boolean) => void }) => {
   const [note, setNote] = useState("");
-  const [nextDate, setNextDate] = useState(order.next_follow_up_date || "");
-  const [type, setType] = useState<string>("call");
-
-  const quick = (t: string, label: string) => {
-    onLog(order, t, `${label} — quick action`, undefined);
-  };
+  const [noteDate, setNoteDate] = useState(new Date().toISOString().split("T")[0]);
+  const [saving, setSaving] = useState(false);
 
   const fmtDate = (s: string | null) => s ? new Date(s).toLocaleDateString() : "—";
+
+  const saveNote = async () => {
+    if (!note.trim()) return;
+    setSaving(true);
+    await onLog(order, "note", `[${noteDate}] ${note.trim()}`, undefined, false);
+    setNote("");
+    setSaving(false);
+  };
 
   return (
     <tr className="border-b border-border font-body text-sm align-middle">
@@ -271,34 +275,13 @@ const FollowUpRow = ({ order, onLog }: { order: FollowUpOrder; onLog: (o: Follow
       <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground w-[100px]">{fmtDate(order.last_contacted_at)}</td>
       <td className="px-3 py-1.5 w-[100px]"><Badge variant="outline" className={priorityColor(order.internal_priority || "normal")}>{priorityLabels[order.internal_priority || "normal"]}</Badge></td>
 
-      <td className="px-3 py-1.5 sticky right-0 bg-background shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">
-        <div className="flex items-center gap-1">
-          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("call", "Called")} title="Called"><Phone className="w-3 h-3" /></Button>
-          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("text", "Texted")} title="Texted"><MessageSquare className="w-3 h-3" /></Button>
-          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("email", "Emailed")} title="Emailed"><Mail className="w-3 h-3" /></Button>
-          <Button size="icon" className="h-7 w-7" variant="outline" onClick={() => quick("voicemail", "Left voicemail")} title="Voicemail"><Voicemail className="w-3 h-3" /></Button>
-          <Popover>
-            <PopoverTrigger asChild><Button size="icon" className="h-7 w-7" variant="outline" title="Log with note"><StickyNote className="w-3 h-3" /></Button></PopoverTrigger>
-            <PopoverContent className="w-80 p-3">
-              <div className="space-y-2">
-                <Select value={type} onValueChange={setType}>
-                  <SelectTrigger className="h-8 text-xs font-body"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {INTERACTION_TYPES.map((t) => <SelectItem key={t} value={t}>{interactionTypeLabels[t]}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="What happened?" className="min-h-[70px] text-xs font-body" />
-                <div className="flex gap-2 items-center">
-                  <label className="text-xs font-body text-muted-foreground">Next:</label>
-                  <Input type="date" value={nextDate} onChange={(e) => setNextDate(e.target.value)} className="h-8 text-xs" />
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" className="flex-1" onClick={() => { if (!note.trim()) return; onLog(order, type, note.trim(), nextDate || null, false); setNote(""); }}>Log</Button>
-                  <Button size="sm" variant="outline" className="flex-1" onClick={() => { if (!note.trim()) return; onLog(order, type, note.trim(), null, true); setNote(""); }}>Log &amp; Resolve</Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+      <td className="px-3 py-1.5 w-[280px] sticky right-0 bg-background shadow-[-4px_0_6px_-4px_rgba(0,0,0,0.15)]">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex gap-1.5">
+            <Input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)} className="h-7 text-xs w-[130px]" />
+            <Button size="sm" className="h-7 text-xs" onClick={saveNote} disabled={saving || !note.trim()}>Save</Button>
+          </div>
+          <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note…" className="min-h-[50px] text-xs font-body" />
         </div>
       </td>
     </tr>
