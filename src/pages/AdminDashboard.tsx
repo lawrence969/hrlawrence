@@ -298,12 +298,58 @@ const AdminDashboard = () => {
       preferred_contact_method: (o as any).preferred_contact_method || (o as any).preferred_contact || null,
       internal_priority: (o as any).internal_priority || (o as any).priority || null,
     };
+    // Capture previous follow-up values to detect changes for timeline logging
+    const { data: prev } = await supabase
+      .from("orders")
+      .select("next_follow_up_date, private_follow_up_notes, follow_up_reason")
+      .eq("id", o.id)
+      .single();
+
     const { error } = await supabase.from("orders").update(updates).eq("id", o.id);
     setSaving(false);
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
       return false;
     }
+
+    // Log follow-up changes into the order timeline
+    try {
+      const prevDate = (prev as any)?.next_follow_up_date || null;
+      const prevNotes = ((prev as any)?.private_follow_up_notes || "").trim();
+      const newDate = updates.next_follow_up_date || null;
+      const newNotes = (updates.private_follow_up_notes || "").trim();
+      const dateChanged = prevDate !== newDate;
+      const notesChanged = prevNotes !== newNotes;
+      if ((dateChanged || notesChanged) && user) {
+        const parts: string[] = [];
+        if (dateChanged) {
+          parts.push(newDate ? `Follow-up scheduled for ${newDate}` : "Follow-up date cleared");
+        }
+        if (notesChanged && newNotes) {
+          parts.push(newNotes);
+        } else if (notesChanged && !newNotes) {
+          parts.push("Follow-up note cleared");
+        }
+        const noteText = parts.join(" — ");
+        const noteDate = newDate || new Date().toISOString().split("T")[0];
+        await supabase.from("order_notes").insert({
+          order_id: o.id,
+          note: noteText,
+          note_date: noteDate,
+          created_by: user.id,
+        });
+        // Refresh timeline if visible
+        const { data: refreshed } = await supabase
+          .from("order_notes")
+          .select("*")
+          .eq("order_id", o.id)
+          .order("note_date", { ascending: false });
+        if (refreshed) setOrderNotes(refreshed as any);
+      }
+    } catch (e) {
+      console.error("Failed to log follow-up to timeline", e);
+    }
+
     setDirty(false);
     toast({ title: "Order saved" });
     fetchOrders();
