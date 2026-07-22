@@ -343,7 +343,16 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
       </td>
       <td className="px-3 py-1.5 w-[70px] truncate">{order.item_description || "—"}</td>
       <td className="px-3 py-1.5 text-sm w-[220px] leading-snug">{followUpReasonLabels[order.follow_up_reason || ""] || "—"}</td>
-      <td className="px-3 py-1.5 text-sm w-[420px] leading-snug"><div className="whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div></td>
+      <td className="px-3 py-1.5 text-sm w-[420px] leading-snug">
+        <div className="flex items-start gap-2">
+          <div className="flex-1 whitespace-normal break-words text-muted-foreground">{order.private_follow_up_notes || "—"}</div>
+          <label className="flex items-center gap-1 text-xs cursor-pointer shrink-0 mt-0.5">
+            <Checkbox checked={doneOpen} onCheckedChange={(c) => { if (c) openDone(); }} />
+            Done
+          </label>
+        </div>
+      </td>
+
       <td className="px-3 py-1.5 whitespace-nowrap w-[130px]">
         <Input
           type="date"
