@@ -286,26 +286,44 @@ const FollowUpRow = ({ order, onLog, onRefresh }: { order: FollowUpOrder; onLog:
   const openDone = () => {
     setNextDate("");
     setNextNote("");
+    setPickedUp(false);
     setDoneOpen(true);
   };
 
   const submitDone = async () => {
-    if (!nextDate || !nextNote.trim()) {
-      toast({ title: "Required", description: "Enter next follow-up date and note.", variant: "destructive" });
+    if (!pickedUp && (!nextDate || !nextNote.trim())) {
+      toast({ title: "Required", description: "Enter next follow-up date and note, or mark as picked up.", variant: "destructive" });
       return;
     }
     setCompleting(true);
+    const today = new Date().toISOString().split("T")[0];
     const currentNote = order.private_follow_up_notes?.trim() || "(no note)";
-    const currentDate = order.next_follow_up_date || new Date().toISOString().split("T")[0];
-    // Mark current follow-up as done
-    await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, nextDate, false);
-    // Clear the old private follow-up note and set the new one
-    await supabase.from("orders").update({
-      private_follow_up_notes: nextNote.trim(),
-      next_follow_up_date: nextDate,
-    }).eq("id", order.id);
-    // Log the next planned follow-up
-    await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
+    const currentDate = order.next_follow_up_date || today;
+
+    if (pickedUp) {
+      // Mark current follow-up done
+      await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, null, true);
+      // Close out order
+      await supabase.from("orders").update({
+        status: "picked_up",
+        private_follow_up_notes: null,
+        next_follow_up_date: null,
+      }).eq("id", order.id);
+      await supabase.from("order_notes").insert({
+        order_id: order.id,
+        note: "Client picked up item — order closed",
+        note_date: today,
+        created_by: user?.id,
+      } as any);
+      toast({ title: "Marked as picked up" });
+    } else {
+      await onLog(order, "note", `[${currentDate}] ${currentNote} — DONE`, nextDate, false);
+      await supabase.from("orders").update({
+        private_follow_up_notes: nextNote.trim(),
+        next_follow_up_date: nextDate,
+      }).eq("id", order.id);
+      await onLog(order, "note", `[${nextDate}] Next follow-up: ${nextNote.trim()}`, nextDate, false);
+    }
     setDoneOpen(false);
     setCompleting(false);
     onRefresh();
