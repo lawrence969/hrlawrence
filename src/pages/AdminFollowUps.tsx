@@ -60,7 +60,7 @@ const AdminFollowUps = () => {
   const load = async () => {
     const { data } = await supabase
       .from("orders")
-      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id, production_updated_at")
+      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id, production_updated_at, updated_at")
       .order("next_follow_up_date", { ascending: true, nullsFirst: false });
     setOrders((data as any) || []);
   };
