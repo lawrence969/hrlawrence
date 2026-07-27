@@ -60,7 +60,7 @@ const AdminFollowUps = () => {
   const load = async () => {
     const { data } = await supabase
       .from("orders")
-      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id, production_updated_at")
+      .select("id, order_number, order_type, status, item_description, first_name, last_name, customer_email, phone1, next_follow_up_date, last_contacted_at, preferred_contact_method, follow_up_reason, internal_priority, blocked_reason, private_follow_up_notes, customer_profile_id, production_updated_at, updated_at")
       .order("next_follow_up_date", { ascending: true, nullsFirst: false });
     setOrders((data as any) || []);
   };
@@ -69,7 +69,7 @@ const AdminFollowUps = () => {
 
   const parseLocal = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
   const dateKey = (o: FollowUpOrder) => {
-    if (activeTab === "stale") return o.production_updated_at || o.next_follow_up_date;
+    if (activeTab === "stale") return (o as any).updated_at || o.production_updated_at || o.next_follow_up_date;
     return o.next_follow_up_date;
   };
   const filtered = useMemo(() => {
@@ -97,7 +97,7 @@ const AdminFollowUps = () => {
         break;
       case "stale": {
         const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
-        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo));
+        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).updated_at || new Date((o as any).updated_at) < sevenDaysAgo));
         break;
       }
       default:
@@ -138,7 +138,7 @@ const AdminFollowUps = () => {
       }).length,
       upcoming: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
-      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo)).length,
+      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).updated_at || new Date((o as any).updated_at) < sevenDaysAgo)).length,
     } as Record<string, number>;
   }, [orders]);
 
