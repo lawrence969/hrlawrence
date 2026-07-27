@@ -69,7 +69,7 @@ const AdminFollowUps = () => {
 
   const parseLocal = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
   const dateKey = (o: FollowUpOrder) => {
-    if (activeTab === "stale") return o.production_updated_at || o.next_follow_up_date;
+    if (activeTab === "stale") return (o as any).updated_at || o.production_updated_at || o.next_follow_up_date;
     return o.next_follow_up_date;
   };
   const filtered = useMemo(() => {
