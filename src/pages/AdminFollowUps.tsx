@@ -138,7 +138,7 @@ const AdminFollowUps = () => {
       }).length,
       upcoming: active.filter((o) => o.next_follow_up_date && parseLocal(o.next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length,
       ready: active.filter((o) => o.status === "ready_for_pickup").length,
-      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo)).length,
+      stale: active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).updated_at || new Date((o as any).updated_at) < sevenDaysAgo)).length,
     } as Record<string, number>;
   }, [orders]);
 
