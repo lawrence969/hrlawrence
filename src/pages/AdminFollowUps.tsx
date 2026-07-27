@@ -97,7 +97,7 @@ const AdminFollowUps = () => {
         break;
       case "stale": {
         const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
-        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!o.production_updated_at || new Date(o.production_updated_at) < sevenDaysAgo));
+        list = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).updated_at || new Date((o as any).updated_at) < sevenDaysAgo));
         break;
       }
       default:
