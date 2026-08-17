@@ -117,7 +117,7 @@ const AdminDashboard = () => {
   const [showPrintPrompt, setShowPrintPrompt] = useState(false);
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
-  const [orderView, setOrderView] = useState<"active" | "complete">("active");
+  const [orderView, setOrderView] = useState<"active" | "complete" | "all">("active");
   const [clientSearch, setClientSearch] = useState("");
   const [clientResults, setClientResults] = useState<Array<{ id: string; first_name: string | null; last_name: string | null; email: string | null; phone: string | null; client_number: string | null }>>([]);
   const [showClientResults, setShowClientResults] = useState(false);
@@ -623,7 +623,7 @@ const AdminDashboard = () => {
   const completeStatuses = COMPLETE_STATUSES;
   const activeOrders = baseFiltered.filter((o) => !completeStatuses.has(o.status));
   const completeOrders = baseFiltered.filter((o) => completeStatuses.has(o.status));
-  const filteredOrders = orderView === "active" ? activeOrders : completeOrders;
+  const filteredOrders = orderView === "all" ? baseFiltered : orderView === "active" ? activeOrders : completeOrders;
 
   const allStatuses = Object.keys(statusLabels).sort((a, b) => statusLabels[a].localeCompare(statusLabels[b]));
 
@@ -816,7 +816,7 @@ const AdminDashboard = () => {
             { label: "Active Orders", value: orders.filter((o) => !completeStatuses.has(o.status)).length, view: "active" as const },
             { label: "Complete Orders", value: orders.filter((o) => completeStatuses.has(o.status)).length, view: "complete" as const },
             { label: "Ready for Pickup", value: orders.filter((o) => o.status === "ready_for_pickup").length },
-            { label: "Total Orders", value: orders.length },
+            { label: "Total Orders", value: orders.length, view: "all" as const },
           ].map((stat) => (
             <button
               key={stat.label}
@@ -1683,7 +1683,7 @@ const AdminDashboard = () => {
 
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-lg text-foreground">
-            {orderView === "active" ? "Active Orders" : "Complete Orders"}
+            {orderView === "all" ? "All Orders" : orderView === "active" ? "Active Orders" : "Complete Orders"}
             <span className="ml-2 font-body text-sm text-muted-foreground">({filteredOrders.length})</span>
           </h2>
         </div>
