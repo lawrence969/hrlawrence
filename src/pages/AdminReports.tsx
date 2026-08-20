@@ -161,7 +161,7 @@ const AdminReports = () => {
       </div>
       <table><thead><tr>
         <th>Client #</th><th>Name</th><th>Email</th><th>Phone</th>
-        <th class="num">Orders</th><th class="num">Lifetime $</th><th>Last Activity</th><th>Tags</th>
+        <th class="num">Orders</th><th>Last Activity</th><th>Tags</th>
       </tr></thead><tbody>
       ${filtered.map((c) => `<tr>
         <td>${esc(c.client_number ?? "—")}</td>
@@ -169,7 +169,7 @@ const AdminReports = () => {
         <td>${esc(c.email)}</td>
         <td>${esc(c.phone ?? "—")}</td>
         <td class="num">${c.order_count}</td>
-        <td class="num">$${c.total_spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+        
         <td>${c.last_activity ? new Date(c.last_activity).toLocaleDateString() : "—"}</td>
         <td>${esc(c.tags.map((t) => t.label).join(", "))}</td>
       </tr>`).join("")}
@@ -274,7 +274,7 @@ const AdminReports = () => {
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3 text-right">Orders</th>
-                <th className="px-4 py-3 text-right">Lifetime $</th>
+                
                 <th className="px-4 py-3">Last Activity</th>
                 <th className="px-4 py-3">Tags</th>
               </tr>
@@ -291,7 +291,7 @@ const AdminReports = () => {
                   <td className="px-4 py-3 text-muted-foreground">{c.email}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
                   <td className="px-4 py-3 text-right">{c.order_count}</td>
-                  <td className="px-4 py-3 text-right">${c.total_spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  
                   <td className="px-4 py-3 text-muted-foreground">{c.last_activity ? new Date(c.last_activity).toLocaleDateString() : "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
