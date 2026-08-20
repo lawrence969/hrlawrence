@@ -108,7 +108,7 @@ const AdminClients = () => {
   }, [clients, search, tagFilter, activityFilter]);
 
   const exportCsv = () => {
-    const header = ["Client #", "First Name", "Last Name", "Email", "Phone", "Orders", "Lifetime Spend", "Last Activity", "Tags"];
+    const header = ["Client #", "First Name", "Last Name", "Email", "Phone", "Orders", "Last Activity", "Tags"];
     const rows = filtered.map((c) => [
       c.client_number ?? "",
       c.first_name,
@@ -116,7 +116,6 @@ const AdminClients = () => {
       c.email,
       c.phone ?? "",
       String(c.order_count),
-      c.total_spend.toFixed(2),
       c.last_activity ? new Date(c.last_activity).toISOString().slice(0, 10) : "",
       c.tags.map((t) => t.label).join("; "),
     ]);
@@ -172,7 +171,7 @@ const AdminClients = () => {
             { label: "Total Clients", value: clients.length },
             { label: "Filtered", value: filtered.length },
             { label: "With Orders", value: withOrders },
-            { label: "Lifetime Value", value: `$${totalSpend.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
+            { label: "No Orders Yet", value: filtered.length - withOrders },
           ].map((s) => (
             <div key={s.label} className="bg-background border border-border p-5">
               <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">{s.label}</p>
@@ -213,7 +212,7 @@ const AdminClients = () => {
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3">Orders</th>
-                <th className="px-4 py-3">Lifetime $</th>
+                
                 <th className="px-4 py-3">Last Activity</th>
                 <th className="px-4 py-3">Tags</th>
               </tr>
@@ -230,7 +229,7 @@ const AdminClients = () => {
                   <td className="px-4 py-3 text-muted-foreground">{c.email}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
                   <td className="px-4 py-3">{c.order_count}</td>
-                  <td className="px-4 py-3">${c.total_spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  
                   <td className="px-4 py-3 text-muted-foreground">{c.last_activity ? new Date(c.last_activity).toLocaleDateString() : "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">

@@ -140,7 +140,7 @@ const AdminClientDetail = () => {
             </div>
             <div className="grid grid-cols-3 gap-6 text-right">
               <div><p className="font-body text-xs uppercase tracking-widest text-muted-foreground">Orders</p><p className="font-display text-xl">{orders.length}</p></div>
-              <div><p className="font-body text-xs uppercase tracking-widest text-muted-foreground">Lifetime $</p><p className="font-display text-xl">${totalSpend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p></div>
+              
               <div><p className="font-body text-xs uppercase tracking-widest text-muted-foreground">Deposits</p><p className="font-display text-xl">${totalDeposits.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p></div>
             </div>
           </div>
