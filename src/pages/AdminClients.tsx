@@ -147,6 +147,7 @@ const AdminClients = () => {
           <div className="flex items-center gap-8">
             <Link to="/admin" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Orders</Link>
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Clients</span>
+            <Link to="/admin/reports" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Reports</Link>
             <button onClick={signOut} className="text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground">Sign Out</button>
           </div>
         </div>
