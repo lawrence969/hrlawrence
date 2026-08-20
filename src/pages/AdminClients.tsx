@@ -108,7 +108,7 @@ const AdminClients = () => {
   }, [clients, search, tagFilter, activityFilter]);
 
   const exportCsv = () => {
-    const header = ["Client #", "First Name", "Last Name", "Email", "Phone", "Orders", "Lifetime Spend", "Last Activity", "Tags"];
+    const header = ["Client #", "First Name", "Last Name", "Email", "Phone", "Orders", "Last Activity", "Tags"];
     const rows = filtered.map((c) => [
       c.client_number ?? "",
       c.first_name,
@@ -116,7 +116,6 @@ const AdminClients = () => {
       c.email,
       c.phone ?? "",
       String(c.order_count),
-      c.total_spend.toFixed(2),
       c.last_activity ? new Date(c.last_activity).toISOString().slice(0, 10) : "",
       c.tags.map((t) => t.label).join("; "),
     ]);
@@ -136,7 +135,6 @@ const AdminClients = () => {
   if (!user) return <Navigate to="/auth" replace />;
   if (!isStaff) return <Navigate to="/" replace />;
 
-  const totalSpend = filtered.reduce((s, c) => s + c.total_spend, 0);
   const withOrders = filtered.filter((c) => c.order_count > 0).length;
 
   return (
@@ -172,7 +170,7 @@ const AdminClients = () => {
             { label: "Total Clients", value: clients.length },
             { label: "Filtered", value: filtered.length },
             { label: "With Orders", value: withOrders },
-            { label: "Lifetime Value", value: `$${totalSpend.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
+            { label: "No Orders Yet", value: filtered.length - withOrders },
           ].map((s) => (
             <div key={s.label} className="bg-background border border-border p-5">
               <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">{s.label}</p>
@@ -213,16 +211,16 @@ const AdminClients = () => {
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3">Orders</th>
-                <th className="px-4 py-3">Lifetime $</th>
+                
                 <th className="px-4 py-3">Last Activity</th>
                 <th className="px-4 py-3">Tags</th>
               </tr>
             </thead>
             <tbody>
               {fetching ? (
-                <tr><td colSpan={8} className="px-4 py-10 text-center font-body text-sm text-muted-foreground">Loading…</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center font-body text-sm text-muted-foreground">Loading…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={8} className="px-4 py-10 text-center font-body text-sm text-muted-foreground"><Users className="w-8 h-8 mx-auto mb-2 opacity-50" />No clients match your filters</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center font-body text-sm text-muted-foreground"><Users className="w-8 h-8 mx-auto mb-2 opacity-50" />No clients match your filters</td></tr>
               ) : filtered.map((c) => (
                 <motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border hover:bg-muted/50 cursor-pointer font-body text-sm">
                   <td className="px-4 py-3"><Link to={`/admin/clients/${c.id}`} className="text-primary hover:underline font-medium">{c.client_number ?? "—"}</Link></td>
@@ -230,7 +228,7 @@ const AdminClients = () => {
                   <td className="px-4 py-3 text-muted-foreground">{c.email}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
                   <td className="px-4 py-3">{c.order_count}</td>
-                  <td className="px-4 py-3">${c.total_spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  
                   <td className="px-4 py-3 text-muted-foreground">{c.last_activity ? new Date(c.last_activity).toLocaleDateString() : "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">

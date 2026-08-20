@@ -121,7 +121,6 @@ const AdminReports = () => {
     });
   }, [clients, search, tagFilter, activityFilter, sortBy]);
 
-  const totalSpend = filtered.reduce((s, c) => s + c.total_spend, 0);
   const totalDeposit = filtered.reduce((s, c) => s + c.total_deposit, 0);
   const withOrders = filtered.filter((c) => c.order_count > 0).length;
 
@@ -156,7 +155,7 @@ const AdminReports = () => {
       <div class="summary">
         <div>Clients<b>${filtered.length}</b></div>
         <div>With Orders<b>${withOrders}</b></div>
-        <div>Lifetime Value<b>$${totalSpend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div>
+        
         <div>Deposits<b>$${totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div>
       </div>
       <table><thead><tr>
@@ -220,7 +219,7 @@ const AdminReports = () => {
           {[
             { label: "Clients In Report", value: filtered.length },
             { label: "With Orders", value: withOrders },
-            { label: "Lifetime Value", value: `$${totalSpend.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
+            { label: "No Orders Yet", value: filtered.length - withOrders },
             { label: "Deposits", value: `$${totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
           ].map((s) => (
             <div key={s.label} className="bg-background border border-border p-5">
