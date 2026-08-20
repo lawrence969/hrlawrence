@@ -201,7 +201,7 @@ const AdminReports = () => {
         </div>
       </nav>
 
-      <div className="pt-20 p-6 lg:p-10">
+      <div className="p-6 lg:p-10 pt-28 lg:pt-28">
         <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <Link to="/admin" className="text-muted-foreground hover:text-foreground"><ArrowLeft className="w-5 h-5" /></Link>

@@ -121,7 +121,7 @@ const AdminClientDetail = () => {
         </div>
       </nav>
 
-      <div className="pt-20 p-6 lg:p-10 max-w-[1600px] mx-auto">
+      <div className="p-6 lg:p-10 pt-28 lg:pt-28 max-w-[1600px] mx-auto">
         <Link to="/admin/clients" className="inline-flex items-center gap-2 text-sm font-body text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Clients
         </Link>
