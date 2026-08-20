@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Download, ArrowLeft, Users } from "lucide-react";
 import logoNavy from "@/assets/logo-navy.jpg";
+import ClientQuickView from "@/components/ClientQuickView";
 
 interface ClientRow {
   id: string;
@@ -32,6 +33,7 @@ const AdminClients = () => {
   const [tagFilter, setTagFilter] = useState<string>("all");
   const [activityFilter, setActivityFilter] = useState<string>("all");
   const [fetching, setFetching] = useState(true);
+  const [quickViewId, setQuickViewId] = useState<string | null>(null);
 
   const load = async () => {
     setFetching(true);
@@ -223,8 +225,8 @@ const AdminClients = () => {
                 <tr><td colSpan={7} className="px-4 py-10 text-center font-body text-sm text-muted-foreground"><Users className="w-8 h-8 mx-auto mb-2 opacity-50" />No clients match your filters</td></tr>
               ) : filtered.map((c) => (
                 <motion.tr key={c.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-border hover:bg-muted/50 cursor-pointer font-body text-sm">
-                  <td className="px-4 py-3"><Link to={`/admin/clients/${c.id}`} className="text-primary hover:underline font-medium">{c.client_number ?? "—"}</Link></td>
-                  <td className="px-4 py-3"><Link to={`/admin/clients/${c.id}`} className="text-foreground hover:text-primary">{c.first_name} {c.last_name}</Link></td>
+                  <td className="px-4 py-3"><button type="button" onClick={() => setQuickViewId(c.id)} className="text-primary hover:underline font-medium">{c.client_number ?? "—"}</button></td>
+                  <td className="px-4 py-3"><button type="button" onClick={() => setQuickViewId(c.id)} className="text-foreground hover:text-primary text-left">{c.first_name} {c.last_name}</button></td>
                   <td className="px-4 py-3 text-muted-foreground">{c.email}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
                   <td className="px-4 py-3">{c.order_count}</td>
@@ -243,6 +245,13 @@ const AdminClients = () => {
           </table>
         </div>
       </div>
+
+      <ClientQuickView
+        clientId={quickViewId}
+        open={!!quickViewId}
+        onOpenChange={(v) => { if (!v) setQuickViewId(null); }}
+        onSaved={load}
+      />
     </div>
   );
 };
