@@ -755,6 +755,7 @@ const AdminDashboard = () => {
             
             <Link to="/admin/follow-ups" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Follow-Ups</Link>
             <Link to="/admin/clients" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Clients</Link>
+            <Link to="/admin/reports" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Reports</Link>
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Staff Portal</span>
             <button onClick={signOut} className="flex items-center gap-2 text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
               <LogOut className="w-4 h-4" /> Sign Out

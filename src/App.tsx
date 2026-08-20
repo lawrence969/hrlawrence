@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminClients from "./pages/AdminClients";
 import AdminClientDetail from "./pages/AdminClientDetail";
 import AdminFollowUps from "./pages/AdminFollowUps";
+import AdminReports from "./pages/AdminReports";
 import GoldCalculator from "./pages/GoldCalculator";
 
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/admin/follow-ups" element={<AdminFollowUps />} />
             <Route path="/admin/clients" element={<AdminClients />} />
             <Route path="/admin/clients/:id" element={<AdminClientDetail />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
             
             <Route path="*" element={<NotFound />} />
