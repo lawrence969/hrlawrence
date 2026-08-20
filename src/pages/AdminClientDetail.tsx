@@ -106,7 +106,6 @@ const AdminClientDetail = () => {
   if (!isStaff) return <Navigate to="/" replace />;
   if (!profile) return <div className="p-10 font-body text-muted-foreground">Loading client…</div>;
 
-  const totalSpend = orders.reduce((s, o) => s + Number(o.budget ?? 0), 0);
   const totalDeposits = orders.reduce((s, o) => s + Number(o.deposit ?? 0), 0);
 
   return (

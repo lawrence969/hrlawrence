@@ -135,7 +135,6 @@ const AdminClients = () => {
   if (!user) return <Navigate to="/auth" replace />;
   if (!isStaff) return <Navigate to="/" replace />;
 
-  const totalSpend = filtered.reduce((s, c) => s + c.total_spend, 0);
   const withOrders = filtered.filter((c) => c.order_count > 0).length;
 
   return (

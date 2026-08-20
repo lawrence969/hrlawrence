@@ -121,7 +121,6 @@ const AdminReports = () => {
     });
   }, [clients, search, tagFilter, activityFilter, sortBy]);
 
-  const totalSpend = filtered.reduce((s, c) => s + c.total_spend, 0);
   const totalDeposit = filtered.reduce((s, c) => s + c.total_deposit, 0);
   const withOrders = filtered.filter((c) => c.order_count > 0).length;
 
