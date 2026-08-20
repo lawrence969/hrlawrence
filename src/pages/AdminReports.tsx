@@ -161,7 +161,7 @@ const AdminReports = () => {
       </div>
       <table><thead><tr>
         <th>Client #</th><th>Name</th><th>Email</th><th>Phone</th>
-        <th class="num">Orders</th><th class="num">Lifetime $</th><th>Last Activity</th><th>Tags</th>
+        <th class="num">Orders</th><th>Last Activity</th><th>Tags</th>
       </tr></thead><tbody>
       ${filtered.map((c) => `<tr>
         <td>${esc(c.client_number ?? "—")}</td>
@@ -169,7 +169,7 @@ const AdminReports = () => {
         <td>${esc(c.email)}</td>
         <td>${esc(c.phone ?? "—")}</td>
         <td class="num">${c.order_count}</td>
-        <td class="num">$${c.total_spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+        
         <td>${c.last_activity ? new Date(c.last_activity).toLocaleDateString() : "—"}</td>
         <td>${esc(c.tags.map((t) => t.label).join(", "))}</td>
       </tr>`).join("")}
@@ -257,7 +257,6 @@ const AdminReports = () => {
             <SelectContent>
               <SelectItem value="name">Sort: Name (A–Z)</SelectItem>
               <SelectItem value="client_number">Sort: Client #</SelectItem>
-              <SelectItem value="spend">Sort: Lifetime $</SelectItem>
               <SelectItem value="orders">Sort: Order count</SelectItem>
               <SelectItem value="recent">Sort: Last activity</SelectItem>
               <SelectItem value="newest">Sort: Newest client</SelectItem>
@@ -274,16 +273,16 @@ const AdminReports = () => {
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3 text-right">Orders</th>
-                <th className="px-4 py-3 text-right">Lifetime $</th>
+                
                 <th className="px-4 py-3">Last Activity</th>
                 <th className="px-4 py-3">Tags</th>
               </tr>
             </thead>
             <tbody>
               {fetching ? (
-                <tr><td colSpan={8} className="px-4 py-10 text-center font-body text-sm text-muted-foreground">Loading…</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center font-body text-sm text-muted-foreground">Loading…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={8} className="px-4 py-10 text-center font-body text-sm text-muted-foreground"><Users className="w-8 h-8 mx-auto mb-2 opacity-50" />No clients match your filters</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center font-body text-sm text-muted-foreground"><Users className="w-8 h-8 mx-auto mb-2 opacity-50" />No clients match your filters</td></tr>
               ) : filtered.map((c) => (
                 <tr key={c.id} className="border-b border-border hover:bg-muted/50 font-body text-sm">
                   <td className="px-4 py-3"><Link to={`/admin/clients/${c.id}`} className="text-primary hover:underline font-medium">{c.client_number ?? "—"}</Link></td>
@@ -291,7 +290,7 @@ const AdminReports = () => {
                   <td className="px-4 py-3 text-muted-foreground">{c.email}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
                   <td className="px-4 py-3 text-right">{c.order_count}</td>
-                  <td className="px-4 py-3 text-right">${c.total_spend.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                  
                   <td className="px-4 py-3 text-muted-foreground">{c.last_activity ? new Date(c.last_activity).toLocaleDateString() : "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
