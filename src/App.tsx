@@ -38,6 +38,7 @@ const App = () => (
             <Route path="/admin/follow-ups" element={<AdminFollowUps />} />
             <Route path="/admin/clients" element={<AdminClients />} />
             <Route path="/admin/clients/:id" element={<AdminClientDetail />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
             
             <Route path="*" element={<NotFound />} />
