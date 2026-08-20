@@ -205,6 +205,7 @@ const AdminFollowUps = () => {
             <Link to="/admin" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent">Orders</Link>
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Follow-Ups</span>
             <Link to="/admin/clients" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent">Clients</Link>
+            <Link to="/admin/reports" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Reports</Link>
             <button onClick={signOut} className="flex items-center gap-2 text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground"><LogOut className="w-4 h-4" /> Sign Out</button>
           </div>
         </div>
