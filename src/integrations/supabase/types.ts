@@ -1399,6 +1399,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_placeholder_email: { Args: { _e: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
           dlq_name: string
