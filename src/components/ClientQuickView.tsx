@@ -169,7 +169,7 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
                 {orders.length === 0 ? (
                   <p className="px-3 py-4 text-sm text-muted-foreground">No orders yet</p>
                 ) : orders.map((o) => (
-                  <Link key={o.id} to={`/admin?order=${o.id}`} className="flex items-center justify-between gap-3 px-3 py-2 text-sm hover:bg-muted/50">
+                  <Link key={o.id} to={`/admin?open=${o.id}`} className="flex items-center justify-between gap-3 px-3 py-2 text-sm hover:bg-muted/50">
                     <span className="font-medium text-primary">{o.order_number}</span>
                     <span className="flex-1 truncate text-muted-foreground">{o.item_description}</span>
                     <span className="text-xs uppercase tracking-wide text-muted-foreground">{o.status.replace(/_/g, " ")}</span>
