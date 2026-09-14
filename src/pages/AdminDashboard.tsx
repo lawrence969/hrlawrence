@@ -494,6 +494,17 @@ const AdminDashboard = () => {
           created_by: user.id,
         });
       }
+      // Save how the client found us onto their client record
+      if (data?.id && newOrder.clientSource) {
+        const { data: linked } = await supabase.from("orders").select("customer_profile_id").eq("id", data.id).maybeSingle();
+        const pid = (linked as any)?.customer_profile_id;
+        if (pid) {
+          await supabase.from("profiles").update({
+            source: newOrder.clientSource,
+            source_detail: newOrder.clientSourceDetail.trim() || null,
+          } as any).eq("id", pid);
+        }
+      }
       toast({ title: "Order Created", description: orderNum });
       setCreatedOrderData({ ...newOrder });
       setCreatedOrderNumber(orderNum);
