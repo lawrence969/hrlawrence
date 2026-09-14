@@ -64,6 +64,7 @@ interface Order {
   notes: string | null;
   created_at: string;
   customer_profile_id: string | null;
+  client_number: string | null;
   budget: number | null;
   deposit: number | null;
   address: string | null;
@@ -129,6 +130,7 @@ const AdminDashboard = () => {
   const [showPrintPrompt, setShowPrintPrompt] = useState(false);
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
+  const [createdClientNumber, setCreatedClientNumber] = useState<string | null>(null);
   const [orderView, setOrderView] = useState<"active" | "complete" | "all">("active");
   const [clientSearch, setClientSearch] = useState("");
   const [clientResults, setClientResults] = useState<Array<{ id: string; first_name: string | null; last_name: string | null; email: string | null; phone: string | null; client_number: string | null }>>([]);
@@ -153,8 +155,16 @@ const AdminDashboard = () => {
   });
 
   const fetchOrders = async () => {
-    const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
-    setOrders(data || []);
+    const { data } = await supabase
+      .from("orders")
+      .select("*, profiles:customer_profile_id(client_number)")
+      .order("created_at", { ascending: false });
+    setOrders(
+      (data || []).map((o: any) => ({
+        ...o,
+        client_number: o.profiles?.client_number ?? null,
+      }))
+    );
   };
 
   // Search existing clients while typing in intake form
@@ -388,7 +398,7 @@ const AdminDashboard = () => {
     setShowConfirmCreate(true);
   };
 
-  const printOrderForm = (orderData: typeof newOrder, orderNumber?: string | null) => {
+  const printOrderForm = (orderData: typeof newOrder, orderNumber?: string | null, clientNumber?: string | null) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
     printWindow.document.write(`
@@ -397,6 +407,7 @@ const AdminDashboard = () => {
         body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
         h1 { font-size: 22px; margin-bottom: 4px; }
         .order-num { font-size: 16px; color: #555; margin-bottom: 4px; font-weight: bold; }
+        .client-num { font-size: 13px; color: #777; margin-bottom: 4px; }
         h2 { font-size: 14px; color: #888; margin-bottom: 24px; font-weight: normal; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 20px; }
         .field { margin-bottom: 4px; }
@@ -408,6 +419,7 @@ const AdminDashboard = () => {
         @media print { body { padding: 20px; } }
       </style></head><body>
       ${orderNumber ? `<div class="order-num">${orderNumber}</div>` : ""}
+      ${clientNumber ? `<div class="client-num">Client ${clientNumber}</div>` : ""}
       <h1>Order Form</h1>
       <h2>${orderTypeLabel(orderData.orderType)} — ${new Date().toLocaleDateString()}</h2>
       <div class="grid">
@@ -494,11 +506,13 @@ const AdminDashboard = () => {
           created_by: user.id,
         });
       }
-      // Save how the client found us onto their client record
-      if (data?.id && newOrder.clientSource) {
-        const { data: linked } = await supabase.from("orders").select("customer_profile_id").eq("id", data.id).maybeSingle();
+      // Save how the client found us onto their client record and fetch client number
+      let clientNum: string | null = null;
+      if (data?.id) {
+        const { data: linked } = await supabase.from("orders").select("customer_profile_id, profiles:customer_profile_id(client_number)").eq("id", data.id).maybeSingle();
         const pid = (linked as any)?.customer_profile_id;
-        if (pid) {
+        clientNum = (linked as any)?.profiles?.client_number ?? null;
+        if (pid && newOrder.clientSource) {
           await supabase.from("profiles").update({
             source: newOrder.clientSource,
             source_detail: newOrder.clientSourceDetail.trim() || null,
@@ -508,6 +522,7 @@ const AdminDashboard = () => {
       toast({ title: "Order Created", description: orderNum });
       setCreatedOrderData({ ...newOrder });
       setCreatedOrderNumber(orderNum);
+      setCreatedClientNumber(clientNum);
       setShowPrintPrompt(true);
       setShowNewOrder(false);
       setNewOrder({
@@ -1158,6 +1173,7 @@ const AdminDashboard = () => {
                         <h1>Order ${selectedOrder.order_number}</h1>
                         <p class="subtitle">${selectedOrder.order_type.charAt(0).toUpperCase() + selectedOrder.order_type.slice(1)} · ${new Date(selectedOrder.created_at).toLocaleDateString()}</p>
                         <table>
+                          <tr><th>Client #</th><td>${selectedOrder.client_number || "—"}</td></tr>
                           <tr><th>Client Name</th><td>${name}</td></tr>
                           <tr><th>Email</th><td>${selectedOrder.customer_email}</td></tr>
                           <tr><th>Phone 1</th><td>${selectedOrder.phone1 || "—"}</td></tr>
@@ -1772,11 +1788,12 @@ const AdminDashboard = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="font-body">No, Skip</AlertDialogCancel>
+            <AlertDialogCancel className="font-body" onClick={() => { setCreatedOrderData(null); setCreatedOrderNumber(null); setCreatedClientNumber(null); }}>No, Skip</AlertDialogCancel>
             <AlertDialogAction className="font-body" onClick={() => {
-              if (createdOrderData) printOrderForm(createdOrderData, createdOrderNumber);
+              if (createdOrderData) printOrderForm(createdOrderData, createdOrderNumber, createdClientNumber);
               setCreatedOrderData(null);
               setCreatedOrderNumber(null);
+              setCreatedClientNumber(null);
             }}>
               Print Form
             </AlertDialogAction>
