@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { ExternalLink, Save } from "lucide-react";
 
@@ -20,7 +21,17 @@ interface Props {
   onSaved?: () => void;
 }
 
-const emptyForm = { first_name: "", last_name: "", email: "", phone: "", sms_consent: false };
+const emptyForm = { first_name: "", last_name: "", email: "", phone: "", sms_consent: false, source: "", source_detail: "" };
+
+const SOURCES = [
+  { value: "social_media", label: "Social Media" },
+  { value: "referral", label: "Referral" },
+  { value: "internet", label: "Internet" },
+  { value: "ai", label: "AI" },
+  { value: "gold_party", label: "Gold Party" },
+  { value: "walk_in", label: "Walk-In" },
+  { value: "other", label: "Other" },
+];
 
 const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
   const [loading, setLoading] = useState(false);
@@ -38,7 +49,7 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
     (async () => {
       setLoading(true);
       const [{ data: p }, { data: o }, { data: t }, { data: assigns }] = await Promise.all([
-        supabase.from("profiles").select("id, client_number, first_name, last_name, email, phone, sms_consent").eq("id", clientId).maybeSingle(),
+        supabase.from("profiles").select("id, client_number, first_name, last_name, email, phone, sms_consent, source, source_detail").eq("id", clientId).maybeSingle(),
         supabase.from("orders").select("id, order_number, status, item_description, created_at").eq("customer_profile_id", clientId).order("created_at", { ascending: false }),
         supabase.from("client_tags").select("id, label, color").order("label"),
         supabase.from("client_tag_assignments").select("tag_id").eq("profile_id", clientId),
@@ -50,6 +61,8 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
         email: p?.email ?? "",
         phone: p?.phone ?? "",
         sms_consent: !!p?.sms_consent,
+        source: (p as any)?.source ?? "",
+        source_detail: (p as any)?.source_detail ?? "",
       };
       setClientNumber(p?.client_number ?? null);
       setForm(next);
@@ -88,7 +101,9 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
       email: form.email.trim(),
       phone: form.phone.trim() || null,
       sms_consent: form.sms_consent,
-    }).eq("id", clientId);
+      source: form.source || null,
+      source_detail: form.source_detail.trim() || null,
+    } as any).eq("id", clientId);
     setSaving(false);
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
@@ -134,6 +149,25 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
               <div className="space-y-1.5">
                 <Label>Phone</Label>
                 <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>How did they find us?</Label>
+                <Select value={form.source || undefined} onValueChange={(v) => setForm({ ...form, source: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select source" /></SelectTrigger>
+                  <SelectContent>
+                    {SOURCES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>{form.source === "referral" ? "Referred by" : "Source details"}</Label>
+                <Input
+                  value={form.source_detail}
+                  onChange={(e) => setForm({ ...form, source_detail: e.target.value })}
+                  placeholder={form.source === "referral" ? "Name of person" : "Optional"}
+                />
               </div>
             </div>
 
