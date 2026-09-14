@@ -64,6 +64,7 @@ interface Order {
   notes: string | null;
   created_at: string;
   customer_profile_id: string | null;
+  client_number: string | null;
   budget: number | null;
   deposit: number | null;
   address: string | null;
