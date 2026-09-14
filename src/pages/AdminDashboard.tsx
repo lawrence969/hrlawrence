@@ -972,6 +972,7 @@ const AdminDashboard = () => {
                       placeholder={newOrder.clientSource === "referral" ? "Name of person" : "Optional"}
                       className="mt-1"
                     />
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <Checkbox id="rhodium" checked={newOrder.rhodiumPolish} onCheckedChange={(checked) => setNewOrder({ ...newOrder, rhodiumPolish: !!checked })} />
