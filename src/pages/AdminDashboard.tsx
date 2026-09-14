@@ -136,7 +136,8 @@ const AdminDashboard = () => {
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
-    orderType: "" as "" | "repair" | "custom" | "showroom",
+    orderType: "" as "" | "repair" | "custom" | "showroom" | "gold_purchase",
+    clientSource: "", clientSourceDetail: "",
     itemDescription: "", notes: "",
     orderDate: new Date().toISOString().split("T")[0],
     rhodiumPolish: false,
