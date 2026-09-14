@@ -721,6 +721,8 @@ export type Database = {
           last_name: string
           phone: string | null
           sms_consent: boolean
+          source: string | null
+          source_detail: string | null
           updated_at: string
           user_id: string | null
         }
@@ -733,6 +735,8 @@ export type Database = {
           last_name: string
           phone?: string | null
           sms_consent?: boolean
+          source?: string | null
+          source_detail?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -745,6 +749,8 @@ export type Database = {
           last_name?: string
           phone?: string | null
           sms_consent?: boolean
+          source?: string | null
+          source_detail?: string | null
           updated_at?: string
           user_id?: string | null
         }
