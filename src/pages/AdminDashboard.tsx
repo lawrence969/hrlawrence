@@ -950,6 +950,29 @@ const AdminDashboard = () => {
                   <Label htmlFor="ce" className="font-body text-sm">Email</Label>
                   <Input id="ce" type="email" required value={newOrder.customerEmail} onChange={(e) => setNewOrder({ ...newOrder, customerEmail: e.target.value })} className="mt-1" />
                 </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-sm">How did they find us?</Label>
+                    <Select value={newOrder.clientSource || undefined} onValueChange={(v) => setNewOrder({ ...newOrder, clientSource: v })}>
+                      <SelectTrigger className="mt-1"><SelectValue placeholder="Select source" /></SelectTrigger>
+                      <SelectContent>
+                        {CLIENT_SOURCES.map((s) => (
+                          <SelectItem key={s.value} value={s.value} className="font-body text-sm">{s.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="font-body text-sm">
+                      {newOrder.clientSource === "referral" ? "Referred by" : "Source details"}
+                    </Label>
+                    <Input
+                      value={newOrder.clientSourceDetail}
+                      onChange={(e) => setNewOrder({ ...newOrder, clientSourceDetail: e.target.value })}
+                      placeholder={newOrder.clientSource === "referral" ? "Name of person" : "Optional"}
+                      className="mt-1"
+                    />
+                </div>
                 <div className="flex items-center gap-2 mt-2">
                   <Checkbox id="rhodium" checked={newOrder.rhodiumPolish} onCheckedChange={(checked) => setNewOrder({ ...newOrder, rhodiumPolish: !!checked })} />
                   <Label htmlFor="rhodium" className="font-body text-sm cursor-pointer">Rhodium / Polish</Label>
