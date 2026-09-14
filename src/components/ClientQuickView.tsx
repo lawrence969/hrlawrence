@@ -20,7 +20,17 @@ interface Props {
   onSaved?: () => void;
 }
 
-const emptyForm = { first_name: "", last_name: "", email: "", phone: "", sms_consent: false };
+const emptyForm = { first_name: "", last_name: "", email: "", phone: "", sms_consent: false, source: "", source_detail: "" };
+
+const SOURCES = [
+  { value: "social_media", label: "Social Media" },
+  { value: "referral", label: "Referral" },
+  { value: "internet", label: "Internet" },
+  { value: "ai", label: "AI" },
+  { value: "gold_party", label: "Gold Party" },
+  { value: "walk_in", label: "Walk-In" },
+  { value: "other", label: "Other" },
+];
 
 const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
   const [loading, setLoading] = useState(false);
