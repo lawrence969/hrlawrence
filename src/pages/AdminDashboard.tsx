@@ -1788,7 +1788,7 @@ const AdminDashboard = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="font-body">No, Skip</AlertDialogCancel>
+            <AlertDialogCancel className="font-body" onClick={() => { setCreatedOrderData(null); setCreatedOrderNumber(null); setCreatedClientNumber(null); }}>No, Skip</AlertDialogCancel>
             <AlertDialogAction className="font-body" onClick={() => {
               if (createdOrderData) printOrderForm(createdOrderData, createdOrderNumber, createdClientNumber);
               setCreatedOrderData(null);
