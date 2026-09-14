@@ -130,6 +130,7 @@ const AdminDashboard = () => {
   const [showPrintPrompt, setShowPrintPrompt] = useState(false);
   const [createdOrderData, setCreatedOrderData] = useState<typeof newOrder | null>(null);
   const [createdOrderNumber, setCreatedOrderNumber] = useState<string | null>(null);
+  const [createdClientNumber, setCreatedClientNumber] = useState<string | null>(null);
   const [orderView, setOrderView] = useState<"active" | "complete" | "all">("active");
   const [clientSearch, setClientSearch] = useState("");
   const [clientResults, setClientResults] = useState<Array<{ id: string; first_name: string | null; last_name: string | null; email: string | null; phone: string | null; client_number: string | null }>>([]);
