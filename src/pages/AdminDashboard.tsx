@@ -154,8 +154,16 @@ const AdminDashboard = () => {
   });
 
   const fetchOrders = async () => {
-    const { data } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
-    setOrders(data || []);
+    const { data } = await supabase
+      .from("orders")
+      .select("*, profiles:customer_profile_id(client_number)")
+      .order("created_at", { ascending: false });
+    setOrders(
+      (data || []).map((o: any) => ({
+        ...o,
+        client_number: o.profiles?.client_number ?? null,
+      }))
+    );
   };
 
   // Search existing clients while typing in intake form
