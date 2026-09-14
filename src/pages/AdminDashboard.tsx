@@ -36,7 +36,19 @@ import {
   formatPhone,
 } from "@/lib/order-status";
 
-const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : "Custom Piece";
+const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : t === "gold_purchase" ? "Gold Purchase" : "Custom Piece";
+
+export const CLIENT_SOURCES: Array<{ value: string; label: string }> = [
+  { value: "social_media", label: "Social Media" },
+  { value: "referral", label: "Referral" },
+  { value: "internet", label: "Internet" },
+  { value: "ai", label: "AI" },
+  { value: "gold_party", label: "Gold Party" },
+  { value: "walk_in", label: "Walk-In" },
+  { value: "other", label: "Other" },
+];
+export const clientSourceLabel = (s?: string | null) =>
+  CLIENT_SOURCES.find((x) => x.value === s)?.label ?? "";
 
 
 interface Order {
