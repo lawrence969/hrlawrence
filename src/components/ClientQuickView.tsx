@@ -48,7 +48,7 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
     (async () => {
       setLoading(true);
       const [{ data: p }, { data: o }, { data: t }, { data: assigns }] = await Promise.all([
-        supabase.from("profiles").select("id, client_number, first_name, last_name, email, phone, sms_consent").eq("id", clientId).maybeSingle(),
+        supabase.from("profiles").select("id, client_number, first_name, last_name, email, phone, sms_consent, source, source_detail").eq("id", clientId).maybeSingle(),
         supabase.from("orders").select("id, order_number, status, item_description, created_at").eq("customer_profile_id", clientId).order("created_at", { ascending: false }),
         supabase.from("client_tags").select("id, label, color").order("label"),
         supabase.from("client_tag_assignments").select("tag_id").eq("profile_id", clientId),
@@ -60,6 +60,8 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
         email: p?.email ?? "",
         phone: p?.phone ?? "",
         sms_consent: !!p?.sms_consent,
+        source: (p as any)?.source ?? "",
+        source_detail: (p as any)?.source_detail ?? "",
       };
       setClientNumber(p?.client_number ?? null);
       setForm(next);
