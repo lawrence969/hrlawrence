@@ -700,6 +700,7 @@ const AdminDashboard = () => {
                     <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
                     <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
                     <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
+                    <SelectItem value="gold_purchase" className="text-xs font-body">Gold Purchase</SelectItem>
                   </SelectContent>
                 </Select>
               </td>
@@ -881,6 +882,7 @@ const AdminDashboard = () => {
                       <SelectItem value="custom" className="font-body text-sm">Custom Piece</SelectItem>
                       <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
                       <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
+                      <SelectItem value="gold_purchase" className="font-body text-sm">Gold Purchase</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1259,6 +1261,7 @@ const AdminDashboard = () => {
                             <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
                             <SelectItem value="custom" className="font-body text-sm">Custom</SelectItem>
                             <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
+                            <SelectItem value="gold_purchase" className="font-body text-sm">Gold Purchase</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -1683,6 +1686,7 @@ const AdminDashboard = () => {
               <SelectItem value="custom" className="text-xs font-body">Custom</SelectItem>
               <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
               <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
+              <SelectItem value="gold_purchase" className="text-xs font-body">Gold Purchase</SelectItem>
             </SelectContent>
           </Select>
 
