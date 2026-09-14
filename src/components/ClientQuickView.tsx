@@ -100,7 +100,9 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
       email: form.email.trim(),
       phone: form.phone.trim() || null,
       sms_consent: form.sms_consent,
-    }).eq("id", clientId);
+      source: form.source || null,
+      source_detail: form.source_detail.trim() || null,
+    } as any).eq("id", clientId);
     setSaving(false);
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
