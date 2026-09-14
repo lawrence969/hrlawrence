@@ -1169,6 +1169,7 @@ const AdminDashboard = () => {
                         <h1>Order ${selectedOrder.order_number}</h1>
                         <p class="subtitle">${selectedOrder.order_type.charAt(0).toUpperCase() + selectedOrder.order_type.slice(1)} · ${new Date(selectedOrder.created_at).toLocaleDateString()}</p>
                         <table>
+                          <tr><th>Client #</th><td>${selectedOrder.client_number || "—"}</td></tr>
                           <tr><th>Client Name</th><td>${name}</td></tr>
                           <tr><th>Email</th><td>${selectedOrder.customer_email}</td></tr>
                           <tr><th>Phone 1</th><td>${selectedOrder.phone1 || "—"}</td></tr>
