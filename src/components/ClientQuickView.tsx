@@ -149,6 +149,25 @@ const ClientQuickView = ({ clientId, open, onOpenChange, onSaved }: Props) => {
                 <Label>Phone</Label>
                 <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               </div>
+              <div className="space-y-1.5">
+                <Label>How did they find us?</Label>
+                <Select value={form.source || undefined} onValueChange={(v) => setForm({ ...form, source: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select source" /></SelectTrigger>
+                  <SelectContent>
+                    {SOURCES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>{form.source === "referral" ? "Referred by" : "Source details"}</Label>
+                <Input
+                  value={form.source_detail}
+                  onChange={(e) => setForm({ ...form, source_detail: e.target.value })}
+                  placeholder={form.source === "referral" ? "Name of person" : "Optional"}
+                />
+              </div>
             </div>
 
             <label className="flex items-center gap-2 text-sm cursor-pointer">
