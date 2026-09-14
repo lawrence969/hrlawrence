@@ -397,7 +397,7 @@ const AdminDashboard = () => {
     setShowConfirmCreate(true);
   };
 
-  const printOrderForm = (orderData: typeof newOrder, orderNumber?: string | null) => {
+  const printOrderForm = (orderData: typeof newOrder, orderNumber?: string | null, clientNumber?: string | null) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
     printWindow.document.write(`
@@ -406,6 +406,7 @@ const AdminDashboard = () => {
         body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
         h1 { font-size: 22px; margin-bottom: 4px; }
         .order-num { font-size: 16px; color: #555; margin-bottom: 4px; font-weight: bold; }
+        .client-num { font-size: 13px; color: #777; margin-bottom: 4px; }
         h2 { font-size: 14px; color: #888; margin-bottom: 24px; font-weight: normal; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 20px; }
         .field { margin-bottom: 4px; }
@@ -417,6 +418,7 @@ const AdminDashboard = () => {
         @media print { body { padding: 20px; } }
       </style></head><body>
       ${orderNumber ? `<div class="order-num">${orderNumber}</div>` : ""}
+      ${clientNumber ? `<div class="client-num">Client ${clientNumber}</div>` : ""}
       <h1>Order Form</h1>
       <h2>${orderTypeLabel(orderData.orderType)} — ${new Date().toLocaleDateString()}</h2>
       <div class="grid">
