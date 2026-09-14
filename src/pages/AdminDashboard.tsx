@@ -506,11 +506,13 @@ const AdminDashboard = () => {
           created_by: user.id,
         });
       }
-      // Save how the client found us onto their client record
-      if (data?.id && newOrder.clientSource) {
-        const { data: linked } = await supabase.from("orders").select("customer_profile_id").eq("id", data.id).maybeSingle();
+      // Save how the client found us onto their client record and fetch client number
+      let clientNum: string | null = null;
+      if (data?.id) {
+        const { data: linked } = await supabase.from("orders").select("customer_profile_id, profiles:customer_profile_id(client_number)").eq("id", data.id).maybeSingle();
         const pid = (linked as any)?.customer_profile_id;
-        if (pid) {
+        clientNum = (linked as any)?.profiles?.client_number ?? null;
+        if (pid && newOrder.clientSource) {
           await supabase.from("profiles").update({
             source: newOrder.clientSource,
             source_detail: newOrder.clientSourceDetail.trim() || null,
@@ -520,6 +522,7 @@ const AdminDashboard = () => {
       toast({ title: "Order Created", description: orderNum });
       setCreatedOrderData({ ...newOrder });
       setCreatedOrderNumber(orderNum);
+      setCreatedClientNumber(clientNum);
       setShowPrintPrompt(true);
       setShowNewOrder(false);
       setNewOrder({
