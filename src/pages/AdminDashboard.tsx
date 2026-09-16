@@ -794,8 +794,8 @@ const AdminDashboard = () => {
             <Link to="/track-order" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Track Order</Link>
             <Link to="/gold-calculator" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Gold Calculator</Link>
             
-            <Link to="/admin/follow-ups" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Follow-Ups</Link>
             <Link to="/admin/clients" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Clients</Link>
+
             <Link to="/admin/reports" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Reports</Link>
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Staff Portal</span>
             <button onClick={signOut} className="flex items-center gap-2 text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
@@ -816,41 +816,8 @@ const AdminDashboard = () => {
           </Button>
         </div>
 
-        {/* Follow-up quick cards */}
-        {(() => {
-          const today = new Date(); today.setHours(0,0,0,0);
-          const active = orders.filter((o) => !completeStatuses.has(o.status));
-          const withDate = active.filter((o) => (o as any).next_follow_up_date);
-          const parseLocalD = (s: string) => new Date(s.length === 10 ? s + "T00:00:00" : s);
-          const dueToday = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) === today.getTime()).length;
-          const overdue = withDate.filter((o) => {
-            const d = parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0);
-            if (d >= today.getTime()) return false;
-            const last = (o as any).last_contacted_at ? new Date((o as any).last_contacted_at).getTime() : 0;
-            return last < d; // not contacted on/after the due date
-          }).length;
-          const upcoming = withDate.filter((o) => parseLocalD((o as any).next_follow_up_date).setHours(0,0,0,0) > today.getTime()).length;
-          const ready = active.filter((o) => o.status === "ready_for_pickup").length;
-          const sevenDaysAgo = new Date(Date.now() - 7 * 864e5);
-          const stale = active.filter((o) => ["in_design","in_production","work_complete"].includes(o.status) && (!(o as any).production_updated_at || new Date((o as any).production_updated_at) < sevenDaysAgo)).length;
-          const cards = [
-            { label: "Due Today", value: dueToday, tab: "due_today", tone: "bg-blue-50 border-blue-300 text-blue-900" },
-            { label: "Overdue", value: overdue, tab: "overdue", tone: "bg-red-50 border-red-300 text-red-900" },
-            { label: "Upcoming", value: upcoming, tab: "upcoming", tone: "bg-amber-50 border-amber-300 text-amber-900" },
-            { label: "Ready For Pickup", value: ready, tab: "ready", tone: "bg-green-50 border-green-300 text-green-900" },
-            { label: "Stale 7+ Days", value: stale, tab: "stale", tone: "bg-purple-50 border-purple-300 text-purple-900" },
-          ];
-          return (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-              {cards.map((c) => (
-                <Link key={c.label} to={`/admin/follow-ups?tab=${c.tab}`} className={`border p-4 hover:shadow-sm transition-shadow ${c.tone}`}>
-                  <p className="font-body text-xs uppercase tracking-widest opacity-80">{c.label}</p>
-                  <p className="font-display text-2xl mt-1">{c.value}</p>
-                </Link>
-              ))}
-            </div>
-          );
-        })()}
+
+
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
