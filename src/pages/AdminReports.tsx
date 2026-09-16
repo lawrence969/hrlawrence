@@ -219,9 +219,7 @@ const AdminReports = () => {
     });
   }, [orders, orderSearch, statusFilter, typeFilter, fromDate, toDate, orderSort, dateField]);
 
-  const totalDeposit = filtered.reduce((s, c) => s + c.total_deposit, 0);
   const withOrders = filtered.filter((c) => c.order_count > 0).length;
-  const ordersDeposit = filteredOrders.reduce((s, o) => s + Number(o.deposit ?? 0), 0);
 
   const activityLabel: Record<string, string> = {
     all: "All clients",
@@ -265,7 +263,6 @@ const AdminReports = () => {
       <div class="summary">
         <div>Clients<b>${filtered.length}</b></div>
         <div>With Orders<b>${withOrders}</b></div>
-        <div>Deposits<b>$${totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div>
       </div>
       <table><thead><tr>
         <th>Client #</th><th>Name</th><th>Email</th><th>Phone</th>
@@ -301,7 +298,6 @@ const AdminReports = () => {
       Sorted by: ${esc(sortLabel[orderSort])}${orderSearch.trim() ? ` &middot; Search: "${esc(orderSearch.trim())}"` : ""}</div>
       <div class="summary">
         <div>Orders<b>${filteredOrders.length}</b></div>
-        <div>Deposits<b>$${ordersDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div>
       </div>
       <table><thead><tr>
         <th>Order #</th><th>Client #</th><th>Client</th><th>Item</th><th>Type</th><th>Status</th><th>Order Date</th><th>Delivery</th><th class="num">Deposit</th>
@@ -381,7 +377,6 @@ const AdminReports = () => {
                 { label: "Orders In Report", value: filteredOrders.length },
                 { label: "Repairs", value: filteredOrders.filter((o) => o.order_type === "repair").length },
                 { label: "Custom Pieces", value: filteredOrders.filter((o) => o.order_type === "custom").length },
-                { label: "Deposits", value: `$${ordersDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
               ].map((s) => (
                 <div key={s.label} className="bg-background border border-border p-5">
                   <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">{s.label}</p>
@@ -485,7 +480,6 @@ const AdminReports = () => {
                 { label: "Clients In Report", value: filtered.length },
                 { label: "With Orders", value: withOrders },
                 { label: "No Orders Yet", value: filtered.length - withOrders },
-                { label: "Deposits", value: `$${totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
               ].map((s) => (
                 <div key={s.label} className="bg-background border border-border p-5">
                   <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">{s.label}</p>
