@@ -219,9 +219,7 @@ const AdminReports = () => {
     });
   }, [orders, orderSearch, statusFilter, typeFilter, fromDate, toDate, orderSort, dateField]);
 
-  const totalDeposit = filtered.reduce((s, c) => s + c.total_deposit, 0);
   const withOrders = filtered.filter((c) => c.order_count > 0).length;
-  const ordersDeposit = filteredOrders.reduce((s, o) => s + Number(o.deposit ?? 0), 0);
 
   const activityLabel: Record<string, string> = {
     all: "All clients",
