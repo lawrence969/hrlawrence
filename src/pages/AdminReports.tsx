@@ -379,7 +379,6 @@ const AdminReports = () => {
                 { label: "Orders In Report", value: filteredOrders.length },
                 { label: "Repairs", value: filteredOrders.filter((o) => o.order_type === "repair").length },
                 { label: "Custom Pieces", value: filteredOrders.filter((o) => o.order_type === "custom").length },
-                { label: "Deposits", value: `$${ordersDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
               ].map((s) => (
                 <div key={s.label} className="bg-background border border-border p-5">
                   <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">{s.label}</p>
@@ -483,7 +482,6 @@ const AdminReports = () => {
                 { label: "Clients In Report", value: filtered.length },
                 { label: "With Orders", value: withOrders },
                 { label: "No Orders Yet", value: filtered.length - withOrders },
-                { label: "Deposits", value: `$${totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}` },
               ].map((s) => (
                 <div key={s.label} className="bg-background border border-border p-5">
                   <p className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2">{s.label}</p>
