@@ -265,7 +265,6 @@ const AdminReports = () => {
       <div class="summary">
         <div>Clients<b>${filtered.length}</b></div>
         <div>With Orders<b>${withOrders}</b></div>
-        <div>Deposits<b>$${totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div>
       </div>
       <table><thead><tr>
         <th>Client #</th><th>Name</th><th>Email</th><th>Phone</th>
@@ -301,7 +300,6 @@ const AdminReports = () => {
       Sorted by: ${esc(sortLabel[orderSort])}${orderSearch.trim() ? ` &middot; Search: "${esc(orderSearch.trim())}"` : ""}</div>
       <div class="summary">
         <div>Orders<b>${filteredOrders.length}</b></div>
-        <div>Deposits<b>$${ordersDeposit.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div>
       </div>
       <table><thead><tr>
         <th>Order #</th><th>Client #</th><th>Client</th><th>Item</th><th>Type</th><th>Status</th><th>Order Date</th><th>Delivery</th><th class="num">Deposit</th>
