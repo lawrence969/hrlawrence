@@ -56,7 +56,6 @@ const typeLabels: Record<string, string> = {
   repair: "Repair",
   custom: "Custom Piece",
   showroom: "Showroom Purchase",
-  showroom_purchase: "Showroom Purchase",
   gold_purchase: "Gold Purchase",
   inquiry: "Inquiry",
 };
