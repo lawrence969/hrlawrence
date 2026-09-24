@@ -97,7 +97,7 @@ export const showroomStatusFlow: OrderStatus[] = [
 
 export const getStatusFlow = (orderType: string): OrderStatus[] => {
   if (orderType === "repair") return repairStatusFlow;
-  if (orderType === "showroom" || orderType === "gold_purchase") return showroomStatusFlow;
+  if (orderType === "showroom" || orderType === "gold_purchase" || orderType === "inquiry") return showroomStatusFlow;
   return customStatusFlow;
 };
 
