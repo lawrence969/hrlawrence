@@ -36,7 +36,7 @@ import {
   formatPhone,
 } from "@/lib/order-status";
 
-const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : t === "gold_purchase" ? "Gold Purchase" : "Custom Piece";
+const orderTypeLabel = (t: string) => t === "repair" ? "Repair" : t === "showroom" ? "Showroom Purchase" : t === "gold_purchase" ? "Gold Purchase" : t === "inquiry" ? "Inquiry" : "Custom Piece";
 
 export const CLIENT_SOURCES: Array<{ value: string; label: string }> = [
   { value: "social_media", label: "Social Media" },
@@ -138,7 +138,7 @@ const AdminDashboard = () => {
   const [newOrder, setNewOrder] = useState({
     customerEmail: "", firstName: "", lastName: "", address: "",
     phone1: "", phone2: "",
-    orderType: "" as "" | "repair" | "custom" | "showroom" | "gold_purchase",
+    orderType: "" as "" | "repair" | "custom" | "showroom" | "gold_purchase" | "inquiry",
     clientSource: "", clientSourceDetail: "",
     itemDescription: "", notes: "",
     orderDate: new Date().toISOString().split("T")[0],
@@ -527,7 +527,7 @@ const AdminDashboard = () => {
       setShowNewOrder(false);
       setNewOrder({
         customerEmail: "", firstName: "", lastName: "", address: "",
-        phone1: "", phone2: "", orderType: "" as "" | "repair" | "custom" | "showroom" | "gold_purchase",
+        phone1: "", phone2: "", orderType: "" as "" | "repair" | "custom" | "showroom" | "gold_purchase" | "inquiry",
         clientSource: "", clientSourceDetail: "",
         itemDescription: "", notes: "",
         orderDate: new Date().toISOString().split("T")[0],
@@ -708,7 +708,7 @@ const AdminDashboard = () => {
               <td className="px-4 py-3 font-body text-sm text-muted-foreground hidden md:table-cell truncate max-w-[150px]">{order.item_description}</td>
               <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                 <Select value={order.order_type} onValueChange={(val) => changeOrderType(order.id, val)}>
-                  <SelectTrigger className={`h-7 w-[130px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : order.order_type === "showroom" ? "bg-amber-100 text-amber-800" : order.order_type === "gold_purchase" ? "bg-yellow-100 text-yellow-900" : "bg-purple-100 text-purple-800"}`}>
+                  <SelectTrigger className={`h-7 w-[130px] text-xs font-body border-0 ${order.order_type === "repair" ? "bg-orange-100 text-orange-800" : order.order_type === "showroom" ? "bg-amber-100 text-amber-800" : order.order_type === "gold_purchase" ? "bg-yellow-100 text-yellow-900" : order.order_type === "inquiry" ? "bg-sky-100 text-sky-800" : "bg-purple-100 text-purple-800"}`}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -716,6 +716,7 @@ const AdminDashboard = () => {
                     <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
                     <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
                     <SelectItem value="gold_purchase" className="text-xs font-body">Gold Purchase</SelectItem>
+                    <SelectItem value="inquiry" className="text-xs font-body">Inquiry</SelectItem>
                   </SelectContent>
                 </Select>
               </td>
@@ -856,7 +857,7 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="font-body text-sm">Order Type</Label>
-                  <Select value={newOrder.orderType || undefined} onValueChange={(val: "repair" | "custom" | "showroom" | "gold_purchase") => setNewOrder({ ...newOrder, orderType: val })}>
+                  <Select value={newOrder.orderType || undefined} onValueChange={(val: "repair" | "custom" | "showroom" | "gold_purchase" | "inquiry") => setNewOrder({ ...newOrder, orderType: val })}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
@@ -865,6 +866,7 @@ const AdminDashboard = () => {
                       <SelectItem value="repair" className="font-body text-sm">Repair</SelectItem>
                       <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
                       <SelectItem value="gold_purchase" className="font-body text-sm">Gold Purchase</SelectItem>
+                      <SelectItem value="inquiry" className="font-body text-sm">Inquiry</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1269,6 +1271,7 @@ const AdminDashboard = () => {
                             <SelectItem value="custom" className="font-body text-sm">Custom</SelectItem>
                             <SelectItem value="showroom" className="font-body text-sm">Showroom Purchase</SelectItem>
                             <SelectItem value="gold_purchase" className="font-body text-sm">Gold Purchase</SelectItem>
+                            <SelectItem value="inquiry" className="font-body text-sm">Inquiry</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -1694,6 +1697,7 @@ const AdminDashboard = () => {
               <SelectItem value="repair" className="text-xs font-body">Repair</SelectItem>
               <SelectItem value="showroom" className="text-xs font-body">Showroom</SelectItem>
               <SelectItem value="gold_purchase" className="text-xs font-body">Gold Purchase</SelectItem>
+              <SelectItem value="inquiry" className="text-xs font-body">Inquiry</SelectItem>
             </SelectContent>
           </Select>
 

@@ -55,8 +55,9 @@ const orderNumKey = (n: string) => {
 const typeLabels: Record<string, string> = {
   repair: "Repair",
   custom: "Custom Piece",
-  showroom_purchase: "Showroom Purchase",
+  showroom: "Showroom Purchase",
   gold_purchase: "Gold Purchase",
+  inquiry: "Inquiry",
 };
 
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleDateString() : "—");
