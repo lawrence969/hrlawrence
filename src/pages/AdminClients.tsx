@@ -7,9 +7,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Download, ArrowLeft, Users } from "lucide-react";
+import { Search, Download, ArrowLeft, Users, UserPlus } from "lucide-react";
 import logoNavy from "@/assets/logo-navy.jpg";
 import ClientQuickView from "@/components/ClientQuickView";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
+
+const SOURCES = [
+  { value: "social_media", label: "Social Media" },
+  { value: "referral", label: "Referral" },
+  { value: "internet", label: "Internet" },
+  { value: "ai", label: "AI" },
+  { value: "gold_party", label: "Gold Party" },
+  { value: "walk_in", label: "Walk-In" },
+  { value: "other", label: "Other" },
+];
 
 interface ClientRow {
   id: string;
@@ -34,6 +47,35 @@ const AdminClients = () => {
   const [activityFilter, setActivityFilter] = useState<string>("all");
   const [fetching, setFetching] = useState(true);
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
+  const emptyNew = { first_name: "", last_name: "", email: "", phone: "", source: "", source_detail: "" };
+  const [addOpen, setAddOpen] = useState(false);
+  const [newForm, setNewForm] = useState(emptyNew);
+  const [creating, setCreating] = useState(false);
+
+  const createClient = async () => {
+    if (!newForm.first_name.trim() || !newForm.last_name.trim()) {
+      toast({ title: "First and last name are required", variant: "destructive" });
+      return;
+    }
+    setCreating(true);
+    const { data, error } = await supabase.from("profiles").insert({
+      first_name: newForm.first_name.trim(),
+      last_name: newForm.last_name.trim(),
+      email: newForm.email.trim().toLowerCase(),
+      phone: newForm.phone.trim() || null,
+      source: newForm.source || null,
+      source_detail: newForm.source_detail.trim() || null,
+    } as any).select("id, client_number").single();
+    setCreating(false);
+    if (error) {
+      toast({ title: "Could not create client", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: `Client ${data.client_number ?? ""} created` });
+    setAddOpen(false);
+    setNewForm(emptyNew);
+    load();
+  };
 
   const load = async () => {
     setFetching(true);
@@ -162,9 +204,14 @@ const AdminClients = () => {
               <p className="font-body text-sm text-muted-foreground">Manage your client relationships</p>
             </div>
           </div>
-          <Button onClick={exportCsv} variant="outline" className="font-body text-sm">
-            <Download className="w-4 h-4 mr-2" /> Export CSV
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setAddOpen(true)} className="font-body text-sm">
+              <UserPlus className="w-4 h-4 mr-2" /> Add Client
+            </Button>
+            <Button onClick={exportCsv} variant="outline" className="font-body text-sm">
+              <Download className="w-4 h-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -252,6 +299,32 @@ const AdminClients = () => {
         onOpenChange={(v) => { if (!v) setQuickViewId(null); }}
         onSaved={load}
       />
+
+      <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle className="font-display text-2xl">New Client</DialogTitle></DialogHeader>
+          <div className="grid grid-cols-2 gap-4 font-body">
+            <div className="space-y-1.5"><Label>First name *</Label><Input value={newForm.first_name} onChange={(e) => setNewForm({ ...newForm, first_name: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Last name *</Label><Input value={newForm.last_name} onChange={(e) => setNewForm({ ...newForm, last_name: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Email</Label><Input type="email" value={newForm.email} onChange={(e) => setNewForm({ ...newForm, email: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Phone</Label><Input value={newForm.phone} onChange={(e) => setNewForm({ ...newForm, phone: e.target.value })} /></div>
+            <div className="space-y-1.5">
+              <Label>How did they find us?</Label>
+              <Select value={newForm.source || undefined} onValueChange={(v) => setNewForm({ ...newForm, source: v })}>
+                <SelectTrigger><SelectValue placeholder="Select source" /></SelectTrigger>
+                <SelectContent>
+                  {SOURCES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5"><Label>{newForm.source === "referral" ? "Referred by" : "Source details"}</Label><Input value={newForm.source_detail} onChange={(e) => setNewForm({ ...newForm, source_detail: e.target.value })} /></div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+            <Button onClick={createClient} disabled={creating}>{creating ? "Saving…" : "Create Client"}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
