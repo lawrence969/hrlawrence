@@ -1,9 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
-import React from 'npm:react@18.3.1';
-import { Html, Head, Preview, Body, Container, Text, Button, Hr, Link } from 'npm:@react-email/components@0.0.22';
-import { render } from 'npm:@react-email/render@1.0.1';
+import { renderClientEmail } from './render-email.ts';
 import { normalizedEmail, uniqueRecipients, staffMaySend } from '../_shared/christmas-email.ts';
 const gateway = 'https://connector-gateway.lovable.dev/resend';
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -62,8 +60,7 @@ Deno.serve(async req => {
       const { error: claimError } = await db.from('client_email_deliveries').insert({ run_id: input.runId, email, profile_id: recipient.id, subject: draft.subject, status: 'sending' });
       if (claimError) { results.push({ email, status: 'skipped', error: 'Already processing' }); continue; }
       const unsubscribe = `${url}/functions/v1/client-email-unsubscribe?token=${preference.token}`;
-      const sections = (text: string, label: string) => [ ...text.split('\n\n').map((paragraph, i) => React.createElement(Text, { key: `${label}-${i}`, style: { fontSize: i === 0 ? '22px' : '15px', lineHeight: '1.7', whiteSpace: 'pre-line', fontFamily: i === 0 ? 'Georgia,serif' : 'Arial,sans-serif' } }, paragraph)), React.createElement(Button, { key: label, href: draft.catalogUrl, style: { backgroundColor: '#1c2854', color: '#ffffff', padding: '14px 24px', fontFamily: 'Arial,sans-serif' } }, label) ];
-      const html = await render(React.createElement(Html, null, React.createElement(Head), React.createElement(Preview, null, draft.preview), React.createElement(Body, { style: { backgroundColor: '#ffffff', color: '#1c2854' } }, React.createElement(Container, { style: { maxWidth: '620px', padding: '32px 20px' } }, React.createElement(Text, { style: { fontFamily: 'Georgia,serif', fontSize: '26px', borderBottom: '1px solid #c29a47', paddingBottom: '20px' } }, 'HR Lawrence Fine Jewelry'), ...sections(draft.english, 'Browse the sale collection'), React.createElement(Hr), ...sections(draft.french, 'Découvrir la collection en solde'), React.createElement(Hr), React.createElement(Link, { href: unsubscribe }, 'Unsubscribe / Se désabonner')))));
+      const html = renderClientEmail(draft, unsubscribe);
       let status = 'failed'; let providerId: string | null = null; let failure: string | null = null;
       try {
         const res = await fetch(`${gateway}/emails`, { method: 'POST', headers: { ...headers, 'Idempotency-Key': `${input.runId}-${email}` }, body: JSON.stringify({ from: `HR Lawrence Fine Jewelry <${draft.from}>`, reply_to: draft.replyTo, to: [email], subject: draft.subject, html, text: `${draft.english}\n\nBrowse the sale collection: ${draft.catalogUrl}\n\n${draft.french}\n\nDécouvrir la collection en solde : ${draft.catalogUrl}\n\nUnsubscribe / Se désabonner: ${unsubscribe}`, headers: { 'List-Unsubscribe': `<${unsubscribe}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } }) });
