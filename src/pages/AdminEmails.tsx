@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { Mail, Save, Send, Search, FlaskConical, ArrowLeft } from 'lucide-react';
+import { Mail, Save, Send, Search, FlaskConical, ArrowLeft, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,7 @@ export default function AdminEmails() {
   const [domains, setDomains] = useState<{ name: string; status: string }[]>([]);
   const [setupError, setSetupError] = useState('');
   const [testEmail, setTestEmail] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [consent, setConsent] = useState(false);
   const [results, setResults] = useState<Delivery[]>([]);
@@ -135,6 +136,14 @@ export default function AdminEmails() {
   if (loading) return <div className="p-10">Loading…</div>;
   if (!user) return <Navigate to="/auth" replace />;
   if (!isStaff) return <Navigate to="/" replace />;
+  const emailPreview = <div className="border border-border p-6 sm:p-10 max-w-[680px] mx-auto bg-background text-foreground">
+    <img src={logoNavy} alt="HR Lawrence Fine Jewelry" className="h-12 mx-auto mb-8" />
+    {[{ text: draft.english, lang: 'en', label: 'Browse the sale collection' }, { text: draft.french, lang: 'fr', label: 'Découvrir la collection en solde' }].map((section, index) => <article key={section.lang} lang={section.lang} className={index ? 'mt-8 pt-8 border-t border-accent' : ''}>
+      {section.text.split('\n\n').map((p, i) => <p key={i} className={i === 0 ? 'font-display text-xl mb-6 break-words' : 'text-sm leading-7 mb-4 whitespace-pre-line break-words'}>{p}</p>)}
+      {draft.catalogUrl.startsWith('https://') ? <Button asChild className="whitespace-normal h-auto text-center py-3"><a href={draft.catalogUrl} target="_blank" rel="noreferrer">{section.label}</a></Button> : <span className="text-accent text-sm">{section.label}: [catalog link]</span>}
+    </article>)}
+    <p className="text-xs text-muted-foreground mt-8 border-t border-border pt-4">Unsubscribe / Se désabonner</p>
+  </div>;
   return <div className="min-h-screen bg-background font-body">
     <header className="border-b border-border px-6 py-5 flex items-center justify-between gap-4 flex-wrap">
       <Link to="/admin"><img src={logoNavy} alt="HR Lawrence Fine Jewelry" className="h-10" /></Link>
@@ -143,9 +152,19 @@ export default function AdminEmails() {
     <main className="mx-auto max-w-[1800px] px-6 py-8 lg:px-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3"><Link to="/admin/clients" aria-label="Back to clients"><ArrowLeft className="w-5 h-5" /></Link><div><h1 className="font-display text-3xl">Christmas client email</h1><p className="text-sm text-muted-foreground mt-1">{dirty ? 'Unsaved changes' : 'Saved draft'} · English / Français</p></div></div>
-        <Button onClick={save} disabled={busy || !ready}><Save className="w-4 h-4 mr-2" />Save draft</Button>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="outline" onClick={() => setPreviewOpen(true)} disabled={!ready}><Eye className="w-4 h-4 mr-2" />Preview email</Button>
+          <Button onClick={save} disabled={busy || !ready}><Save className="w-4 h-4 mr-2" />Save draft</Button>
+        </div>
       </div>
       {!ready ? <p>Loading email draft…</p> : <>
+        <section className="mb-8 border-t border-border pt-5">
+          <h2 className="font-display text-2xl mb-4">Send a test to myself</h2>
+          <div className="flex items-end gap-3 flex-wrap">
+            <div className="flex-1 max-w-md min-w-[200px]"><Label htmlFor="test">My email address</Label><Input id="test" type="email" value={testEmail} onChange={e => setTestEmail(e.target.value)} disabled={busy} /></div>
+            <Button onClick={test} variant="outline" disabled={busy}><FlaskConical className="w-4 h-4 mr-2" />Send test to myself</Button>
+          </div>
+        </section>
         <section className="mb-8 border-y border-border py-5">
           <h2 className="font-display text-xl mb-3">Resend sender</h2>
           {setupError ? <p role="alert" className="text-destructive mb-3">{setupError}</p> : <p className="text-sm text-muted-foreground mb-3">{domains.length ? domains.map(d => `${d.name} — ${d.status}`).join(' · ') : 'No verified sending domain in Resend. Add a domain in Resend → Domains. Do not use notify.hrlawrence.com; it is already used for your existing emails.'}</p>}
@@ -166,20 +185,9 @@ export default function AdminEmails() {
           </section>
           <section className="min-w-0">
             <h2 className="font-display text-2xl mb-5">Preview</h2>
-            <div className="border border-border p-6 sm:p-10 max-w-[680px] mx-auto">
-              <img src={logoNavy} alt="HR Lawrence Fine Jewelry" className="h-12 mx-auto mb-8" />
-              {[{ text: draft.english, lang: 'en', label: 'Browse the sale collection' }, { text: draft.french, lang: 'fr', label: 'Découvrir la collection en solde' }].map((section, index) => <article key={section.lang} lang={section.lang} className={index ? 'mt-8 pt-8 border-t border-accent' : ''}>
-                {section.text.split('\n\n').map((p, i) => <p key={i} className={i === 0 ? 'font-display text-xl mb-6 break-words' : 'text-sm leading-7 mb-4 whitespace-pre-line break-words'}>{p}</p>)}
-                {draft.catalogUrl.startsWith('https://') ? <Button asChild className="whitespace-normal h-auto text-center py-3"><a href={draft.catalogUrl} target="_blank" rel="noreferrer">{section.label}</a></Button> : <span className="text-accent text-sm">{section.label}: [catalog link]</span>}
-              </article>)}
-              <p className="text-xs text-muted-foreground mt-8 border-t border-border pt-4">Unsubscribe / Se désabonner</p>
-            </div>
+            {emailPreview}
           </section>
         </div>
-        <section className="mt-10 border-t border-border pt-8">
-          <h2 className="font-display text-2xl mb-4">Send a test</h2>
-          <div className="flex items-end gap-3 flex-wrap"><div className="flex-1 max-w-md min-w-0"><Label htmlFor="test">Test recipient</Label><Input id="test" type="email" value={testEmail} onChange={e => setTestEmail(e.target.value)} disabled={busy} /></div><Button onClick={test} variant="outline" disabled={busy}><FlaskConical className="w-4 h-4 mr-2" />Send test</Button></div>
-        </section>
         <section className="mt-10 border-t border-border pt-8">
           <div className="flex flex-wrap justify-between items-center gap-4 mb-5"><h2 className="font-display text-2xl">Recipients · {recipients.length} unique emails</h2><Button disabled={busy || !verified || !recipients.length} onClick={() => { if (validate()) setConfirm(true); }}><Send className="w-4 h-4 mr-2" />Review & send</Button></div>
           <div className="flex gap-3 flex-wrap mb-4"><div className="relative flex-1 min-w-0"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search clients" className="pl-9" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search clients, CL number, email" /></div><Button variant="outline" disabled={busy} onClick={() => setSelected(new Set(uniqueRecipients(filtered).map(c => c.id)))}>Select visible</Button><Button variant="ghost" disabled={busy} onClick={() => setSelected(new Set())}>Clear</Button></div>
@@ -191,6 +199,16 @@ export default function AdminEmails() {
         {results.length > 0 && <section className="mt-8"><h2 className="font-display text-xl mb-3">Delivery results</h2><div className="overflow-x-auto"><table className="w-full min-w-[500px] text-sm"><thead><tr><th className="p-3 text-left">Email</th><th className="p-3 text-left">Result</th><th className="p-3 text-left">Details</th></tr></thead><tbody>{results.map((r,i) => <tr key={i} className="border-t border-border"><td className="p-3">{r.email}</td><td className="p-3">{r.status === 'sent' ? 'Accepted by Resend' : r.status}</td><td className="p-3 break-words max-w-xl">{r.error ?? '—'}</td></tr>)}</tbody></table></div></section>}
       </>}
     </main>
+    <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+      <DialogContent className="max-w-3xl max-h-[85dvh] overflow-y-auto">
+        <DialogHeader><DialogTitle>Email preview</DialogTitle></DialogHeader>
+        <div className="min-w-0 mb-4 border-b border-border pb-4">
+          <p className="font-semibold break-words">{draft.subject}</p>
+          <p className="text-sm text-muted-foreground mt-2 break-words">{draft.preview}</p>
+        </div>
+        {emailPreview}
+      </DialogContent>
+    </Dialog>
     <Dialog open={confirm} onOpenChange={setConfirm}><DialogContent><DialogHeader><DialogTitle>Send Christmas email?</DialogTitle></DialogHeader><p className="text-sm">Send to {recipients.length} unique client email addresses, individually, from {draft.from}. This cannot be undone.</p><p className="text-sm break-words">{draft.subject}</p><Label className="flex items-start gap-3 leading-6"><Checkbox checked={consent} onCheckedChange={v => setConsent(v === true)} /><span>I confirm these are existing clients with permission to receive promotional emails.</span></Label><DialogFooter><Button variant="outline" onClick={() => setConfirm(false)}>Cancel</Button><Button onClick={send} disabled={!consent || busy}><Mail className="w-4 h-4 mr-2" />Send to {recipients.length} clients</Button></DialogFooter></DialogContent></Dialog>
   </div>;
 }
