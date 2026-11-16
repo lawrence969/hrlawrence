@@ -1,8 +1,8 @@
 export const defaultChristmasEmail = {
-  subject: 'A private Christmas sale — 15% off, just for our clients / Une vente privée de Noël — 15 % de rabais, réservée à notre clientèle',
+  subject: 'A private holiday season sale — 15% off, just for our clients / Une vente privée du temps des Fêtes — 15 % de rabais, réservée à notre clientèle',
   preview: "We're making room for the new collection — and our clients shop first. / Nous faisons place à la nouvelle collection — notre clientèle en profite en premier.",
   catalogUrl: '', from: '', replyTo: '',
-  english: `A CHRISTMAS FLASH SALE, JUST FOR YOU
+  english: `A HOLIDAY SEASON FLASH SALE, JUST FOR YOU
 
 Dear friends — as the year turns, we're making room in the showroom for a new collection. Before anything changes, we wanted the pieces we've loved carrying to go first to the clients who have supported us.
 
@@ -10,7 +10,7 @@ So, for a short time, we're offering 15% off a private selection of 157 pieces f
 
 Every piece is one of a kind. When it's gone, it's gone — and this sale won't be advertised anywhere else. If something catches your eye, reply to this email, call us, or visit the showroom and we'll set it aside for you.
 
-Thank you for being part of our year. We wish you and your family a warm and sparkling Christmas.
+Thank you for being part of our year. We wish you and your family a warm and sparkling holiday season.
 
 With our thanks,
 
@@ -21,7 +21,7 @@ HR Lawrence Fine Jewelry
 1255 Phillips Square, Suite 1105 · Montreal
 
 15% off the listed price, for existing clients only. Each piece is unique — once sold, it cannot be restocked.`,
-  french: `UNE VENTE ÉCLAIR DE NOËL, JUSTE POUR VOUS
+  french: `UNE VENTE ÉCLAIR DU TEMPS DES FÊTES, JUSTE POUR VOUS
 
 Chers amis, à l’approche de la fin de l’année, nous faisons place à une nouvelle collection dans notre salle d’exposition. Avant ce changement, nous souhaitions offrir en priorité les pièces que nous avons tant aimé présenter à la clientèle qui nous a soutenus.
 
@@ -29,7 +29,7 @@ Pour une courte période, nous vous offrons donc 15 % de rabais sur une sélecti
 
 Chaque pièce est unique. Une fois vendue, elle ne sera plus disponible — et cette vente ne sera annoncée nulle part ailleurs. Si un bijou attire votre attention, répondez à ce courriel, appelez-nous ou passez à notre salle d’exposition : nous le mettrons de côté pour vous.
 
-Merci d’avoir fait partie de notre année. Nous vous souhaitons, à vous et à votre famille, un Noël chaleureux et étincelant.
+Merci d’avoir fait partie de notre année. Nous vous souhaitons, à vous et à votre famille, un temps des Fêtes chaleureux et étincelant.
 
 Avec toute notre gratitude,
 
