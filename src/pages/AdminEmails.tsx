@@ -94,7 +94,12 @@ export default function AdminEmails() {
   }
   function validate() {
     const parsed = draftSchema.safeParse(draft);
-    if (!parsed.success) { toast({ title: 'Check your email', description: parsed.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; '), variant: 'destructive' }); return false; }
+    if (!parsed.success) {
+      const labels: Record<string, string> = { subject: 'Subject', preview: 'Inbox preview', english: 'English text', french: 'French text', catalogUrl: 'Catalog link', from: 'Sending email', replyTo: 'Reply email' };
+      const missing = [...new Set(parsed.error.issues.map(i => labels[String(i.path[0])] ?? 'Email'))];
+      toast({ title: 'Check your email', description: `Please enter valid details for: ${missing.join(', ')}.`, variant: 'destructive' });
+      return false;
+    }
     return true;
   }
   async function test() {
