@@ -8,6 +8,13 @@
       "when": 1792688371944,
       "tag": "0000_staff_insert_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794841035616,
+      "tag": "0001_manual_client_email",
+      "breakpoints": true
     }
   ]
 }
