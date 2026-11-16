@@ -190,6 +190,7 @@ const AdminClients = () => {
             <Link to="/admin" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Orders</Link>
             <span className="text-sm font-body font-medium tracking-widest uppercase text-accent">Clients</span>
             <Link to="/admin/reports" className="text-sm font-body font-medium tracking-widest uppercase text-foreground hover:text-accent transition-colors">Reports</Link>
+            <Link to="/admin/emails" className="text-sm font-body font-medium uppercase text-foreground hover:text-accent">Emails</Link>
             <button onClick={signOut} className="text-sm font-body font-medium tracking-widest uppercase text-muted-foreground hover:text-foreground">Sign Out</button>
           </div>
         </div>
