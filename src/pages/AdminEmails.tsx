@@ -160,7 +160,7 @@ export default function AdminEmails() {
     </header>
     <main className="mx-auto max-w-[1800px] px-6 py-8 lg:px-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-3"><Link to="/admin/clients" aria-label="Back to clients"><ArrowLeft className="w-5 h-5" /></Link><div><h1 className="font-display text-3xl">Christmas client email</h1><p className="text-sm text-muted-foreground mt-1">{dirty ? 'Unsaved changes' : 'Saved draft'} · English / Français</p></div></div>
+        <div className="flex items-center gap-3"><Link to="/admin/clients" aria-label="Back to clients"><ArrowLeft className="w-5 h-5" /></Link><div><h1 className="font-display text-3xl">Holiday season client email</h1><p className="text-sm text-muted-foreground mt-1">{dirty ? 'Unsaved changes' : 'Saved draft'} · English / Français</p></div></div>
         <div className="flex flex-wrap gap-3">
           <Button variant="outline" onClick={() => setPreviewOpen(true)} disabled={!ready}><Eye className="w-4 h-4 mr-2" />Preview email</Button>
           <Button onClick={save} disabled={busy || !ready}><Save className="w-4 h-4 mr-2" />Save draft</Button>
@@ -225,6 +225,6 @@ export default function AdminEmails() {
         {emailPreview}
       </DialogContent>
     </Dialog>
-    <Dialog open={confirm} onOpenChange={setConfirm}><DialogContent><DialogHeader><DialogTitle>Send Christmas email?</DialogTitle></DialogHeader><p className="text-sm">Send to {recipients.length} unique client email addresses, individually, from {draft.from}. This cannot be undone.</p><p className="text-sm break-words">{draft.subject}</p><Label className="flex items-start gap-3 leading-6"><Checkbox checked={consent} onCheckedChange={v => setConsent(v === true)} /><span>I confirm these are existing clients with permission to receive promotional emails.</span></Label><DialogFooter><Button variant="outline" onClick={() => setConfirm(false)}>Cancel</Button><Button onClick={send} disabled={!consent || busy}><Mail className="w-4 h-4 mr-2" />Send to {recipients.length} clients</Button></DialogFooter></DialogContent></Dialog>
+    <Dialog open={confirm} onOpenChange={setConfirm}><DialogContent><DialogHeader><DialogTitle>Send holiday season email?</DialogTitle></DialogHeader><p className="text-sm">Send to {recipients.length} unique client email addresses, individually, from {draft.from}. This cannot be undone.</p><p className="text-sm break-words">{draft.subject}</p><Label className="flex items-start gap-3 leading-6"><Checkbox checked={consent} onCheckedChange={v => setConsent(v === true)} /><span>I confirm these are existing clients with permission to receive promotional emails.</span></Label><DialogFooter><Button variant="outline" onClick={() => setConfirm(false)}>Cancel</Button><Button onClick={send} disabled={!consent || busy}><Mail className="w-4 h-4 mr-2" />Send to {recipients.length} clients</Button></DialogFooter></DialogContent></Dialog>
   </div>;
 }
