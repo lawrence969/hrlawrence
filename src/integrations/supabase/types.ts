@@ -168,6 +168,86 @@ export type Database = {
           },
         ]
       }
+      client_email_deliveries: {
+        Row: {
+          created_at: string
+          email: string
+          error: string | null
+          id: string
+          profile_id: string | null
+          provider_id: string | null
+          run_id: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          error?: string | null
+          id?: string
+          profile_id?: string | null
+          provider_id?: string | null
+          run_id: string
+          status: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          error?: string | null
+          id?: string
+          profile_id?: string | null
+          provider_id?: string | null
+          run_id?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_email_deliveries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_email_drafts: {
+        Row: {
+          content: Json
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      client_email_preferences: {
+        Row: {
+          email: string
+          token: string
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          email: string
+          token?: string
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          email?: string
+          token?: string
+          unsubscribed_at?: string | null
+        }
+        Relationships: []
+      }
       client_interactions: {
         Row: {
           created_at: string

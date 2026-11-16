@@ -14,6 +14,7 @@ import AdminClients from "./pages/AdminClients";
 import AdminClientDetail from "./pages/AdminClientDetail";
 
 import AdminReports from "./pages/AdminReports";
+import AdminEmails from "./pages/AdminEmails";
 import GoldCalculator from "./pages/GoldCalculator";
 
 import NotFound from "./pages/NotFound";
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/admin/clients" element={<AdminClients />} />
             <Route path="/admin/clients/:id" element={<AdminClientDetail />} />
             <Route path="/admin/reports" element={<AdminReports />} />
+            <Route path="/admin/emails" element={<AdminEmails />} />
             <Route path="/gold-calculator" element={<GoldCalculator />} />
             
             <Route path="*" element={<NotFound />} />

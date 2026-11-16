@@ -1,0 +1,13 @@
+CREATE TABLE public.client_email_drafts (id text PRIMARY KEY, content jsonb NOT NULL, updated_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT, INSERT, UPDATE ON public.client_email_drafts TO authenticated;
+GRANT ALL ON public.client_email_drafts TO service_role;
+ALTER TABLE public.client_email_drafts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY staff_drafts ON public.client_email_drafts FOR ALL TO authenticated USING (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'staff')) WITH CHECK (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'staff'));
+CREATE TABLE public.client_email_deliveries (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), run_id uuid NOT NULL, email text NOT NULL, profile_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL, subject text NOT NULL, status text NOT NULL CHECK (status IN ('sending','sent','failed')), provider_id text, error text, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE(run_id,email));
+GRANT SELECT ON public.client_email_deliveries TO authenticated;
+GRANT ALL ON public.client_email_deliveries TO service_role;
+ALTER TABLE public.client_email_deliveries ENABLE ROW LEVEL SECURITY;
+CREATE POLICY staff_delivery_read ON public.client_email_deliveries FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'staff'));
+CREATE TABLE public.client_email_preferences (email text PRIMARY KEY, token uuid NOT NULL DEFAULT gen_random_uuid() UNIQUE, unsubscribed_at timestamptz);
+GRANT ALL ON public.client_email_preferences TO service_role;
+ALTER TABLE public.client_email_preferences ENABLE ROW LEVEL SECURITY;
