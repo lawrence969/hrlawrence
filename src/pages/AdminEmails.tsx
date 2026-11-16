@@ -30,6 +30,8 @@ export default function AdminEmails() {
   const [busy, setBusy] = useState(false);
   const [domains, setDomains] = useState<{ name: string; status: string }[]>([]);
   const [setupError, setSetupError] = useState('');
+  const [checkingSender, setCheckingSender] = useState(false);
+  const [senderChecked, setSenderChecked] = useState(false);
   const [testEmail, setTestEmail] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -52,7 +54,14 @@ export default function AdminEmails() {
   }
   async function checkSender() {
     setSetupError('');
-    try { const data = await invoke({ action: 'setup' }); setDomains(data.domains); } catch (error) { setSetupError(error instanceof Error ? error.message : 'Could not check Resend'); }
+    setCheckingSender(true);
+    setSenderChecked(false);
+    try {
+      const data = await invoke({ action: 'setup' });
+      setDomains(data.domains);
+      setSenderChecked(true);
+    } catch (error) { setSetupError(error instanceof Error ? error.message : 'Could not check Resend'); }
+    finally { setCheckingSender(false); }
   }
   useEffect(() => {
     if (!isStaff) return;
@@ -171,8 +180,15 @@ export default function AdminEmails() {
           <div className="grid md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
             <div><Label htmlFor="from">Sending email</Label><Input id="from" type="email" value={draft.from} onChange={e => update('from', e.target.value)} disabled={busy} placeholder="Email on your verified Resend domain" /></div>
             <div><Label htmlFor="replyTo">Replies go to</Label><Input id="replyTo" type="email" value={draft.replyTo} onChange={e => update('replyTo', e.target.value)} disabled={busy} /></div>
-            <Button variant="outline" onClick={checkSender} disabled={busy}>Check sender</Button>
+            <Button variant="outline" onClick={checkSender} disabled={busy || checkingSender}>{checkingSender ? 'Checking sender…' : 'Check sender'}</Button>
           </div>
+          {senderChecked && !checkingSender && !setupError && <p role={verified ? 'status' : 'alert'} className={`mt-4 text-sm break-words ${verified ? 'text-foreground' : 'text-destructive'}`}>
+            {verified
+              ? `Sender verified: ${draft.from}. No email has been sent. Click Save draft to keep these addresses.`
+              : !z.string().email().safeParse(draft.from).success
+                ? 'Enter a valid sending email address on your verified Resend domain.'
+                : `The sending address uses ${fromDomain}, which is not verified in Resend.${domains.some(d => d.status === 'verified') ? ` Use an address on ${domains.filter(d => d.status === 'verified').map(d => d.name).join(' or ')} instead. Your usual inbox can remain under Replies go to.` : ' Verify its domain in Resend before sending.'}`}
+          </p>}
         </section>
         <div className="grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10">
           <section className="min-w-0 space-y-5">
