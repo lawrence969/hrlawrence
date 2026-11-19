@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { Mail, Save, Send, Search, FlaskConical, ArrowLeft, Eye } from 'lucide-react';
+import { Mail, Save, Send, Search, FlaskConical, ArrowLeft, Eye, Users, CheckCircle2, Pencil, Settings2, ChevronDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,9 @@ export default function AdminEmails() {
   const [consent, setConsent] = useState(false);
   const [results, setResults] = useState<Delivery[]>([]);
   const [progress, setProgress] = useState('');
+  const [panel, setPanel] = useState<'edit' | 'recipients' | 'sender' | null>(null);
+  const [sentCount, setSentCount] = useState(0);
+  const togglePanel = (p: 'edit' | 'recipients' | 'sender') => setPanel(cur => cur === p ? null : p);
   const dirty = JSON.stringify(draft) !== saved;
   const recipients = useMemo(() => uniqueRecipients(clients.filter(c => selected.has(c.id))), [clients, selected]);
   const filtered = useMemo(() => clients.filter(c => `${c.client_number} ${c.first_name} ${c.last_name} ${c.email}`.toLowerCase().includes(search.toLowerCase())), [clients, search]);
@@ -82,6 +85,7 @@ export default function AdminEmails() {
           setDraft(next); setSaved(JSON.stringify(next));
         }
         setResults(history.data ?? []);
+        if (draftData.data) { const subj = (draftData.data.content as unknown as ChristmasEmail).subject; const { count } = await supabase.from('client_email_deliveries').select('id', { count: 'exact', head: true }).eq('status', 'sent').eq('subject', subj).not('profile_id', 'is', null); setSentCount(count ?? 0); }
         setTestEmail(user?.email ?? '');
         setReady(true);
         await checkSender();
@@ -159,60 +163,58 @@ export default function AdminEmails() {
       <nav className="flex gap-5 text-sm"><Link to="/admin">Orders</Link><Link to="/admin/clients">Clients</Link><Link to="/admin/reports">Reports</Link><span className="text-accent">Emails</span></nav>
     </header>
     <main className="mx-auto max-w-[1800px] px-6 py-8 lg:px-10">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-3"><Link to="/admin/clients" aria-label="Back to clients"><ArrowLeft className="w-5 h-5" /></Link><div><h1 className="font-display text-3xl">Holiday season client email</h1><p className="text-sm text-muted-foreground mt-1">{dirty ? 'Unsaved changes' : 'Saved draft'} · English / Français</p></div></div>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline" onClick={() => setPreviewOpen(true)} disabled={!ready}><Eye className="w-4 h-4 mr-2" />Preview email</Button>
-          <Button onClick={save} disabled={busy || !ready}><Save className="w-4 h-4 mr-2" />Save draft</Button>
-        </div>
-      </div>
+      <div className="flex items-center gap-3 mb-6"><Link to="/admin/clients" aria-label="Back to clients"><ArrowLeft className="w-5 h-5" /></Link><h1 className="font-display text-3xl">Client emails</h1></div>
       {!ready ? <p>Loading email draft…</p> : <>
-        <section className="mb-8 border-t border-border pt-5">
-          <h2 className="font-display text-2xl mb-4">Send a test to myself</h2>
-          <div className="flex items-end gap-3 flex-wrap">
-            <div className="flex-1 max-w-md min-w-[200px]"><Label htmlFor="test">My email address</Label><Input id="test" type="email" value={testEmail} onChange={e => setTestEmail(e.target.value)} disabled={busy} /></div>
-            <Button onClick={test} variant="outline" disabled={busy}><FlaskConical className="w-4 h-4 mr-2" />Send test to myself</Button>
+        <section className="border border-accent/40 bg-secondary/40 rounded-lg p-6 lg:p-8 max-w-5xl">
+          <p className="text-xs uppercase tracking-[0.2em] text-accent mb-2">{dirty ? 'Unsaved changes' : 'Saved draft'} · English / Français</p>
+          <h2 className="font-display text-2xl text-primary break-words">{draft.subject}</h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-3xl leading-6 break-words">{draft.preview}</p>
+          <div className="flex flex-wrap gap-5 mt-4 text-sm">
+            <span className="flex items-center gap-2"><Users className="w-4 h-4" />{uniqueRecipients(clients).length} clients with email</span>
+            <span className="font-medium">{recipients.length} selected</span>
+            <span className="flex items-center gap-2 text-accent"><CheckCircle2 className="w-4 h-4" />{sentCount} sent</span>
+            <span className={verified ? 'text-muted-foreground' : 'text-destructive'}>{verified ? `From ${draft.from}` : 'Sender not verified'}</span>
           </div>
-        </section>
-        <section className="mb-8 border-y border-border py-5">
-          <h2 className="font-display text-xl mb-3">Resend sender</h2>
-          {setupError ? <p role="alert" className="text-destructive mb-3">{setupError}</p> : <p className="text-sm text-muted-foreground mb-3">{domains.length ? domains.map(d => `${d.name} — ${d.status}`).join(' · ') : 'No verified sending domain in Resend. Add a domain in Resend → Domains. Do not use notify.hrlawrence.com; it is already used for your existing emails.'}</p>}
-          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
-            <div><Label htmlFor="from">Sending email</Label><Input id="from" type="email" value={draft.from} onChange={e => update('from', e.target.value)} disabled={busy} placeholder="Email on your verified Resend domain" /></div>
-            <div><Label htmlFor="replyTo">Replies go to</Label><Input id="replyTo" type="email" value={draft.replyTo} onChange={e => update('replyTo', e.target.value)} disabled={busy} /></div>
-            <Button variant="outline" onClick={checkSender} disabled={busy || checkingSender}>{checkingSender ? 'Checking sender…' : 'Check sender'}</Button>
+          <div className="flex flex-wrap gap-2 mt-5">
+            <Button variant={panel === 'recipients' ? 'default' : 'outline'} size="sm" className="rounded-full" onClick={() => togglePanel('recipients')}><Users className="w-4 h-4 mr-2" />Choose recipients</Button>
+            <Button variant={panel === 'edit' ? 'default' : 'outline'} size="sm" className="rounded-full" onClick={() => togglePanel('edit')}><Pencil className="w-4 h-4 mr-2" />Edit email</Button>
+            <Button variant={panel === 'sender' ? 'default' : 'outline'} size="sm" className="rounded-full" onClick={() => togglePanel('sender')}><Settings2 className="w-4 h-4 mr-2" />Sender & test address</Button>
           </div>
-          {senderChecked && !checkingSender && !setupError && <p role={verified ? 'status' : 'alert'} className={`mt-4 text-sm break-words ${verified ? 'text-foreground' : 'text-destructive'}`}>
-            {verified
-              ? `Sender verified: ${draft.from}. No email has been sent. Click Save draft to keep these addresses.`
-              : !z.string().email().safeParse(draft.from).success
-                ? 'Enter a valid sending email address on your verified Resend domain.'
-                : `The sending address uses ${fromDomain}, which is not verified in Resend.${domains.some(d => d.status === 'verified') ? ` Use an address on ${domains.filter(d => d.status === 'verified').map(d => d.name).join(' or ')} instead. Your usual inbox can remain under Replies go to.` : ' Verify its domain in Resend before sending.'}`}
-          </p>}
-        </section>
-        <div className="grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10">
-          <section className="min-w-0 space-y-5">
-            <h2 className="font-display text-2xl">Email draft</h2>
-            <div><Label htmlFor="subject">Subject</Label><Input id="subject" value={draft.subject} onChange={e => update('subject', e.target.value)} disabled={busy} maxLength={500} /></div>
-            <div><Label htmlFor="preview">Inbox preview</Label><Textarea id="preview" value={draft.preview} onChange={e => update('preview', e.target.value)} disabled={busy} rows={2} maxLength={500} /></div>
-            <div><Label htmlFor="catalog">Catalog link</Label><Input id="catalog" type="url" value={draft.catalogUrl} onChange={e => update('catalogUrl', e.target.value)} placeholder="https://…" disabled={busy} /></div>
-            <div><Label htmlFor="english">English</Label><Textarea id="english" value={draft.english} onChange={e => update('english', e.target.value)} disabled={busy} rows={17} maxLength={15000} className="leading-relaxed" /></div>
-            <div><Label htmlFor="french">Français</Label><Textarea id="french" value={draft.french} onChange={e => update('french', e.target.value)} disabled={busy} rows={17} maxLength={15000} className="leading-relaxed" /></div>
-          </section>
-          <section className="min-w-0">
-            <h2 className="font-display text-2xl mb-5">Preview</h2>
-            {emailPreview}
-          </section>
-        </div>
-        <section className="mt-10 border-t border-border pt-8">
-          <div className="flex flex-wrap justify-between items-center gap-4 mb-5"><h2 className="font-display text-2xl">Recipients · {recipients.length} unique emails</h2><Button disabled={busy || !verified || !recipients.length} onClick={() => { if (validate()) setConfirm(true); }}><Send className="w-4 h-4 mr-2" />Review & send</Button></div>
-          <div className="flex gap-3 flex-wrap mb-4"><div className="relative flex-1 min-w-0"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search clients" className="pl-9" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search clients, CL number, email" /></div><Button variant="outline" disabled={busy || !clients.length} onClick={() => setSelected(new Set(uniqueRecipients(clients).map(c => c.id)))}>Select all emails</Button><Button variant="outline" disabled={busy} onClick={() => setSelected(new Set(uniqueRecipients(filtered).map(c => c.id)))}>Select visible</Button><Button variant="ghost" disabled={busy} onClick={() => setSelected(new Set())}>Clear</Button></div>
-          <div className="overflow-x-auto max-h-[420px] border-y border-border force-scrollbar">
-            <table className="w-full min-w-[620px] text-sm"><thead className="sticky top-0 bg-muted"><tr><th className="p-3 text-left">Select</th><th className="p-3 text-left">Client</th><th className="p-3 text-left">Email</th></tr></thead><tbody>{filtered.map(c => <tr key={c.id} className="border-t border-border"><td className="p-3"><Checkbox aria-label={`Select ${c.client_number}`} checked={selected.has(c.id)} disabled={busy || !uniqueRecipients([c]).length} onCheckedChange={v => setSelected(previous => { const next = new Set(previous); if (v) next.add(c.id); else next.delete(c.id); return next; })} /></td><td className="p-3">{c.client_number} · {c.first_name} {c.last_name}</td><td className="p-3 break-all">{c.email || 'No email'}</td></tr>)}</tbody></table>
+          <div className="flex flex-wrap gap-3 mt-5">
+            <Button variant="outline" onClick={() => setPreviewOpen(true)}><Eye className="w-4 h-4 mr-2" />Preview</Button>
+            <Button variant="outline" onClick={test} disabled={busy}><FlaskConical className="w-4 h-4 mr-2" />Send test to me</Button>
+            {dirty && <Button variant="outline" onClick={save} disabled={busy}><Save className="w-4 h-4 mr-2" />Save draft</Button>}
+            <Button disabled={busy || !verified || !recipients.length} onClick={() => { if (validate()) setConfirm(true); }} className="bg-accent text-accent-foreground hover:bg-accent/90"><Send className="w-4 h-4 mr-2" />{recipients.length ? `Review & send to ${recipients.length}` : 'Choose recipients to send'}</Button>
           </div>
           {progress && <p role="status" className="mt-4">Sending {progress}…</p>}
         </section>
-        {results.length > 0 && <section className="mt-8"><h2 className="font-display text-xl mb-3">Delivery results</h2><div className="overflow-x-auto"><table className="w-full min-w-[500px] text-sm"><thead><tr><th className="p-3 text-left">Email</th><th className="p-3 text-left">Result</th><th className="p-3 text-left">Details</th></tr></thead><tbody>{results.map((r,i) => <tr key={i} className="border-t border-border"><td className="p-3">{r.email}</td><td className="p-3">{r.status === 'sent' ? 'Accepted by Resend' : r.status}</td><td className="p-3 break-words max-w-xl">{r.error ?? '—'}</td></tr>)}</tbody></table></div></section>}
+        {panel === 'sender' && <section className="mt-6 max-w-5xl border border-border rounded-lg p-6">
+          {setupError ? <p role="alert" className="text-destructive mb-3">{setupError}</p> : <p className="text-sm text-muted-foreground mb-3">{domains.length ? domains.map(d => `${d.name} — ${d.status}`).join(' · ') : 'No verified sending domain in Resend.'}</p>}
+          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+            <div><Label htmlFor="from">Sending email</Label><Input id="from" type="email" value={draft.from} onChange={e => update('from', e.target.value)} disabled={busy} /></div>
+            <div><Label htmlFor="replyTo">Replies go to</Label><Input id="replyTo" type="email" value={draft.replyTo} onChange={e => update('replyTo', e.target.value)} disabled={busy} /></div>
+            <Button variant="outline" onClick={checkSender} disabled={busy || checkingSender}>{checkingSender ? 'Checking…' : 'Check sender'}</Button>
+          </div>
+          {senderChecked && !checkingSender && !setupError && <p role={verified ? 'status' : 'alert'} className={`mt-3 text-sm break-words ${verified ? 'text-foreground' : 'text-destructive'}`}>{verified ? `Sender verified: ${draft.from}.` : `The sending address uses ${fromDomain || 'no domain'}, which is not verified in Resend.`}</p>}
+          <div className="mt-4 max-w-md"><Label htmlFor="test">Send tests to</Label><Input id="test" type="email" value={testEmail} onChange={e => setTestEmail(e.target.value)} disabled={busy} /></div>
+        </section>}
+        {panel === 'edit' && <section className="mt-6 max-w-5xl border border-border rounded-lg p-6 space-y-4">
+          <div><Label htmlFor="subject">Subject</Label><Input id="subject" value={draft.subject} onChange={e => update('subject', e.target.value)} disabled={busy} maxLength={500} /></div>
+          <div><Label htmlFor="preview">Inbox preview</Label><Textarea id="preview" value={draft.preview} onChange={e => update('preview', e.target.value)} disabled={busy} rows={2} maxLength={500} /></div>
+          <div><Label htmlFor="catalog">Button link</Label><Input id="catalog" type="url" value={draft.catalogUrl} onChange={e => update('catalogUrl', e.target.value)} disabled={busy} /></div>
+          <div className="grid lg:grid-cols-2 gap-4">
+            <div><Label htmlFor="english">English</Label><Textarea id="english" value={draft.english} onChange={e => update('english', e.target.value)} disabled={busy} rows={14} maxLength={15000} className="leading-relaxed" /></div>
+            <div><Label htmlFor="french">Français</Label><Textarea id="french" value={draft.french} onChange={e => update('french', e.target.value)} disabled={busy} rows={14} maxLength={15000} className="leading-relaxed" /></div>
+          </div>
+          <Button onClick={save} disabled={busy || !dirty}><Save className="w-4 h-4 mr-2" />Save draft</Button>
+        </section>}
+        {panel === 'recipients' && <section className="mt-6 max-w-5xl border border-border rounded-lg p-6">
+          <div className="flex gap-3 flex-wrap mb-4"><div className="relative flex-1 min-w-[200px]"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Search clients" className="pl-9" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search clients, CL number, email" /></div><Button variant="outline" disabled={busy || !clients.length} onClick={() => setSelected(new Set(uniqueRecipients(clients).map(c => c.id)))}>Select all emails</Button><Button variant="outline" disabled={busy} onClick={() => setSelected(new Set(uniqueRecipients(filtered).map(c => c.id)))}>Select visible</Button><Button variant="ghost" disabled={busy} onClick={() => setSelected(new Set())}>Clear</Button></div>
+          <div className="overflow-x-auto max-h-[420px] border-y border-border force-scrollbar">
+            <table className="w-full min-w-[620px] text-sm"><thead className="sticky top-0 bg-muted"><tr><th className="p-3 text-left">Select</th><th className="p-3 text-left">Client</th><th className="p-3 text-left">Email</th></tr></thead><tbody>{filtered.map(c => <tr key={c.id} className="border-t border-border"><td className="p-3"><Checkbox aria-label={`Select ${c.client_number}`} checked={selected.has(c.id)} disabled={busy || !uniqueRecipients([c]).length} onCheckedChange={v => setSelected(previous => { const next = new Set(previous); if (v) next.add(c.id); else next.delete(c.id); return next; })} /></td><td className="p-3">{c.client_number} · {c.first_name} {c.last_name}</td><td className="p-3 break-all">{c.email || 'No email'}</td></tr>)}</tbody></table>
+          </div>
+        </section>}
+        {results.length > 0 && <details className="mt-8 max-w-5xl"><summary className="cursor-pointer font-display text-xl flex items-center gap-2"><ChevronDown className="w-4 h-4" />Recent delivery results</summary><section className="mt-3"><h2 className="font-display text-xl mb-3">Delivery results</h2><div className="overflow-x-auto"><table className="w-full min-w-[500px] text-sm"><thead><tr><th className="p-3 text-left">Email</th><th className="p-3 text-left">Result</th><th className="p-3 text-left">Details</th></tr></thead><tbody>{results.map((r,i) => <tr key={i} className="border-t border-border"><td className="p-3">{r.email}</td><td className="p-3">{r.status === 'sent' ? 'Accepted by Resend' : r.status}</td><td className="p-3 break-words max-w-xl">{r.error ?? '—'}</td></tr>)}</tbody></table></div></section></details>}
       </>}
     </main>
     <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
