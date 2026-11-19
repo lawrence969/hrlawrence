@@ -147,7 +147,7 @@ export default function AdminEmails() {
   if (!isStaff) return <Navigate to="/" replace />;
   const emailPreview = <div className="border border-border p-6 sm:p-10 max-w-[680px] mx-auto bg-background text-foreground">
     <img src={logoNavy} alt="HR Lawrence Fine Jewelry" className="h-12 mx-auto mb-8" />
-    {[{ text: draft.english, lang: 'en', label: 'Browse the sale collection' }, { text: draft.french, lang: 'fr', label: 'Découvrir la collection en solde' }].map((section, index) => <article key={section.lang} lang={section.lang} className={index ? 'mt-8 pt-8 border-t border-accent' : ''}>
+    {[{ text: draft.english, lang: 'en', label: 'Browse the Collection' }, { text: draft.french, lang: 'fr', label: 'Découvrir la collection' }].map((section, index) => <article key={section.lang} lang={section.lang} className={index ? 'mt-8 pt-8 border-t border-accent' : ''}>
       {section.text.split('\n\n').map((p, i) => <p key={i} className={i === 0 ? 'font-display text-xl mb-6 break-words' : 'text-sm leading-7 mb-4 whitespace-pre-line break-words'}>{p}</p>)}
       {draft.catalogUrl.startsWith('https://') ? <Button asChild className="whitespace-normal h-auto text-center py-3"><a href={draft.catalogUrl} target="_blank" rel="noreferrer">{section.label}</a></Button> : <span className="text-accent text-sm">{section.label}: [catalog link]</span>}
     </article>)}
