@@ -43,7 +43,7 @@ export default function AdminEmails() {
   const togglePanel = (p: 'edit' | 'recipients' | 'sender') => setPanel(cur => cur === p ? null : p);
   const dirty = JSON.stringify(draft) !== saved;
   const recipients = useMemo(() => uniqueRecipients(clients.filter(c => selected.has(c.id))), [clients, selected]);
-  const filtered = useMemo(() => clients.filter(c => `${c.client_number} ${c.first_name} ${c.last_name} ${c.email}`.toLowerCase().includes(search.toLowerCase())), [clients, search]);
+  const filtered = useMemo(() => uniqueRecipients(clients).filter(c => `${c.client_number} ${c.first_name} ${c.last_name} ${c.email}`.toLowerCase().includes(search.toLowerCase())), [clients, search]);
   const fromDomain = draft.from.split('@')[1]?.toLowerCase();
   const verified = domains.some(d => d.status === 'verified' && d.name.toLowerCase() === fromDomain);
 

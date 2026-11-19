@@ -2,7 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 import { renderClientEmail } from './render-email.ts';
-import { normalizedEmail, uniqueRecipients, staffMaySend } from '../_shared/christmas-email.ts';
+import { normalizedEmail, uniqueRecipients, staffMaySend, usableEmail } from '../_shared/christmas-email.ts';
 const gateway = 'https://connector-gateway.lovable.dev/resend';
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 const emailSchema = z.object({ subject: z.string().trim().min(1).max(500), preview: z.string().max(500), english: z.string().min(1).max(15000), french: z.string().min(1).max(15000), catalogUrl: z.string().url().refine(v => v.startsWith('https://'), 'Catalog link must use HTTPS'), from: z.string().email(), replyTo: z.string().email() });
@@ -41,8 +41,10 @@ Deno.serve(async req => {
       if (!input.consentConfirmed || !input.profileIds?.length) return response({ error: 'Select clients and confirm permission to email them.' }, 400);
       const { data, error } = await db.from('profiles').select('id,email').in('id', input.profileIds);
       if (error) throw error;
-      recipients = uniqueRecipients(data ?? []);
-      for (const r of recipients) { const { data: placeholder, error } = await db.rpc('is_placeholder_email', { _e: r.email }); if (error) throw error; if (placeholder) return response({ error: 'Remove clients with placeholder emails.' }, 400); }
+      const usable = [];
+      for (const r of uniqueRecipients((data ?? []).filter(p => p.email && usableEmail(p.email)))) { const { data: placeholder, error } = await db.rpc('is_placeholder_email', { _e: r.email }); if (error) throw error; if (!placeholder) usable.push(r); }
+      recipients = usable;
+      if (!recipients.length) return response({ results: [] });
     }
     const results = [];
     for (const recipient of recipients) {

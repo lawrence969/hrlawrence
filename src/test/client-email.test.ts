@@ -10,6 +10,9 @@ describe('manual promotional email rules', () => {
   it('sends once per email even when clients share an address', () => {
     expect(uniqueRecipients([{ email: 'Client@example.com' }, { email: ' client@example.com ' }])).toHaveLength(1);
   });
+  it('excludes common placeholder addresses', () => {
+    expect(uniqueRecipients([{ email: 'none@gmail.com' }, { email: 'x@x.com' }, { email: 'email@email.com' }])).toEqual([]);
+  });
   it('excludes missing and placeholder email addresses', () => {
     expect(uniqueRecipients([{ email: '' }, { email: 'no@email.com' }, { email: 'client@example.com' }])).toEqual([{ email: 'client@example.com' }]);
   });

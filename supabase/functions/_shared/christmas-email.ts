@@ -45,7 +45,10 @@ export type ChristmasEmail = typeof defaultChristmasEmail;
 export const normalizedEmail = (email: string) => email.trim().toLowerCase();
 export function usableEmail(email: string) {
   const e = normalizedEmail(email);
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && !['no@email.com','noemail@email.com','none@email.com','test@test.com','na@na.com'].includes(e);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+  const [local, domain] = e.split('@');
+  if (['no','none','noemail','no-email','na','n/a','test','x','email','nomail','unknown'].includes(local)) return false;
+  return !['email.com','test.com','x.com','na.com','placeholder.com'].includes(domain);
 }
 export function uniqueRecipients<T extends { email: string }>(rows: T[]): T[] {
   const seen = new Set<string>();
